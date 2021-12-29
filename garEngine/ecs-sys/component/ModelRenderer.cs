@@ -23,6 +23,7 @@ public class ModelRenderer : Component
     private int _texUniform;
     private AssimpLoaderTest _parser;
     private int _viewUniform;
+    private int _lightUniform;
 
 
     public ModelRenderer(AssimpLoaderTest loaderTest, Entity entityref, Texture tex, ShaderProgram shader)
@@ -34,6 +35,7 @@ public class ModelRenderer : Component
         _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
         _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
+        _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
         _Vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
         _nmvbo = GL.GenBuffer();
@@ -76,6 +78,7 @@ public class ModelRenderer : Component
         _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
         _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
+        _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
 
     }
 
@@ -91,11 +94,12 @@ public class ModelRenderer : Component
                         Matrix4.CreateTranslation(_modelTransform.Location);
         Matrix4 mvp = model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
         GL.UniformMatrix4(_mvpUniform, false, ref mvp);
+        GL.Uniform3(_lightUniform, WorldSettings.LightPos);
         GL.Uniform3(_viewUniform, RenderView._camera.Position);
         GL.UseProgram(_shader.Id);
         GL.BindVertexArray(_vao);
-        GL.BindTexture(TextureTarget.Texture2D, _texture.id);
         GL.ActiveTexture(TextureUnit.Texture0);
+        GL.BindTexture(TextureTarget.Texture2D, _texture.id);
         GL.Uniform1(_texUniform, 0);
         GL.DrawElements(PrimitiveType.Triangles, _parser.getMesh().faces.Count*3, DrawElementsType.UnsignedInt, 0);
     }

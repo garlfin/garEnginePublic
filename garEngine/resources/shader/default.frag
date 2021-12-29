@@ -7,12 +7,13 @@ in vec2 fTexCoord;
 in vec3 fNormal;
 
 uniform vec3 viewVec;
+uniform vec3 lightPos;
 
 out vec4 colorOut;
 
 void main() {
     float specFactor = 1 - 0.75;
-    vec3 lightDir = normalize(vec3(10,10,10) - FragPos);  
+    vec3 lightDir = normalize(lightPos - FragPos);  
     float ambient = max(0,dot(lightDir,fNormal))*0.5+0.5;
     // light reflected off normal, dot product with view vector
     float spec = clamp(pow(max(0,dot(reflect(lightDir, fNormal),-normalize(viewVec-FragPos))),pow(12,1+specFactor)),0,1)*specFactor; 

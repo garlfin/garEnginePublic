@@ -20,7 +20,7 @@ public class MyWindow : GameWindow
     private ShaderProgram _shaderProgram;
     private Matrix4 _currentWindowProjection = Matrix4.Zero;
     private float _deltaTime = 0;
-    private Texture myTexture;
+    private Texture _myTexture;
     public MyWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
     }
@@ -32,16 +32,25 @@ public class MyWindow : GameWindow
         GL.Enable(EnableCap.DepthTest);
         
         _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
-        myTexture = new Texture("../../../resources/texture/large_square_pattern_01_diff_2k.jpg");
+        _myTexture = new Texture("../../../resources/texture/large_square_pattern_01_diff_2k.jpg");
         
         RenderView._Window = this;
-        
-        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj");
+        List<string> paths = new List<string>()
+        {
+            "negz","negy","negz","posx","posy","posz"
+        };
+        WorldSettings.LoadCubemap(WorldSettings.PathHelper(paths));
+        ShaderProgram _skyBoxShader = ShaderLoader.LoadShaderProgram("../../../resources/shader/skybox.vert", "../../../resources/shader/skybox.frag");
+        WorldSettings.shader = _skyBoxShader;
+        WorldSettings.genVao();
+
+
+        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/cube.obj");
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
         entity1.GetComponent<Transform>().Scale = new OpenTK.Mathematics.Vector3(1,1,1);
-        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, myTexture, _shaderProgram);
+        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _myTexture, _shaderProgram);
         entity1.AddComponent(modelRenderer);
 
         Entity camera = new Entity();
@@ -75,8 +84,14 @@ public class MyWindow : GameWindow
         Camera currentCameraObject = CameraSystem.currentCamera.GetComponent<Camera>();
         ModelRendererSystem.Update((float)args.Time);
 
+        WorldSettings.renderSkybox();
+        
+        
         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
         Console.WriteLine(args.Time);
+        
+        
+        
         
         SwapBuffers();
         base.OnRenderFrame(args);
@@ -85,7 +100,7 @@ public class MyWindow : GameWindow
     protected override void OnClosing(CancelEventArgs e)
     {
         ModelRendererSystem.Close();
-        myTexture.Delete();
+        _myTexture.Delete();
         Console.WriteLine("Done! Closing :)");
         base.OnClosing(e);
     }
