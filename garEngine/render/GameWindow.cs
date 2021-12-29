@@ -28,6 +28,7 @@ public class MyWindow : GameWindow
     protected override void OnLoad()
     {
         CursorGrabbed = true;
+        GL.ClearColor(ShaderLoader.HexToFloat(135), ShaderLoader.HexToFloat(206), ShaderLoader.HexToFloat(235), 1);
         GL.Enable(EnableCap.DepthTest);
         
         _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
@@ -35,7 +36,7 @@ public class MyWindow : GameWindow
         
         RenderView._Window = this;
         
-        ColladaParser cubeObject = new ColladaParser("../../../resources/model/plane.dae");
+        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/cube.dae");
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
@@ -68,8 +69,6 @@ public class MyWindow : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
-        
-        GL.ClearColor(ShaderLoader.HexToFloat(135), ShaderLoader.HexToFloat(206), ShaderLoader.HexToFloat(235), 1);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         Camera currentCameraObject = CameraSystem.currentCamera.GetComponent<Camera>();

@@ -19,13 +19,13 @@ public class ModelRenderer : Component
     private int _nmvbo;
     private Texture _texture;
     private int _texUniform;
-    private ColladaParser _parser;
+    private AssimpLoaderTest _parser;
 
 
-    public ModelRenderer(ColladaParser parser, Entity entityref, Texture tex, ShaderProgram shader)
+    public ModelRenderer(AssimpLoaderTest loaderTest, Entity entityref, Texture tex, ShaderProgram shader)
     {
         this._texture = tex;
-        _parser = parser;
+        _parser = loaderTest;
         ModelRendererSystem.Register(this);
         _shader = shader;
         _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
@@ -43,26 +43,26 @@ public class ModelRenderer : Component
         GL.BindVertexArray(_vao);
         
         GL.BindBuffer(BufferTarget.ArrayBuffer, _Vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * _parser.vert.Count, _parser.vert.ToArray(), BufferUsageHint.StaticCopy);
+        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float)* 3 * _parser.getMesh().points.Count, _parser.getMesh().points.ToArray(), BufferUsageHint.StaticCopy);
 
         GL.EnableVertexAttribArray(0);
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
         
         GL.BindBuffer(BufferTarget.ArrayBuffer, _nmvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * _parser.normal.Count, _parser.normal.ToArray(), BufferUsageHint.StaticCopy);
+        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * 3 * _parser.getMesh().normal.Count, _parser.getMesh().normal.ToArray(), BufferUsageHint.StaticCopy);
 
         GL.EnableVertexAttribArray(1);
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vtvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * _parser.uv.Count, _parser.uv.ToArray(), BufferUsageHint.StaticCopy);
+        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * 2 * _parser.getMesh().uvs.Count, _parser.getMesh().uvs.ToArray(), BufferUsageHint.StaticCopy);
 
         GL.EnableVertexAttribArray(2);
-        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 0, 0);
 
         
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, _parser.triangle.Count * sizeof(uint), _parser.triangle.ToArray(), BufferUsageHint.StaticCopy);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, _parser.getMesh().faces.Count * 3 * sizeof(uint), _parser.getMesh().faces.ToArray(), BufferUsageHint.StaticCopy);
        
     }
 
@@ -91,7 +91,7 @@ public class ModelRenderer : Component
         GL.BindTexture(TextureTarget.Texture2D, _texture.id);
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.Uniform1(_texUniform, 0);
-        GL.DrawElements(PrimitiveType.Triangles, _parser.triangle.Count, DrawElementsType.UnsignedInt, 0);
+        GL.DrawElements(PrimitiveType.Triangles, _parser.getMesh().faces.Count, DrawElementsType.UnsignedInt, 0);
     }
 
     public override void Close()
