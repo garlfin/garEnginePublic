@@ -15,6 +15,18 @@ public static class assimpContextClass
 public class AssimpLoaderTest
 {
     private Scene _scene;
+    public struct Intvec3{
+        int x;
+        int y;
+        int z;
+
+        public Intvec3(int x_, int y_, int z_)
+        {
+            x = x_;
+            y = y_;
+            z = z_;
+        }
+    }
 
     public struct MeshStruct
     {
@@ -22,7 +34,7 @@ public class AssimpLoaderTest
         public List<Vector3D> normal;
         public List<Vector3D> tangents;
         public List<Vector2D> uvs;
-        public List<Vector3D> faces;
+        public List<Intvec3> faces;
 
     }
 
@@ -38,12 +50,12 @@ public class AssimpLoaderTest
         {
             throw new Exception("No meshes in the file");
         }
-        List<Vector3D> tmpfaces = new();
+        List<Intvec3> tmpfaces = new();
         foreach (var face in _scene.Meshes[0].Faces)
         {
             if (face.Indices.Count == 3)
             {
-                tmpfaces.Add(new(face.Indices[0], face.Indices[1], face.Indices[2]));
+                tmpfaces.Add(new Intvec3(face.Indices[0], face.Indices[1], face.Indices[2]));
             }
         }
 

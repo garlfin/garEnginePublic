@@ -36,7 +36,7 @@ public class MyWindow : GameWindow
         
         RenderView._Window = this;
         
-        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/cube.dae");
+        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj");
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
@@ -60,6 +60,7 @@ public class MyWindow : GameWindow
        
         if (this.KeyboardState.IsKeyDown(Keys.Escape))
         {
+            this.OnClosing(new CancelEventArgs());
             this.Close();
         }
         CameraSystem.Update((float)args.Time);

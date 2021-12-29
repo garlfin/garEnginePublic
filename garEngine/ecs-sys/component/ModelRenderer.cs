@@ -1,9 +1,11 @@
-﻿using garEngine.ecs_sys.entity;
+﻿using Assimp;
+using garEngine.ecs_sys.entity;
 using garEngine.ecs_sys.system;
 using garEngine.render;
 using garEngine.render.model;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using PrimitiveType = OpenTK.Graphics.OpenGL4.PrimitiveType;
 
 namespace garEngine.ecs_sys.component;
 
@@ -20,6 +22,7 @@ public class ModelRenderer : Component
     private Texture _texture;
     private int _texUniform;
     private AssimpLoaderTest _parser;
+    private int _viewUniform;
 
 
     public ModelRenderer(AssimpLoaderTest loaderTest, Entity entityref, Texture tex, ShaderProgram shader)
@@ -30,6 +33,7 @@ public class ModelRenderer : Component
         _shader = shader;
         _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
+        _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
         _Vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
         _nmvbo = GL.GenBuffer();
@@ -71,6 +75,7 @@ public class ModelRenderer : Component
         _shader = shader;
         _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
+        _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
 
     }
 
@@ -86,12 +91,13 @@ public class ModelRenderer : Component
                         Matrix4.CreateTranslation(_modelTransform.Location);
         Matrix4 mvp = model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
         GL.UniformMatrix4(_mvpUniform, false, ref mvp);
+        GL.Uniform3(_viewUniform, RenderView._camera.Position);
         GL.UseProgram(_shader.Id);
         GL.BindVertexArray(_vao);
         GL.BindTexture(TextureTarget.Texture2D, _texture.id);
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.Uniform1(_texUniform, 0);
-        GL.DrawElements(PrimitiveType.Triangles, _parser.getMesh().faces.Count, DrawElementsType.UnsignedInt, 0);
+        GL.DrawElements(PrimitiveType.Triangles, _parser.getMesh().faces.Count*3, DrawElementsType.UnsignedInt, 0);
     }
 
     public override void Close()
