@@ -42,7 +42,7 @@ public static class WorldSettings
       GL.ActiveTexture(TextureUnit.Texture1);
       GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
       GL.UseProgram(shader.Id);
-      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix();
+      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix().ClearTranslation();
       GL.UniformMatrix4(_viewMat, false, ref viewMatrix);
       Matrix4 projectionMatrix = RenderView._camera.GetProjectionMatrix();
       GL.UniformMatrix4(_projMat, false, ref projectionMatrix);

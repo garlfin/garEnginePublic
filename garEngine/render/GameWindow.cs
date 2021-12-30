@@ -49,7 +49,6 @@ public class MyWindow : GameWindow
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
-        entity1.GetComponent<Transform>().Scale = new OpenTK.Mathematics.Vector3(1,1,1);
         ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _myTexture, _shaderProgram);
         entity1.AddComponent(modelRenderer);
 
@@ -80,13 +79,11 @@ public class MyWindow : GameWindow
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-        Camera currentCameraObject = CameraSystem.currentCamera.GetComponent<Camera>();
+        
         ModelRendererSystem.Update((float)args.Time);
-    
+        
         WorldSettings.renderSkybox();
-        
-        
+
         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
         Console.WriteLine(args.Time);
         

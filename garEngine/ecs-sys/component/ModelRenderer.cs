@@ -89,6 +89,7 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
+        GL.UseProgram(_shader.Id);
         _modelTransform = entity.GetComponent<Transform>();
         Matrix4 model = Matrix4.Identity * Matrix4.CreateScale(_modelTransform.Scale) *
                         Matrix4.CreateTranslation(_modelTransform.Location);
@@ -96,7 +97,6 @@ public class ModelRenderer : Component
         GL.UniformMatrix4(_mvpUniform, false, ref mvp);
         GL.Uniform3(_lightUniform, WorldSettings.LightPos);
         GL.Uniform3(_viewUniform, RenderView._camera.Position);
-        GL.UseProgram(_shader.Id);
         GL.BindVertexArray(_vao);
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.Texture2D, _texture.id);
