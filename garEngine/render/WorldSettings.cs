@@ -42,14 +42,13 @@ public static class WorldSettings
       GL.ActiveTexture(TextureUnit.Texture1);
       GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
       GL.UseProgram(shader.Id);
-      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix().ClearTranslation();
+      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix();
       GL.UniformMatrix4(_viewMat, false, ref viewMatrix);
       Matrix4 projectionMatrix = RenderView._camera.GetProjectionMatrix();
       GL.UniformMatrix4(_projMat, false, ref projectionMatrix);
       GL.Uniform1(GL.GetUniformLocation(shader.Id,"skybox"),1);
       GL.DrawArrays(PrimitiveType.Triangles, 0,36);
       GL.DepthFunc(DepthFunction.Less);
-      GL.BindVertexArray(0);
    }
    public static List<string> PathHelper(List<string> pathList)
    {
@@ -73,14 +72,16 @@ public static class WorldSettings
          TextureTarget.TextureCubeMapPositiveZ
       };
       cubeMapTexID = GL.GenTexture();
+      GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
       for (int i = 0; i < 6; i++)
       {
          Bitmap bmp = new Bitmap(path[i]);
          BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            System.Drawing.Imaging.PixelFormat.Format24bppRgb);
          GL.TexImage2D(targets[i], 0, PixelInternalFormat.Rgb8, bmp.Width, bmp.Height, 0, PixelFormat.Bgr, PixelType.UnsignedByte, bmpData.Scan0 );
          
          bmp.UnlockBits(bmpData);
+         bmp.Dispose();
       }
       GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
       GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);

@@ -37,7 +37,7 @@ public class MyWindow : GameWindow
         RenderView._Window = this;
         List<string> paths = new List<string>()
         {
-            "negz","negy","negz","posx","posy","posz"
+            "negx","negy","negz","posx","posy","posz"
         };
         WorldSettings.LoadCubemap(WorldSettings.PathHelper(paths));
         ShaderProgram _skyBoxShader = ShaderLoader.LoadShaderProgram("../../../resources/shader/skybox.vert", "../../../resources/shader/skybox.frag");
@@ -83,7 +83,7 @@ public class MyWindow : GameWindow
 
         Camera currentCameraObject = CameraSystem.currentCamera.GetComponent<Camera>();
         ModelRendererSystem.Update((float)args.Time);
-
+    
         WorldSettings.renderSkybox();
         
         
