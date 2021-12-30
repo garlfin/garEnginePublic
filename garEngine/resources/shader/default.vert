@@ -11,8 +11,10 @@ out vec2 fTexCoord;
 out vec3 fNormal;
 out vec3 FragPos;
 
+
+
 void main() {
-    fNormal = normalize(vNormal);
+    fNormal = normalize(mat3(inverse(model)) * vNormal);
     fTexCoord = vTexCoord;
     gl_Position = mvp * vec4(vPosition, 1.0);
     FragPos = vec3(model * vec4(vPosition, 1.0));

@@ -39,9 +39,9 @@ public class AssimpLoaderTest
     }
 
     private MeshStruct myMesh;
-    public AssimpLoaderTest(string path)
+    public AssimpLoaderTest(string path, PostProcessSteps flags = PostProcessSteps.Triangulate | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.FindInvalidData )
     {
-        _scene = assimpContextClass.get().ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.FindInvalidData );
+        _scene = assimpContextClass.get().ImportFile(path, flags);
         if (_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
         {
             throw new Exception("Error occurred in assimp");

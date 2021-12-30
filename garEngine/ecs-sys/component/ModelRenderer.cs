@@ -24,6 +24,7 @@ public class ModelRenderer : Component
     private AssimpLoaderTest _parser;
     private int _viewUniform;
     private int _lightUniform;
+    private int _CubemapUniform;
 
 
     public ModelRenderer(AssimpLoaderTest loaderTest, Entity entityref, Texture tex, ShaderProgram shader)
@@ -36,6 +37,7 @@ public class ModelRenderer : Component
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
         _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
         _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
+        _CubemapUniform = GL.GetUniformLocation(_shader.Id, "cubemap");
         _Vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
         _nmvbo = GL.GenBuffer();
@@ -79,6 +81,7 @@ public class ModelRenderer : Component
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
         _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
         _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
+        _CubemapUniform = GL.GetUniformLocation(_shader.Id, "cubemap");
 
     }
 
@@ -91,12 +94,14 @@ public class ModelRenderer : Component
     {
         GL.UseProgram(_shader.Id);
         _modelTransform = entity.GetComponent<Transform>();
-        Matrix4 model = Matrix4.Identity * Matrix4.CreateScale(_modelTransform.Scale) *
+        Matrix4 model = Matrix4.CreateScale(_modelTransform.Scale) *
                         Matrix4.CreateTranslation(_modelTransform.Location);
         Matrix4 mvp = model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
+        GL.UniformMatrix4(GL.GetUniformLocation(_shader.Id,"model"), false, ref model );
         GL.UniformMatrix4(_mvpUniform, false, ref mvp);
         GL.Uniform3(_lightUniform, WorldSettings.LightPos);
         GL.Uniform3(_viewUniform, RenderView._camera.Position);
+        GL.Uniform1(_CubemapUniform, 1);
         GL.BindVertexArray(_vao);
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.Texture2D, _texture.id);

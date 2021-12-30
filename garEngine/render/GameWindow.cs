@@ -8,8 +8,10 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using System.Drawing;
+using Assimp;
 using garEngine.render.model;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Camera = garEngine.ecs_sys.component.Camera;
 using Vector3 = OpenTK.Mathematics.Vector3;
 
 namespace garEngine.render;
@@ -32,7 +34,7 @@ public class MyWindow : GameWindow
         GL.Enable(EnableCap.DepthTest);
         
         _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
-        _myTexture = new Texture("../../../resources/texture/large_square_pattern_01_diff_2k.jpg");
+        _myTexture = new Texture("../../../resources/texture/marble.tif");
         
         RenderView._Window = this;
         List<string> paths = new List<string>()
@@ -46,12 +48,19 @@ public class MyWindow : GameWindow
 
 
         AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj");
+        AssimpLoaderTest sphereObject = new AssimpLoaderTest("../../../resources/model/sphere.obj");
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
         ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _myTexture, _shaderProgram);
         entity1.AddComponent(modelRenderer);
 
+        Entity entity2 = new Entity();
+        entity2.AddComponent(new Transform());
+        entity2.GetComponent<Transform>().Location = new Vector3(0, 10, 0);
+        ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, _myTexture, _shaderProgram);
+        entity2.AddComponent(modelRenderer2);
+        
         Entity camera = new Entity();
         camera.AddComponent(new Transform());
         camera.AddComponent(new Camera(30f, 0.1f, 1000f, 0.3f));
