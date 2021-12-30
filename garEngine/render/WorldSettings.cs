@@ -42,7 +42,7 @@ public static class WorldSettings
       GL.ActiveTexture(TextureUnit.Texture1);
       GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
       GL.UseProgram(shader.Id);
-      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix();
+      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix().ClearTranslation();
       GL.UniformMatrix4(_viewMat, false, ref viewMatrix);
       Matrix4 projectionMatrix = RenderView._camera.GetProjectionMatrix();
       GL.UniformMatrix4(_projMat, false, ref projectionMatrix);
@@ -77,7 +77,7 @@ public static class WorldSettings
       {
          Bitmap bmp = new Bitmap(path[i]);
          BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-            System.Drawing.Imaging.PixelFormat.Format64bppArgb);
+            System.Drawing.Imaging.PixelFormat.Format32bppArgb);
          GL.TexImage2D(targets[i], 0, PixelInternalFormat.Rgb8, bmp.Width, bmp.Height, 0, PixelFormat.Bgr, PixelType.UnsignedByte, bmpData.Scan0 );
          
          bmp.UnlockBits(bmpData);
