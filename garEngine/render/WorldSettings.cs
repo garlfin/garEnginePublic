@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using garEngine.render.model;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
@@ -19,6 +20,9 @@ public static class WorldSettings
    public static void genVao()
    {
 
+      AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/cube.obj");
+      
+      
       _viewMat = GL.GetUniformLocation(shader.Id, "view");
       _projMat = GL.GetUniformLocation(shader.Id, "projection");
       
@@ -26,7 +30,7 @@ public static class WorldSettings
       vbo = GL.GenBuffer();
       GL.BindVertexArray(vao);
       GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-      GL.BufferData(BufferTarget.ArrayBuffer, skyboxVertices.Length * sizeof(float), ref vao, BufferUsageHint.StaticDraw);
+      GL.BufferData(BufferTarget.ArrayBuffer, cubeObject.getMesh().points.Count * 3 * sizeof(float), cubeObject.getMesh().points.ToArray(), BufferUsageHint.StaticDraw);
       GL.EnableVertexAttribArray(0);
       GL.VertexAttribPointer(0,3,VertexAttribPointerType.Float, false, 0, 0);
    }
@@ -34,16 +38,18 @@ public static class WorldSettings
    public static void renderSkybox()
    {
       GL.DepthFunc(DepthFunction.Lequal);
+      GL.BindVertexArray(vao);
       GL.ActiveTexture(TextureUnit.Texture1);
       GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
       GL.UseProgram(shader.Id);
-      Matrix4 temp = RenderView._camera.GetViewMatrix();
-      GL.UniformMatrix4(_viewMat, false, ref temp);
-      temp = RenderView._camera.GetProjectionMatrix();
-      GL.UniformMatrix4(_projMat, false, ref temp);
+      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix();
+      GL.UniformMatrix4(_viewMat, false, ref viewMatrix);
+      Matrix4 projectionMatrix = RenderView._camera.GetProjectionMatrix();
+      GL.UniformMatrix4(_projMat, false, ref projectionMatrix);
       GL.Uniform1(GL.GetUniformLocation(shader.Id,"skybox"),1);
       GL.DrawArrays(PrimitiveType.Triangles, 0,36);
       GL.DepthFunc(DepthFunction.Less);
+      GL.BindVertexArray(0);
    }
    public static List<string> PathHelper(List<string> pathList)
    {
@@ -54,51 +60,6 @@ public static class WorldSettings
       }
       return returnList;
    }
-   
-   static float[] skyboxVertices = {
-      // positions          
-      -1.0f,  1.0f, -1.0f,
-      -1.0f, -1.0f, -1.0f,
-      1.0f, -1.0f, -1.0f,
-      1.0f, -1.0f, -1.0f,
-      1.0f,  1.0f, -1.0f,
-      -1.0f,  1.0f, -1.0f,
-
-      -1.0f, -1.0f,  1.0f,
-      -1.0f, -1.0f, -1.0f,
-      -1.0f,  1.0f, -1.0f,
-      -1.0f,  1.0f, -1.0f,
-      -1.0f,  1.0f,  1.0f,
-      -1.0f, -1.0f,  1.0f,
-
-      1.0f, -1.0f, -1.0f,
-      1.0f, -1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,
-      1.0f,  1.0f, -1.0f,
-      1.0f, -1.0f, -1.0f,
-
-      -1.0f, -1.0f,  1.0f,
-      -1.0f,  1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,
-      1.0f, -1.0f,  1.0f,
-      -1.0f, -1.0f,  1.0f,
-
-      -1.0f,  1.0f, -1.0f,
-      1.0f,  1.0f, -1.0f,
-      1.0f,  1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,
-      -1.0f,  1.0f,  1.0f,
-      -1.0f,  1.0f, -1.0f,
-
-      -1.0f, -1.0f, -1.0f,
-      -1.0f, -1.0f,  1.0f,
-      1.0f, -1.0f, -1.0f,
-      1.0f, -1.0f, -1.0f,
-      -1.0f, -1.0f,  1.0f,
-      1.0f, -1.0f,  1.0f
-   };
 
    public static void LoadCubemap(List<string> path)
    {
@@ -126,5 +87,12 @@ public static class WorldSettings
       GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
       GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
       GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int) TextureWrapMode.ClampToEdge);
+   }
+
+   public static void Delete()
+   {
+      GL.DeleteTexture(cubeMapTexID);
+      GL.DeleteBuffer(vbo);
+      GL.DeleteVertexArray(vao);
    }
 }

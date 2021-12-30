@@ -45,7 +45,7 @@ public class MyWindow : GameWindow
         WorldSettings.genVao();
 
 
-        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/cube.obj");
+        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj");
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
@@ -99,6 +99,7 @@ public class MyWindow : GameWindow
 
     protected override void OnClosing(CancelEventArgs e)
     {
+        WorldSettings.Delete();
         ModelRendererSystem.Close();
         _myTexture.Delete();
         Console.WriteLine("Done! Closing :)");
