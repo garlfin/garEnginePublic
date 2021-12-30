@@ -23,6 +23,7 @@ public class MyWindow : GameWindow
     private Matrix4 _currentWindowProjection = Matrix4.Zero;
     private float _deltaTime = 0;
     private Texture _myTexture;
+    private Texture _normalMap;
     public MyWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
     }
@@ -30,11 +31,12 @@ public class MyWindow : GameWindow
     protected override void OnLoad()
     {
         CursorGrabbed = true;
-        GL.ClearColor(ShaderLoader.HexToFloat(135), ShaderLoader.HexToFloat(206), ShaderLoader.HexToFloat(235), 1);
+        GL.ClearColor(1f,1f,1f, 1f);
         GL.Enable(EnableCap.DepthTest);
         
         _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
-        _myTexture = new Texture("../../../resources/texture/marble.tif");
+        _myTexture = new Texture("../../../resources/texture/brick_albedo.tif");
+        _normalMap = new Texture("../../../resources/texture/download.jpg");
         
         RenderView._Window = this;
         List<string> paths = new List<string>()
@@ -47,18 +49,18 @@ public class MyWindow : GameWindow
         WorldSettings.genVao();
 
 
-        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj");
+        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/sphere.obj");
         AssimpLoaderTest sphereObject = new AssimpLoaderTest("../../../resources/model/sphere.obj");
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
-        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _myTexture, _shaderProgram);
+        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _myTexture, _normalMap, _shaderProgram);
         entity1.AddComponent(modelRenderer);
 
         Entity entity2 = new Entity();
         entity2.AddComponent(new Transform());
         entity2.GetComponent<Transform>().Location = new Vector3(0, 10, 0);
-        ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, _myTexture, _shaderProgram);
+        ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, _myTexture, _normalMap, _shaderProgram);
         entity2.AddComponent(modelRenderer2);
         
         Entity camera = new Entity();

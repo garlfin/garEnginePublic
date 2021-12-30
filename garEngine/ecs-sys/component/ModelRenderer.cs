@@ -25,11 +25,15 @@ public class ModelRenderer : Component
     private int _viewUniform;
     private int _lightUniform;
     private int _CubemapUniform;
+    private int _tanvbo;
+    private Texture _normalTex;
+    private int _normalUniform;
 
 
-    public ModelRenderer(AssimpLoaderTest loaderTest, Entity entityref, Texture tex, ShaderProgram shader)
+    public ModelRenderer(AssimpLoaderTest loaderTest, Entity entityref, Texture tex, Texture normalTex, ShaderProgram shader)
     {
-        this._texture = tex;
+        _texture = tex;
+        _normalTex = normalTex;
         _parser = loaderTest;
         ModelRendererSystem.Register(this);
         _shader = shader;
@@ -38,9 +42,11 @@ public class ModelRenderer : Component
         _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
         _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
         _CubemapUniform = GL.GetUniformLocation(_shader.Id, "cubemap");
+        _normalUniform = GL.GetUniformLocation(_shader.Id, "normalMap");
         _Vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
         _nmvbo = GL.GenBuffer();
+        _tanvbo = GL.GenBuffer();
         _ebo = GL.GenBuffer();
         entity = entityref;
         
@@ -67,7 +73,12 @@ public class ModelRenderer : Component
 
         GL.EnableVertexAttribArray(2);
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 0, 0);
+        
+        GL.BindBuffer(BufferTarget.ArrayBuffer, _tanvbo);
+        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * 3 * _parser.getMesh().tangents.Count, _parser.getMesh().tangents.ToArray(), BufferUsageHint.StaticCopy);
 
+        GL.EnableVertexAttribArray(3);
+        GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, 0, 0);
         
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
         GL.BufferData(BufferTarget.ElementArrayBuffer, _parser.getMesh().faces.Count * 3 * sizeof(uint), _parser.getMesh().faces.ToArray(), BufferUsageHint.StaticCopy);
@@ -79,6 +90,7 @@ public class ModelRenderer : Component
         _shader = shader;
         _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
         _texUniform = GL.GetUniformLocation(_shader.Id, "albedo");
+        _normalUniform = GL.GetUniformLocation(_shader.Id, "normalMap");
         _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
         _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
         _CubemapUniform = GL.GetUniformLocation(_shader.Id, "cubemap");
@@ -105,7 +117,10 @@ public class ModelRenderer : Component
         GL.BindVertexArray(_vao);
         GL.ActiveTexture(TextureUnit.Texture0);
         GL.BindTexture(TextureTarget.Texture2D, _texture.id);
+        GL.ActiveTexture(TextureUnit.Texture2);
+        GL.BindTexture(TextureTarget.Texture2D, _normalTex.id);
         GL.Uniform1(_texUniform, 0);
+        GL.Uniform1(_normalUniform, 2);
         GL.DrawElements(PrimitiveType.Triangles, _parser.getMesh().faces.Count*3, DrawElementsType.UnsignedInt, 0);
     }
 
