@@ -37,7 +37,7 @@ void main() {
     color = texture(albedo, fTexCoord)*ambient+vec4(spec);
     color = mixMultiply(color, texture(cubemap, reflect(-viewPos, normal)), fresnel * specFactor);
     color = pow(color, vec4(1.0/2.2));
-    //colorOut = vec4(1.0)*ambient;
+    colorOut = vec4(1.0)*ambient;
     //colorOut = vec4(fViewVec,1.0);
-    colorOut = texture(cubemap, normalize(reflect(-viewPos, normal)));
+    //colorOut = texture(cubemap, normalize(reflect(-viewPos, normal)));
 }
