@@ -19,20 +19,25 @@ vec4 mixMultiply(vec4 inone, vec4 intwo, float mixfac){
 }
 
 void main() {
-    vec4 color = vec4(1); 
-    float specFactor = 1 - 0.75;
-    vec3 normal = texture(normalMap, fTexCoord).rgb;
-    normal = vec3(normal.r, 1-normal.g, normal.b) * 2.0 - 1.0;
+    vec4 color = vec4(1.0); 
+    float specFactor = 1.0 - 0.75;
+    
+    
+    vec3 normal = vec3(0.5,0.5,1.0);//texture(normalMap, fTexCoord).rgb;
+    normal = normalize(normal * 2.0 - 1.0);
     vec3 lightDir = normalize(fLightPos-FragPos);  
-    float ambient = max(dot(lightDir,normal),0)*0.5+0.5;
     vec3 viewPos = normalize(fViewVec-FragPos);
-    float fresnel = clamp(1 - max(dot(viewPos, normal),0),0,1);
+    
+    
+    float ambient = max(dot(lightDir,normal),0.0)*0.5+0.5;
+
+    float fresnel = clamp(1.0 - max(dot(viewPos, normal),0.0),0.0,1.0);
     // light reflected off normal, dot product with view vector
-    float spec = clamp(pow(max(0,dot(reflect(lightDir, normal),-viewPos)),pow(12,1+specFactor)),0,1)*specFactor; 
+    float spec = clamp(pow(max(0,dot(reflect(lightDir, normal),-viewPos)),pow(12,1.0+specFactor)),0.0,1.0)*specFactor; 
     color = texture(albedo, fTexCoord)*ambient+vec4(spec);
     color = mixMultiply(color, texture(cubemap, reflect(-viewPos, normal)), fresnel * specFactor);
-    color = pow(color, vec4(1/2.2));
-    //colorOut = color;
-    colorOut = vec4(tangent,1);
-    //colorOut = texture(cubemap, reflect(-viewPos, normal));
+    color = pow(color, vec4(1.0/2.2));
+    //colorOut = vec4(1.0)*ambient;
+    //colorOut = vec4(fViewVec,1.0);
+    colorOut = texture(cubemap, normalize(reflect(-viewPos, normal)));
 }

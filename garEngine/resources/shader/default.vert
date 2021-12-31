@@ -27,11 +27,12 @@ void main() {
     vec3 T = normalize(normalMatrix * vTangent);
     vec3 N = normalize(normalMatrix * vNormal);
     vec3 B = cross(N, T);
-    TBN = transpose(mat3(T, B, N));
-    fViewVec = TBN * lightPos;
-    fLightPos = TBN * viewVec;
-    FragPos = TBN * vec3(model * vec4(vPosition, 1.0));
+    
     tangent = T;
+    TBN = transpose(mat3(T, B, N));   
+    fViewVec = TBN * viewVec;
+    fLightPos = TBN * lightPos;
+    FragPos = vec3(model * vec4(vPosition, 1.0));  
     gl_Position = mvp * vec4(vPosition, 1.0);
 }
 

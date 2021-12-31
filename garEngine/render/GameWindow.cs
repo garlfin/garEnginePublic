@@ -49,8 +49,8 @@ public class MyWindow : GameWindow
         WorldSettings.genVao();
 
 
-        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/sphere.obj");
-        AssimpLoaderTest sphereObject = new AssimpLoaderTest("../../../resources/model/sphere.obj");
+        AssimpLoaderTest cubeObject = new AssimpLoaderTest("../../../resources/model/cube.obj");
+        AssimpLoaderTest sphereObject = new AssimpLoaderTest("../../../resources/model/sphere.fbx", PostProcessSteps.None | PostProcessSteps.Triangulate | PostProcessSteps.FindInvalidData);
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
