@@ -29,6 +29,16 @@ class BaseSystem<T> where T : Component
         }
 
     }
+    
+    public static void UpdateShadow()
+    {
+        foreach (T component in Components)
+        {
+            component.UpdateShadow();
+        }
+
+    }
+    
 
     public static void Close()
     {

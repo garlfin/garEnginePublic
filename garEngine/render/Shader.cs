@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using System.Net.Mime;
+using OpenTK.Graphics.OpenGL4;
 
 namespace garEngine.render
 {
@@ -65,6 +66,13 @@ namespace garEngine.render
     public struct ShaderProgram
     {
         public int Id;
+        public List<ShaderSettingTex> ShaderSettingTexes = new List<ShaderSettingTex>();
+    }
+
+    public struct ShaderSettingTex
+    {
+        public string uniformName;
+        public Texture value;
     }
     
     }

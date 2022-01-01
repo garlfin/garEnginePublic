@@ -15,6 +15,7 @@ public static class assimpContextClass
 public class AssimpLoaderTest
 {
     private Scene _scene;
+    private List<MeshStruct> _meshes = new List<MeshStruct>();
     public struct Intvec3{
         int x;
         int y;
@@ -38,47 +39,56 @@ public class AssimpLoaderTest
 
     }
 
-    private MeshStruct myMesh;
-    public AssimpLoaderTest(string path, PostProcessSteps flags = PostProcessSteps.Triangulate | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.FindInvalidData )
+    public AssimpLoaderTest(string path,
+        PostProcessSteps flags = PostProcessSteps.Triangulate | PostProcessSteps.CalculateTangentSpace |
+                                 PostProcessSteps.FindInvalidData)
     {
         _scene = assimpContextClass.get().ImportFile(path, flags);
         if (_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
         {
             throw new Exception("Error occurred in assimp");
         }
+
         if (!_scene.HasMeshes)
         {
             throw new Exception("No meshes in the file");
         }
-        List<Intvec3> tmpfaces = new();
-        foreach (var face in _scene.Meshes[0].Faces)
+
+        foreach (Mesh mesh in _scene.Meshes)
         {
-            if (face.Indices.Count == 3)
+
+
+            List<Intvec3> tmpfaces = new();
+            foreach (var face in mesh.Faces)
             {
-                tmpfaces.Add(new Intvec3(face.Indices[0], face.Indices[1], face.Indices[2]));
+                if (face.Indices.Count == 3)
+                {
+                    tmpfaces.Add(new Intvec3(face.Indices[0], face.Indices[1], face.Indices[2]));
+                }
             }
-        }
 
-        List<Vector2D> tmpUvs = new();
-        foreach (var uv in _scene.Meshes[0].TextureCoordinateChannels[0])
-        {
-            tmpUvs.Add(new Vector2D(uv.X, uv.Y));
-        }
-        myMesh = new MeshStruct()
-        {
-            points = _scene.Meshes[0].Vertices,
-            normal = _scene.Meshes[0].Normals,
-            faces = tmpfaces,
-            tangents = _scene.Meshes[0].Tangents,
-            uvs = tmpUvs
-            
-        };
+            List<Vector2D> tmpUvs = new();
+            foreach (var uv in mesh.TextureCoordinateChannels[0])
+            {
+                tmpUvs.Add(new Vector2D(uv.X, uv.Y));
+            }
 
+            _meshes.Add(new MeshStruct()
+            {
+                points = mesh.Vertices,
+                normal = mesh.Normals,
+                faces = tmpfaces,
+                tangents = mesh.Tangents,
+                uvs = tmpUvs
+
+            });
+
+        }
     }
 
-    public MeshStruct getMesh()
+    public MeshStruct getMesh(int index)
     {
-        return myMesh;
+        return _meshes[index];
     }
 
 
