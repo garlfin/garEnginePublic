@@ -87,7 +87,7 @@ public class ModelRenderer : Component
     {
         GL.UseProgram(_shader.Id);
         _modelTransform = entity.GetComponent<Transform>();
-        Matrix4 model = Matrix4.CreateScale(_modelTransform.Scale) *
+        Matrix4 model = Matrix4.CreateRotationX(_modelTransform.Rotation.X) * Matrix4.CreateRotationY(_modelTransform.Rotation.Y) * Matrix4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
                         Matrix4.CreateTranslation(_modelTransform.Location);
         Matrix4 mvp = model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
         GL.UniformMatrix4(GL.GetUniformLocation(_shader.Id, "model"), false, ref model);

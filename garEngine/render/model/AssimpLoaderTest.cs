@@ -1,4 +1,5 @@
-﻿using Assimp;
+﻿using System.Numerics;
+using Assimp;
 
 namespace garEngine.render.model;
 
@@ -16,6 +17,7 @@ public class AssimpLoaderTest
 {
     private Scene _scene;
     private List<MeshStruct> _meshes = new List<MeshStruct>();
+    public List<MaterialStruct> _Materials = new();
     public struct Intvec3{
         int x;
         int y;
@@ -29,6 +31,11 @@ public class AssimpLoaderTest
         }
     }
 
+    public struct MaterialStruct
+    {
+        public string albedo;
+        public string normal;
+    }
     public struct MeshStruct
     {
         public List<Vector3D> points;
@@ -36,7 +43,7 @@ public class AssimpLoaderTest
         public List<Vector3D> tangents;
         public List<Vector2D> uvs;
         public List<Intvec3> faces;
-
+        public string name;
     }
 
     public AssimpLoaderTest(string path,
@@ -54,10 +61,16 @@ public class AssimpLoaderTest
             throw new Exception("No meshes in the file");
         }
 
+        foreach (Material material in _scene.Materials)
+        {
+            _Materials.Add(new MaterialStruct()
+            {
+                albedo = material.TextureDiffuse.FilePath,
+                normal = material.TextureNormal.FilePath
+            });
+        }
         foreach (Mesh mesh in _scene.Meshes)
         {
-
-
             List<Intvec3> tmpfaces = new();
             foreach (var face in mesh.Faces)
             {
@@ -73,25 +86,41 @@ public class AssimpLoaderTest
                 tmpUvs.Add(new Vector2D(uv.X, uv.Y));
             }
 
+            //_scene.Materials[mesh.MaterialIndex].TextureDiffuse.FilePath;
+            
+
             _meshes.Add(new MeshStruct()
             {
                 points = mesh.Vertices,
                 normal = mesh.Normals,
                 faces = tmpfaces,
                 tangents = mesh.Tangents,
-                uvs = tmpUvs
-
+                uvs = tmpUvs,
+                name = mesh.Name
             });
 
         }
     }
 
+    public List<MeshStruct> getAllMeshes()
+    {
+        return _meshes;
+    }
     public MeshStruct getMesh(int index)
     {
         return _meshes[index];
     }
+    public MeshStruct? getMesh(string name)
+    {
+        foreach (MeshStruct mesh in _meshes)
+        {
+            if (mesh.name == name)
+            {
+                return mesh;
+            }
+        }
 
-
-
+        return null;
+    }
 
 }

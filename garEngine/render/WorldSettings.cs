@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using garEngine.ecs_sys.component;
 using garEngine.ecs_sys.system;
 using garEngine.render.model;
 using OpenTK.Graphics.OpenGL;
@@ -24,8 +25,12 @@ public static class WorldSettings
    
    private static int _fbo;
    public static int _texture;
-   private static Matrix4 _lightProjeciton, _lightView;
+   private static Matrix4 _lightProjection, _lightView;
    public static Matrix4 lightSpaceMatrix;
+
+   static WorldSettings()
+   {
+   }
 
    public static void ShadowBuffer(int width, int height)
    {
@@ -35,8 +40,10 @@ public static class WorldSettings
       GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent, width, height, 0, PixelFormat.DepthComponent, PixelType.Float, IntPtr.Zero);
       GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
       GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-      GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-      GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+      GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+      GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+      float[] borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
+      GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
         
       GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
       GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, _texture, 0);
@@ -47,9 +54,10 @@ public static class WorldSettings
 
    public static void Render()
    {
-      _lightProjeciton = Matrix4.CreateOrthographicOffCenter(-100.0f, 100.0f, -100.0f, 100.0f, 1.0f, 100.0f);
-      _lightView = Matrix4.LookAt(LightPos, Vector3.Zero, Vector3.UnitY);
-      lightSpaceMatrix = _lightView * _lightProjeciton;
+      float _nearPlane = 1.0f, _farPlane = 100f;
+      _lightProjection = Matrix4.CreateOrthographicOffCenter(-100.0f, 100.0f, -100.0f, 100.0f, _nearPlane, _farPlane);
+      _lightView = Matrix4.LookAt(new Vector3(0, 20, 0), new Vector3(0f), new Vector3(0.0f, 1.0f, 0.0f));
+      lightSpaceMatrix = _lightView * _lightProjection;
       GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
       GL.Clear(ClearBufferMask.DepthBufferBit);
       ModelRendererSystem.UpdateShadow();

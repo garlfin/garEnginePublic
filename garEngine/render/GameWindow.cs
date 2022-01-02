@@ -11,6 +11,7 @@ using System.Drawing;
 using Assimp;
 using garEngine.render.model;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using static garEngine.render.model.AssimpLoaderTest;
 using Camera = garEngine.ecs_sys.component.Camera;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using TextureTarget = OpenTK.Graphics.OpenGL4.TextureTarget;
@@ -42,7 +43,7 @@ public class MyWindow : GameWindow
         GL.Enable(EnableCap.DepthTest);
         
         WorldSettings.genDepthShader();
-        WorldSettings.ShadowBuffer(1024, 1024);
+        WorldSettings.ShadowBuffer(2048, 2048);
 
         _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
         _myTexture = new Texture("../../../resources/texture/brick_albedo.tif");
@@ -60,9 +61,11 @@ public class MyWindow : GameWindow
         WorldSettings.genVao();
 
 
-        AssimpLoaderTest.MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj").getMesh(0);
-        AssimpLoaderTest.MeshStruct sphereObject = new AssimpLoaderTest("../../../resources/model/plane.dae", PostProcessSteps.None | PostProcessSteps.Triangulate | PostProcessSteps.FindInvalidData).getMesh(0);
+        MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj").getMesh(0);
+        MeshStruct sphereObject = new AssimpLoaderTest("../../../resources/model/plane.dae").getMesh(0);
         
+
+
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
         ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _shaderProgram);
@@ -70,7 +73,7 @@ public class MyWindow : GameWindow
 
         Entity entity2 = new Entity();
         entity2.AddComponent(new Transform());
-        entity2.GetComponent<Transform>().Location = new Vector3(0, -5, 0);
+        entity2.GetComponent<Transform>().Location = new Vector3(0, -10, 0);
         entity2.GetComponent<Transform>().Scale = new Vector3(20);
         ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, _shaderProgram);
         entity2.AddComponent(modelRenderer2);
