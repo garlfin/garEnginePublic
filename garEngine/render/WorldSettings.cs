@@ -56,7 +56,7 @@ public static class WorldSettings
    {
       float _nearPlane = 1.0f, _farPlane = 100f;
       _lightProjection = Matrix4.CreateOrthographicOffCenter(-100.0f, 100.0f, -100.0f, 100.0f, _nearPlane, _farPlane);
-      _lightView = Matrix4.LookAt(new Vector3(0, 20, 0), new Vector3(0f), new Vector3(0.0f, 1.0f, 0.0f));
+      _lightView = Matrix4.LookAt(WorldSettings.LightPos, Vector3.Zero, Vector3.UnitY);
       lightSpaceMatrix = _lightView * _lightProjection;
       GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
       GL.Clear(ClearBufferMask.DepthBufferBit);
