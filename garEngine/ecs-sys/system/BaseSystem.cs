@@ -1,5 +1,4 @@
 ﻿using garEngine.ecs_sys.component;
-using garEngine.ecs_sys.entity;
 using OpenTK.Mathematics;
 
 namespace garEngine.ecs_sys.system;
@@ -47,16 +46,4 @@ class BaseSystem<T> where T : Component
             component.Close();
         }
     }
-}
-
-class TransformSystem : BaseSystem<Transform> { }
-
-class ModelRendererSystem : BaseSystem<ModelRenderer>
-{
-}
-
-class MovementSystem : BaseSystem<Movement> {}
-class CameraSystem : BaseSystem<Camera>
-{
-    public static Entity currentCamera { get; set; }
 }

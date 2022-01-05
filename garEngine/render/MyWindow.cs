@@ -42,9 +42,9 @@ public class MyWindow : GameWindow
         WorldSettings.ShadowBuffer(2048, 2048);
         WorldSettings.LoadCubemap(WorldSettings.PathHelper(paths));
         
-        ShaderProgram skyBoxShader = ShaderLoader.LoadShaderProgram("../../../resources/shader/skybox.vert", "../../../resources/shader/skybox.frag");
-        ShaderProgram shadowDepthProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/shadowDepth.vert", "../../../resources/shader/depth.frag");
-        ShaderProgram depthProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/depth.vert", "../../../resources/shader/depth.frag");
+        ShaderProgram skyBoxShader = ShaderLoader.LoadShaderProgram("resources/shader/skybox.vert", "resources/shader/skybox.frag");
+        ShaderProgram shadowDepthProgram = ShaderLoader.LoadShaderProgram("resources/shader/shadowDepth.vert", "resources/shader/depth.frag");
+        ShaderProgram depthProgram = ShaderLoader.LoadShaderProgram("resources/shader/depth.vert", "resources/shader/depth.frag");
 
         
         WorldSettings.SetShadowDepthMaterial(new Material(shadowDepthProgram));
@@ -52,9 +52,9 @@ public class MyWindow : GameWindow
         WorldSettings.SetSkyboxMaterial(new Material(skyBoxShader));
         WorldSettings.genVao();
 
-        _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
-        _myTexture = new Texture("../../../resources/texture/brick_albedo.tif");
-        _normalMap = new Texture("../../../resources/texture/brick_normal.tif");
+        _shaderProgram = ShaderLoader.LoadShaderProgram("resources/shader/default.vert", "resources/shader/default.frag");
+        _myTexture = new Texture("resources/texture/brick_albedo.tif");
+        _normalMap = new Texture("resources/texture/brick_normal.tif");
         
         Material defaultShader = new(_shaderProgram);
         defaultShader.AddSetting("albedo", _myTexture);
@@ -64,8 +64,8 @@ public class MyWindow : GameWindow
         RenderView._Window = this;
         
         
-        MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj").getMesh(0);
-        MeshStruct sphereObject = new AssimpLoaderTest("../../../resources/model/plane.dae").getMesh(0);
+        MeshStruct cubeObject = new AssimpLoaderTest("resources/model/teapot.obj").getMesh(0);
+        MeshStruct sphereObject = new AssimpLoaderTest("resources/model/plane.dae").getMesh(0);
         
 
 
@@ -142,6 +142,10 @@ public class MyWindow : GameWindow
         WorldSettings.Delete();
         ModelRendererSystem.Close();
         _myTexture.Delete();
+        _normalMap.Delete();
+        GL.DeleteProgram(_shaderProgram.Id);
+
+
 
         Console.WriteLine("Done! Closing :)");
         base.OnClosing(e);

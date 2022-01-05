@@ -77,7 +77,7 @@ public static class WorldSettings
    public static void genVao()
    {
 
-      AssimpLoaderTest.MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/cube.obj").getMesh(0);
+      AssimpLoaderTest.MeshStruct cubeObject = new AssimpLoaderTest("resources/model/cube.obj").getMesh(0);
       
       
       vao = GL.GenVertexArray();
@@ -126,7 +126,7 @@ public static class WorldSettings
       List<string> returnList = new List<string>();
       foreach (string x in pathList)
       {
-         returnList.Add("../../../resources/texture/cubemap/"+x+".jpg");
+         returnList.Add("resources/texture/cubemap/"+x+".jpg");
       }
       return returnList;
    }
