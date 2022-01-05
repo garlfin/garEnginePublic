@@ -1,20 +1,14 @@
 ﻿using System.ComponentModel;
-using System.Numerics;
 using garEngine.ecs_sys.component;
 using garEngine.ecs_sys.entity;
 using garEngine.ecs_sys.system;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using System.Drawing;
-using Assimp;
 using garEngine.render.model;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using static garEngine.render.model.AssimpLoaderTest;
 using Camera = garEngine.ecs_sys.component.Camera;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using TextureTarget = OpenTK.Graphics.OpenGL4.TextureTarget;
 using Vector3 = OpenTK.Mathematics.Vector3;
 
 
@@ -24,13 +18,8 @@ public class MyWindow : GameWindow
 {
     
     private ShaderProgram _shaderProgram;
-    private Matrix4 _currentWindowProjection = Matrix4.Zero;
-    private float _deltaTime = 0;
     private Texture _myTexture;
     private Texture _normalMap;
-    private Texture _heightMap;
-    private int _depthMap;
-    private int _shadowFrameBuffer;
     public MyWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
     }
@@ -40,7 +29,7 @@ public class MyWindow : GameWindow
         
         // Settings
         GL.Enable(EnableCap.CullFace);
-        GL.ClearColor(1f,1f,1f, 1f);
+        GL.ClearColor(0f,0f,1f, 1f);
         GL.Enable(EnableCap.DepthTest);
         CursorGrabbed = true;
          
@@ -50,11 +39,17 @@ public class MyWindow : GameWindow
             "negx","negy","negz","posx","posy","posz"
         };
         
-        WorldSettings.genDepthShader();
         WorldSettings.ShadowBuffer(2048, 2048);
         WorldSettings.LoadCubemap(WorldSettings.PathHelper(paths));
+        
         ShaderProgram skyBoxShader = ShaderLoader.LoadShaderProgram("../../../resources/shader/skybox.vert", "../../../resources/shader/skybox.frag");
-        WorldSettings.shader = skyBoxShader;
+        ShaderProgram shadowDepthProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/shadowDepth.vert", "../../../resources/shader/depth.frag");
+        ShaderProgram depthProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/depth.vert", "../../../resources/shader/depth.frag");
+
+        
+        WorldSettings.SetShadowDepthMaterial(new Material(shadowDepthProgram));
+        WorldSettings.SetDepthMaterial(new Material(depthProgram));
+        WorldSettings.SetSkyboxMaterial(new Material(skyBoxShader));
         WorldSettings.genVao();
 
         _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
@@ -67,11 +62,8 @@ public class MyWindow : GameWindow
         
         
         RenderView._Window = this;
-       
         
-       
-
-
+        
         MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj").getMesh(0);
         MeshStruct sphereObject = new AssimpLoaderTest("../../../resources/model/plane.dae").getMesh(0);
         
@@ -115,12 +107,25 @@ public class MyWindow : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
+        
         WorldSettings.Render();
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
-        ModelRendererSystem.Update((float)args.Time);
+        GL.Enable(EnableCap.DepthTest);
+        GL.DepthFunc(DepthFunction.Less);
+        GL.ColorMask(false, false,false,false);
+        GL.DepthMask(true);
+
+        ModelRendererSystem.UpdateDepth(false);
+        WorldSettings.renderSkybox();
         
+        GL.Enable(EnableCap.DepthTest);
+        GL.DepthFunc(DepthFunction.Equal);
+        GL.ColorMask(true, true, true, true);
+        GL.DepthMask(false);
+
+        ModelRendererSystem.Update((float)args.Time);
         WorldSettings.renderSkybox();
 
         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
@@ -138,6 +143,7 @@ public class MyWindow : GameWindow
         WorldSettings.Delete();
         ModelRendererSystem.Close();
         _myTexture.Delete();
+
         Console.WriteLine("Done! Closing :)");
         base.OnClosing(e);
     }

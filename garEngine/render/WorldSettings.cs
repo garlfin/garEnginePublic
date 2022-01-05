@@ -16,13 +16,11 @@ public static class WorldSettings
    public static int cubeMapTexID;
    public static int vao;
    public static int vbo;
-   public static ShaderProgram shader;
-   private static int _viewMat;
-   private static int _projMat;
+   private static Material skyboxMaterial;
+   public static Material ShadowDepthMaterial;
+   public static Material DepthMaterial;
 
-   public static ShaderProgram depthShader;
 
-   
    private static int _fbo;
    public static int _texture;
    private static Matrix4 _lightProjection, _lightView;
@@ -60,23 +58,25 @@ public static class WorldSettings
       lightSpaceMatrix = _lightView * _lightProjection;
       GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
       GL.Clear(ClearBufferMask.DepthBufferBit);
-      ModelRendererSystem.UpdateShadow();
+      ModelRendererSystem.UpdateDepth(true);
       GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         
    }
-   public static void genDepthShader()
+   public static void SetShadowDepthMaterial(Material material)
    {
-      depthShader = ShaderLoader.LoadShaderProgram("../../../resources/shader/depth.vert","../../../resources/shader/depth.frag");
+       ShadowDepthMaterial = material;
    }
+   public static void SetDepthMaterial(Material material)
+   {
+      DepthMaterial = material;
+   }
+   
 
    public static void genVao()
    {
 
       AssimpLoaderTest.MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/cube.obj").getMesh(0);
       
-      
-      _viewMat = GL.GetUniformLocation(shader.Id, "view");
-      _projMat = GL.GetUniformLocation(shader.Id, "projection");
       
       vao = GL.GenVertexArray();
       vbo = GL.GenBuffer();
@@ -94,12 +94,12 @@ public static class WorldSettings
       GL.BindVertexArray(vao);
       GL.ActiveTexture(TextureUnit.Texture0);
       GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
-      GL.UseProgram(shader.Id);
+      skyboxMaterial.Use();
       Matrix4 viewMatrix = RenderView._camera.GetViewMatrix().ClearTranslation();
-      GL.UniformMatrix4(_viewMat, false, ref viewMatrix);
+      skyboxMaterial.SetUniform("view", ref viewMatrix);
       Matrix4 projectionMatrix = RenderView._camera.GetProjectionMatrix();
-      GL.UniformMatrix4(_projMat, false, ref projectionMatrix);
-      GL.Uniform1(GL.GetUniformLocation(shader.Id,"skybox"),0);
+      skyboxMaterial.SetUniform("projection", ref projectionMatrix);
+      skyboxMaterial.SetUniform("skybox", 0);
       GL.DrawArrays(PrimitiveType.Triangles, 0,36);
       GL.DepthFunc(DepthFunction.Less);
       GL.CullFace(CullFaceMode.Back);
@@ -114,6 +114,10 @@ public static class WorldSettings
       return returnList;
    }
 
+   public static void SetSkyboxMaterial(Material material)
+   {
+      skyboxMaterial = material;
+   }   
    public static void LoadCubemap(List<string> path)
    {
       List<TextureTarget> targets = new List<TextureTarget>()

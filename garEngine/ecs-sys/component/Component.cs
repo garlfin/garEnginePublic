@@ -14,6 +14,6 @@ public class Component
 
         public virtual void Close() {}
 
-        public virtual void UpdateShadow() { }
+        public virtual void UpdateDepth(bool isShadow) { }
 
 }

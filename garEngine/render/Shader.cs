@@ -85,6 +85,11 @@ namespace garEngine.render
             _program = program;
         }
 
+        public void Delete()
+        {
+            GL.DeleteProgram(_program.Id);
+        }
+
         public void AddSetting(string name, Texture value)
         {
             ShaderSettingTexes.Add(new ShaderSettingTex{uniformName = name, value = value});

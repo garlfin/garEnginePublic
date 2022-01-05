@@ -19,6 +19,8 @@ public class ModelRenderer : Component
     private readonly int _nmvbo;
     private readonly AssimpLoaderTest.MeshStruct _parser;
     private readonly int _tanvbo;
+    private Matrix4 model;
+    private Matrix4 mvp;
 
 
 
@@ -28,7 +30,6 @@ public class ModelRenderer : Component
         _parser = loaderTest;
         ModelRendererSystem.Register(this);
         _material = material;
-  
         _vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
         _nmvbo = GL.GenBuffer();
@@ -80,9 +81,8 @@ public class ModelRenderer : Component
     {
         _material.Use();
         _modelTransform = entity.GetComponent<Transform>();
-        Matrix4 model = Matrix4.CreateRotationX(_modelTransform.Rotation.X) * Matrix4.CreateRotationY(_modelTransform.Rotation.Y) * Matrix4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
-                        Matrix4.CreateTranslation(_modelTransform.Location);
-        Matrix4 mvp = model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
+        model = CreateModelMatrix();
+        mvp =  model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
         _material.SetUniform("model", ref model);
         _material.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
         _material.SetUniform("mvp", ref mvp);
@@ -97,6 +97,13 @@ public class ModelRenderer : Component
         GL.DrawElements(PrimitiveType.Triangles, _parser.faces.Count * 3, DrawElementsType.UnsignedInt, 0);
     }
 
+    private Matrix4 CreateModelMatrix()
+    {
+        return Matrix4.CreateRotationX(_modelTransform.Rotation.X) * Matrix4.CreateRotationY(_modelTransform.Rotation.Y) *
+                Matrix4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
+                Matrix4.CreateTranslation(_modelTransform.Location);
+    }
+
     public override void Close()
     {
         Console.WriteLine($"Deleted Vertex Array: {_vao}");
@@ -108,14 +115,23 @@ public class ModelRenderer : Component
     }
 
 
-    public override void UpdateShadow()
+    public override void UpdateDepth(bool isShadow)
     {
         _modelTransform = entity.GetComponent<Transform>();
-        Matrix4 model = Matrix4.CreateScale(_modelTransform.Scale) *
-                        Matrix4.CreateTranslation(_modelTransform.Location);
-        GL.UseProgram(WorldSettings.depthShader.Id);
-        GL.UniformMatrix4(GL.GetUniformLocation(WorldSettings.depthShader.Id, "model"), false, ref model );
-        GL.UniformMatrix4(GL.GetUniformLocation(WorldSettings.depthShader.Id, "lightSpaceMatrix"), false, ref WorldSettings.lightSpaceMatrix );
+        model = CreateModelMatrix();
+        if (isShadow)
+        {
+            WorldSettings.ShadowDepthMaterial.Use();
+            WorldSettings.ShadowDepthMaterial.SetUniform("model", ref model);
+            WorldSettings.ShadowDepthMaterial.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
+        }
+        else
+        {
+            WorldSettings.DepthMaterial.Use();
+            mvp =  model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
+            WorldSettings.DepthMaterial.SetUniform("model", ref model);
+            WorldSettings.DepthMaterial.SetUniform("mvp", ref mvp);
+        }
         GL.BindVertexArray(_vao);
         GL.DrawElements(PrimitiveType.Triangles, _parser.faces.Count * 3, DrawElementsType.UnsignedInt, 0);
     }
