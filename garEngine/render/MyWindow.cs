@@ -66,8 +66,6 @@ public class MyWindow : GameWindow
         
         MeshStruct cubeObject = new AssimpLoaderTest("resources/model/teapot.obj").getMesh(0);
         MeshStruct sphereObject = new AssimpLoaderTest("resources/model/plane.dae").getMesh(0);
-        
-
 
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
@@ -103,6 +101,13 @@ public class MyWindow : GameWindow
         CameraSystem.Update((float)args.Time);
         RenderView.Update();
         base.OnUpdateFrame(args);
+    }
+
+    protected override void OnResize(ResizeEventArgs e)
+    {
+        base.OnResize(e);
+        GL.Viewport(0,0, e.Width, e.Height);
+
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
