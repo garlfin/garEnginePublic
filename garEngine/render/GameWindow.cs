@@ -107,10 +107,10 @@ public class MyWindow : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
-        
-        WorldSettings.Render();
-        
+        GL.DepthMask(true);
+
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        WorldSettings.RenderShadow();
         
         GL.Enable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Less);
@@ -127,6 +127,7 @@ public class MyWindow : GameWindow
 
         ModelRendererSystem.Update((float)args.Time);
         WorldSettings.renderSkybox();
+        
 
         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
         Console.WriteLine(args.Time);

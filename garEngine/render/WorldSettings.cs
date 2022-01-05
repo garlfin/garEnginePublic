@@ -50,7 +50,7 @@ public static class WorldSettings
       GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
    }
 
-   public static void Render()
+   public static void RenderShadow()
    {
       float _nearPlane = 1.0f, _farPlane = 100f;
       _lightProjection = Matrix4.CreateOrthographicOffCenter(-100.0f, 100.0f, -100.0f, 100.0f, _nearPlane, _farPlane);
