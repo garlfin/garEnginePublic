@@ -37,28 +37,39 @@ public class MyWindow : GameWindow
     
     protected override void OnLoad()
     {
+        
+        // Settings
         GL.Enable(EnableCap.CullFace);
-        CursorGrabbed = true;
         GL.ClearColor(1f,1f,1f, 1f);
         GL.Enable(EnableCap.DepthTest);
-        
-        WorldSettings.genDepthShader();
-        WorldSettings.ShadowBuffer(2048, 2048);
-
-        _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
-        _myTexture = new Texture("../../../resources/texture/brick_albedo.tif");
-        _normalMap = new Texture("../../../resources/texture/brick_normal.tif");
-        _shaderProgram.ShaderSettingTexes.Add(new ShaderSettingTex{uniformName = "albedo", value = _myTexture});
-        _shaderProgram.ShaderSettingTexes.Add(new ShaderSettingTex {uniformName = "normalMap", value = _normalMap });
-        RenderView._Window = this;
+        CursorGrabbed = true;
+         
+        // Cubemap paths
         List<string> paths = new List<string>()
         {
             "negx","negy","negz","posx","posy","posz"
         };
+        
+        WorldSettings.genDepthShader();
+        WorldSettings.ShadowBuffer(2048, 2048);
         WorldSettings.LoadCubemap(WorldSettings.PathHelper(paths));
         ShaderProgram skyBoxShader = ShaderLoader.LoadShaderProgram("../../../resources/shader/skybox.vert", "../../../resources/shader/skybox.frag");
         WorldSettings.shader = skyBoxShader;
         WorldSettings.genVao();
+
+        _shaderProgram = ShaderLoader.LoadShaderProgram("../../../resources/shader/default.vert", "../../../resources/shader/default.frag");
+        _myTexture = new Texture("../../../resources/texture/brick_albedo.tif");
+        _normalMap = new Texture("../../../resources/texture/brick_normal.tif");
+        
+        Material defaultShader = new(_shaderProgram);
+        defaultShader.AddSetting("albedo", _myTexture);
+        defaultShader.AddSetting("normalMap", _normalMap);
+        
+        
+        RenderView._Window = this;
+       
+        
+       
 
 
         MeshStruct cubeObject = new AssimpLoaderTest("../../../resources/model/teapot.obj").getMesh(0);
@@ -68,14 +79,14 @@ public class MyWindow : GameWindow
 
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
-        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, _shaderProgram);
+        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, defaultShader);
         entity1.AddComponent(modelRenderer);
 
         Entity entity2 = new Entity();
         entity2.AddComponent(new Transform());
         entity2.GetComponent<Transform>().Location = new Vector3(0, -10, 0);
         entity2.GetComponent<Transform>().Scale = new Vector3(20);
-        ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, _shaderProgram);
+        ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, defaultShader);
         entity2.AddComponent(modelRenderer2);
         
         Entity camera = new Entity();

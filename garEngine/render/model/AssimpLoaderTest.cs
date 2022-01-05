@@ -61,7 +61,7 @@ public class AssimpLoaderTest
             throw new Exception("No meshes in the file");
         }
 
-        foreach (Material material in _scene.Materials)
+        foreach (Assimp.Material material in _scene.Materials)
         {
             _Materials.Add(new MaterialStruct()
             {

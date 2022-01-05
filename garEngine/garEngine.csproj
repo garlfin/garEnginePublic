@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <PackageReference Include="AssimpNet" Version="4.1.0" />
+      <PackageReference Include="ImGui.NET" Version="1.86.0" />
       <PackageReference Include="OpenTK" Version="4.6.7" />
       <PackageReference Include="OpenTK.Core" Version="4.6.7" />
       <PackageReference Include="OpenTK.Graphics" Version="4.6.7" />

@@ -10,13 +10,13 @@ public class Texture
 {
     public int id { get; set; }
     private BitmapData _bmpData;
-    public Texture(string path)
+    public Texture(string path, System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
     {
         Bitmap bmp = new Bitmap(path);
         bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
         id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, id);
-        _bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        _bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, format);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, _bmpData.Scan0);
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);

@@ -10,8 +10,7 @@ namespace garEngine.ecs_sys.component;
 
 public class ModelRenderer : Component
 {
-    private ShaderProgram _shader;
-    private readonly int _mvpUniform;
+    private Material _material;
     private readonly int _vao;
     private readonly int _vbo;
     private readonly int _ebo;
@@ -19,23 +18,17 @@ public class ModelRenderer : Component
     private Transform _modelTransform;
     private readonly int _nmvbo;
     private readonly AssimpLoaderTest.MeshStruct _parser;
-    private readonly int _viewUniform;
-    private readonly int _lightUniform;
-    private readonly int _cubemapUniform;
     private readonly int _tanvbo;
 
 
 
 
-    public ModelRenderer(AssimpLoaderTest.MeshStruct loaderTest, Entity entityref, ShaderProgram shader)
+    public ModelRenderer(AssimpLoaderTest.MeshStruct loaderTest, Entity entityref, Material material)
     {
         _parser = loaderTest;
         ModelRendererSystem.Register(this);
-        _shader = shader;
-        _mvpUniform = GL.GetUniformLocation(_shader.Id, "mvp");
-        _viewUniform = GL.GetUniformLocation(_shader.Id, "viewVec");
-        _lightUniform = GL.GetUniformLocation(_shader.Id, "lightPos");
-        _cubemapUniform = GL.GetUniformLocation(_shader.Id, "cubemap");
+        _material = material;
+  
         _vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
         _nmvbo = GL.GenBuffer();
@@ -78,41 +71,29 @@ public class ModelRenderer : Component
        
     }
 
-    public void ChangeShader(ShaderProgram shader)
+    public void ChangeShader(Material material)
     {
-        _shader = shader;
+        _material = material;
     }
 
     public override void Update(float gameTime)
     {
-        GL.UseProgram(_shader.Id);
+        _material.Use();
         _modelTransform = entity.GetComponent<Transform>();
         Matrix4 model = Matrix4.CreateRotationX(_modelTransform.Rotation.X) * Matrix4.CreateRotationY(_modelTransform.Rotation.Y) * Matrix4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
                         Matrix4.CreateTranslation(_modelTransform.Location);
         Matrix4 mvp = model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
-        GL.UniformMatrix4(GL.GetUniformLocation(_shader.Id, "model"), false, ref model);
-        GL.UniformMatrix4(GL.GetUniformLocation(_shader.Id,"lightSpaceMatrix"), false, ref WorldSettings.lightSpaceMatrix);
-        GL.UniformMatrix4(_mvpUniform, false, ref mvp);
-        GL.Uniform3(_lightUniform, WorldSettings.LightPos);
-        GL.Uniform3(_viewUniform, RenderView._camera.Position);
-        GL.Uniform1(_cubemapUniform, 0);
-        GL.BindVertexArray(_vao);
-        int i = 0;
+        _material.SetUniform("model", ref model);
+        _material.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
+        _material.SetUniform("mvp", ref mvp);
+        _material.SetUniform("lightPos", WorldSettings.LightPos);
+        _material.SetUniform("viewVec", RenderView._camera.Position);
+        _material.SetUniform("cubemap", 0);
         GL.ActiveTexture(TextureUnit.Texture6);
         GL.BindTexture(TextureTarget.Texture2D, WorldSettings._texture);
-        GL.Uniform1(GL.GetUniformLocation(_shader.Id, "shadowMap"), 6);
-        List<TextureUnit> availableTargets =
-            new List<TextureUnit>
-            {
-                TextureUnit.Texture1, TextureUnit.Texture2, TextureUnit.Texture3
-            };
-        foreach (ShaderSettingTex settingTex in _shader.ShaderSettingTexes)
-        {
-            GL.ActiveTexture(availableTargets[i]);
-            GL.BindTexture(TextureTarget.Texture2D, settingTex.value.id);
-            GL.Uniform1(GL.GetUniformLocation(_shader.Id, settingTex.uniformName), i+1);
-            i++;
-        }
+        _material.SetUniform("shadowMap", 6);
+        
+        GL.BindVertexArray(_vao);
         GL.DrawElements(PrimitiveType.Triangles, _parser.faces.Count * 3, DrawElementsType.UnsignedInt, 0);
     }
 
