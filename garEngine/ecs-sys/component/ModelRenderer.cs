@@ -80,9 +80,9 @@ public class ModelRenderer : Component
     public override void Update(float gameTime)
     {
         _material.Use();
-        _modelTransform = entity.GetComponent<Transform>();
-        model = CreateModelMatrix();
-        mvp =  model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
+        //_modelTransform = entity.GetComponent<Transform>();
+       // model = CreateModelMatrix();
+        //mvp =  model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
         _material.SetUniform("model", ref model);
         _material.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
         _material.SetUniform("mvp", ref mvp);

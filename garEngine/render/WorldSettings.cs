@@ -19,12 +19,14 @@ public static class WorldSettings
    private static Material skyboxMaterial;
    public static Material ShadowDepthMaterial;
    public static Material DepthMaterial;
+   public static Matrix4 viewMatrix;
 
 
    private static int _fbo;
    public static int _texture;
    private static Matrix4 _lightProjection, _lightView;
    public static Matrix4 lightSpaceMatrix;
+   private static Matrix4 projectionMatrix;
 
    static WorldSettings()
    {
@@ -95,9 +97,24 @@ public static class WorldSettings
       GL.ActiveTexture(TextureUnit.Texture0);
       GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
       skyboxMaterial.Use();
-      Matrix4 viewMatrix = RenderView._camera.GetViewMatrix().ClearTranslation();
       skyboxMaterial.SetUniform("view", ref viewMatrix);
-      Matrix4 projectionMatrix = RenderView._camera.GetProjectionMatrix();
+      skyboxMaterial.SetUniform("projection", ref projectionMatrix);
+      skyboxMaterial.SetUniform("skybox", 0);
+      GL.DrawArrays(PrimitiveType.Triangles, 0,36);
+      GL.DepthFunc(DepthFunction.Less);
+      GL.CullFace(CullFaceMode.Back);
+   }
+   public static void renderSkyboxDepth()
+   {
+      GL.CullFace(CullFaceMode.Front);
+      GL.DepthFunc(DepthFunction.Lequal);
+      GL.BindVertexArray(vao);
+      GL.ActiveTexture(TextureUnit.Texture0);
+      GL.BindTexture(TextureTarget.TextureCubeMap, cubeMapTexID);
+      skyboxMaterial.Use();
+      viewMatrix = RenderView._camera.GetViewMatrix().ClearTranslation();
+      skyboxMaterial.SetUniform("view", ref viewMatrix);
+      projectionMatrix = RenderView._camera.GetProjectionMatrix();
       skyboxMaterial.SetUniform("projection", ref projectionMatrix);
       skyboxMaterial.SetUniform("skybox", 0);
       GL.DrawArrays(PrimitiveType.Triangles, 0,36);

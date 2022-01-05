@@ -108,19 +108,17 @@ public class MyWindow : GameWindow
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         GL.DepthMask(true);
-
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        
         WorldSettings.RenderShadow();
         
         GL.Enable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Less);
         GL.ColorMask(false, false,false,false);
-        GL.DepthMask(true);
 
         ModelRendererSystem.UpdateDepth(false);
-        WorldSettings.renderSkybox();
-        
-        GL.Enable(EnableCap.DepthTest);
+        WorldSettings.renderSkyboxDepth();
+
         GL.DepthFunc(DepthFunction.Equal);
         GL.ColorMask(true, true, true, true);
         GL.DepthMask(false);
