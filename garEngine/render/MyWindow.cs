@@ -20,6 +20,7 @@ public class MyWindow : GameWindow
     private ShaderProgram _shaderProgram;
     private Texture _myTexture;
     private Texture _normalMap;
+    private Framebuffer _framebuffer;
     public MyWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
     }
@@ -60,7 +61,11 @@ public class MyWindow : GameWindow
         defaultShader.AddSetting("albedo", _myTexture);
         defaultShader.AddSetting("normalMap", _normalMap);
         
-        
+        var framebufferShader = ShaderLoader.LoadShaderProgram("resources/shader/framebuffer.vert", "resources/shader/framebuffer.frag");
+        var framebufferMaterial = new Material(framebufferShader);
+        _framebuffer = new Framebuffer(framebufferMaterial);
+
+
         RenderView._Window = this;
         
         
@@ -113,9 +118,9 @@ public class MyWindow : GameWindow
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         GL.DepthMask(true);
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        
         WorldSettings.RenderShadow();
+        
+        _framebuffer.Bind();
         
         GL.Enable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Less);
@@ -131,7 +136,8 @@ public class MyWindow : GameWindow
         ModelRendererSystem.Update((float)args.Time);
         WorldSettings.renderSkybox();
         
-
+        _framebuffer.Render();
+        
         Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
         Console.WriteLine(args.Time);
         

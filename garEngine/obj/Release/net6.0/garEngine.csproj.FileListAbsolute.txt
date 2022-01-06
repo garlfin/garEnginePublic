@@ -71,3 +71,5 @@ C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\te
 C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\texture\large_square_pattern_01_diff_2k.jpg
 C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\texture\marble.tif
 C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\texture\normal_mapping_normal_map.png
+C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\shader\framebuffer.frag
+C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\shader\framebuffer.vert
