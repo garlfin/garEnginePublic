@@ -41,19 +41,26 @@ public class Framebuffer
         _fbo = GL.GenFramebuffer();
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
         _fboTex = GL.GenTexture();
+        
         GL.BindTexture(TextureTarget.Texture2D, _fboTex);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 1280, 720, 0, PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _fbo, 0);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _fbo, 0);
 
         _rbo = GL.GenRenderbuffer();
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _rbo);
         GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, 1280, 720);
         GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, _rbo);
 
+        var fboStatus = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+        if (fboStatus != FramebufferErrorCode.FramebufferComplete)
+        {
+            Console.WriteLine($"Error in FrameBuffer: {fboStatus}");
+        }
+        
         _rectVao = GL.GenVertexArray();
         _rectVbo = GL.GenBuffer();
         _rectVboUv = GL.GenBuffer();
@@ -67,6 +74,7 @@ public class Framebuffer
         GL.BufferData(BufferTarget.ArrayBuffer, rectangleVerticesUV.Length * sizeof(float), rectangleVerticesUV, BufferUsageHint.StaticDraw);
         GL.EnableVertexAttribArray(1);
         GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 0, 0);
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
     }
 
     public void Render()
@@ -88,5 +96,16 @@ public class Framebuffer
         GL.ClearColor(0,0f, 1f, 1.0f);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.Enable(EnableCap.DepthTest);
+    }
+
+    public void Delete()
+    {
+        GL.DeleteBuffer(_rectVbo);
+        GL.DeleteVertexArray(_rectVao);
+        GL.DeleteBuffer(_rectVboUv);
+        GL.DeleteRenderbuffer(_rbo);
+        GL.DeleteFramebuffer(_fbo);
+        GL.DeleteTexture(_fboTex);
+
     }
 }

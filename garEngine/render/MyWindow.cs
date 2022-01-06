@@ -2,6 +2,7 @@
 using garEngine.ecs_sys.component;
 using garEngine.ecs_sys.entity;
 using garEngine.ecs_sys.system;
+using garEngine.render.debug;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -29,9 +30,13 @@ public class MyWindow : GameWindow
     {
         
         // Settings
-        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.CullFace | EnableCap.DepthTest);
         GL.ClearColor(0f,0f,1f, 1f);
-        GL.Enable(EnableCap.DepthTest);
+        
+        #if DEBUG
+            GLDebug.Init();
+        #endif
+
         CursorGrabbed = true;
          
         // Cubemap paths
@@ -52,7 +57,7 @@ public class MyWindow : GameWindow
         WorldSettings.SetDepthMaterial(new Material(depthProgram));
         WorldSettings.SetSkyboxMaterial(new Material(skyBoxShader));
         WorldSettings.genVao();
-
+        
         _shaderProgram = ShaderLoader.LoadShaderProgram("resources/shader/default.vert", "resources/shader/default.frag");
         _myTexture = new Texture("resources/texture/brick_albedo.tif");
         _normalMap = new Texture("resources/texture/brick_normal.tif");
@@ -120,7 +125,8 @@ public class MyWindow : GameWindow
         GL.DepthMask(true);
         WorldSettings.RenderShadow();
         
-        _framebuffer.Bind();
+       _framebuffer.Bind();
+       GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
         GL.Enable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Less);
@@ -155,7 +161,7 @@ public class MyWindow : GameWindow
         _myTexture.Delete();
         _normalMap.Delete();
         GL.DeleteProgram(_shaderProgram.Id);
-
+        _framebuffer.Delete();
 
 
         Console.WriteLine("Done! Closing :)");
