@@ -77,10 +77,7 @@ public class MyWindow : GameWindow
         MeshStruct cubeObject = new AssimpLoaderTest("resources/model/teapot.obj").getMesh(0);
         MeshStruct sphereObject = new AssimpLoaderTest("resources/model/plane.dae").getMesh(0);
 
-        Entity entity1 = new Entity();
-        entity1.AddComponent(new Transform());
-        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, defaultShader);
-        entity1.AddComponent(modelRenderer);
+ 
 
         Entity entity2 = new Entity();
         entity2.AddComponent(new Transform());
@@ -88,6 +85,11 @@ public class MyWindow : GameWindow
         entity2.GetComponent<Transform>().Scale = new Vector3(20);
         ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, defaultShader);
         entity2.AddComponent(modelRenderer2);
+        
+        Entity entity1 = new Entity();
+        entity1.AddComponent(new Transform());
+        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, defaultShader);
+        entity1.AddComponent(modelRenderer);
         
         Entity camera = new Entity();
         camera.AddComponent(new Transform());
@@ -126,9 +128,8 @@ public class MyWindow : GameWindow
         WorldSettings.RenderShadow();
         
        _framebuffer.Bind();
-       GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        
-        GL.Enable(EnableCap.DepthTest);
+
+       GL.Enable(EnableCap.DepthTest);
         GL.DepthFunc(DepthFunction.Less);
         GL.ColorMask(false, false,false,false);
 

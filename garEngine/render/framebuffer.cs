@@ -44,11 +44,11 @@ public class Framebuffer
         
         GL.BindTexture(TextureTarget.Texture2D, _fboTex);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 1280, 720, 0, PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _fbo, 0);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _fboTex, 0);
 
         _rbo = GL.GenRenderbuffer();
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _rbo);
@@ -81,19 +81,21 @@ public class Framebuffer
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         _material.Use();
-        GL.Disable(EnableCap.CullFace | EnableCap.DepthTest);
+        GL.Disable(EnableCap.CullFace);
+        GL.Disable(EnableCap.DepthTest);
+
         GL.BindVertexArray(_rectVao);
         GL.BindTexture(TextureTarget.Texture2D, _fboTex);
         _material.SetUniform("screenTexture", 0);
         GL.DrawArrays(BeginMode.Triangles, 0, 6);
-        GL.Enable(EnableCap.CullFace | EnableCap.DepthTest);
+        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.DepthTest);
 
     }
 
     public void Bind()
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
-        GL.ClearColor(0,0f, 1f, 1.0f);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.Enable(EnableCap.DepthTest);
     }
