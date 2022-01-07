@@ -1,9 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using TextureWrapMode = OpenTK.Graphics.OpenGL4.TextureWrapMode;
 
-namespace garEngine.render;
+namespace garEngine.render.utility;
 
-public class Framebuffer
+public class Framebuffer  : Asset
 {
     private readonly int _fbo, _rbo, _rectVao, _rectVbo, _rectVboUv;
     
@@ -39,6 +38,7 @@ public class Framebuffer
 
     public Framebuffer(Material material)
     {
+        FBManager.Register(this);
         _material = material;
         _fbo = GL.GenFramebuffer();
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
@@ -110,7 +110,7 @@ public class Framebuffer
         GL.Enable(EnableCap.DepthTest);
     }
 
-    public void Delete()
+    public override void Delete()
     {
         GL.DeleteBuffer(_rectVbo);
         GL.DeleteVertexArray(_rectVao);

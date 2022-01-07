@@ -1,17 +1,17 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
-namespace garEngine.render;
+namespace garEngine.render.utility;
 
-public class Texture
+public class Texture  : Asset
 {
     public int id { get; set; }
     private BitmapData _bmpData;
     public Texture(string path, System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
     {
+        TextureManager.Register(this);
         Bitmap bmp = new Bitmap(path);
         bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
         id = GL.GenTexture();
@@ -28,7 +28,7 @@ public class Texture
 
     }
 
-    public void Delete()
+    public override void Delete()
     {
         GL.DeleteTexture(id);
         Console.WriteLine($"Deleted texture: {id}");

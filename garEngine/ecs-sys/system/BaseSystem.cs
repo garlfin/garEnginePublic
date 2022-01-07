@@ -1,5 +1,4 @@
 ﻿using garEngine.ecs_sys.component;
-using OpenTK.Mathematics;
 
 namespace garEngine.ecs_sys.system;
 
@@ -38,12 +37,5 @@ class BaseSystem<T> where T : Component
 
     }
     
-
-    public static void Close()
-    {
-        foreach (T component in Components)
-        {
-            component.Close();
-        }
-    }
+    
 }

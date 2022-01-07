@@ -1,10 +1,9 @@
-﻿using garEngine.ecs_sys.entity;
-using garEngine.ecs_sys.system;
+﻿using garEngine.ecs_sys.system;
 using garEngine.render;
 using garEngine.render.model;
+using garEngine.render.utility;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using PrimitiveType = OpenTK.Graphics.OpenGL4.PrimitiveType;
 
 namespace garEngine.ecs_sys.component;
 
@@ -54,11 +53,7 @@ public class ModelRenderer : Component
                 Matrix4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
                 Matrix4.CreateTranslation(_modelTransform.Location);
     }
-
-    public override void Close()
-    {
-      
-    }
+    
 
 
     public override void UpdateDepth(bool isShadow)

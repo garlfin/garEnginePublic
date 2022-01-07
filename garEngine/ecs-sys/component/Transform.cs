@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using garEngine.ecs_sys.system;
+﻿using garEngine.ecs_sys.system;
 
 namespace garEngine.ecs_sys.component;
 

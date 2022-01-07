@@ -1,8 +1,9 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using garEngine.render.utility;
+using OpenTK.Graphics.OpenGL;
 
 namespace garEngine.render.model;
 
-public class VertexArray
+public class VertexArray : Asset
 {
     private AssimpLoaderTest.MeshStruct _parser;
     private readonly int _vao;
@@ -14,6 +15,7 @@ public class VertexArray
 
     public VertexArray(AssimpLoaderTest.MeshStruct parser)
     {
+        VertexArrayManager.Register(this);
         _parser = parser;
         _vbo = GL.GenBuffer();
         _vtvbo = GL.GenBuffer();
@@ -61,7 +63,7 @@ public class VertexArray
         GL.DrawElements(PrimitiveType.Triangles, _parser.faces.Count * 3, DrawElementsType.UnsignedInt, 0);
     }
 
-    public void Delete()
+    public override void Delete()
     {
         GL.DeleteVertexArray( _vao);
         GL.DeleteBuffer( _vbo);

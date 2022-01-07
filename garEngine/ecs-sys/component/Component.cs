@@ -1,5 +1,4 @@
 ﻿using garEngine.ecs_sys.entity;
-using OpenTK.Mathematics;
 
 namespace garEngine.ecs_sys.component;
 

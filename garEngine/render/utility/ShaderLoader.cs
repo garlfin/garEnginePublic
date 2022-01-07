@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace garEngine.render;
+namespace garEngine.render.utility;
 
 public static class ShaderLoader
 {

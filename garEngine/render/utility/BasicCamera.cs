@@ -1,7 +1,6 @@
-﻿namespace garEngine.render;
+﻿using OpenTK.Mathematics;
 
-using OpenTK.Mathematics;
-using System;
+namespace garEngine.render.utility;
 
 // This is the camera class as it could be set up after the tutorials on the website.
 // It is important to note there are a few ways you could have set up this camera.

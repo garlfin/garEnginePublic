@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using garEngine.ecs_sys.component;
 using garEngine.ecs_sys.system;
 using garEngine.render.model;
 using OpenTK.Graphics.OpenGL;
@@ -8,7 +7,7 @@ using OpenTK.Mathematics;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 
-namespace garEngine.render;
+namespace garEngine.render.utility;
 
 public static class WorldSettings
 {
@@ -169,5 +168,7 @@ public static class WorldSettings
       GL.DeleteTexture(cubeMapTexID);
       GL.DeleteBuffer(vbo);
       GL.DeleteVertexArray(vao);
+      GL.DeleteFramebuffer(_fbo);
+      GL.DeleteTexture(_texture);
    }
 }

@@ -2,18 +2,17 @@
 using garEngine.ecs_sys.component;
 using garEngine.ecs_sys.entity;
 using garEngine.ecs_sys.system;
-using garEngine.render.debug;
+using garEngine.render.model;
+using garEngine.render.utility;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using garEngine.render.model;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using static garEngine.render.model.AssimpLoaderTest;
 using Camera = garEngine.ecs_sys.component.Camera;
 using Vector3 = OpenTK.Mathematics.Vector3;
 
 
-namespace garEngine.render;
+namespace garEngine.render.window;
 
 public class MyWindow : GameWindow
 {
@@ -158,13 +157,11 @@ public class MyWindow : GameWindow
     protected override void OnClosing(CancelEventArgs e)
     {
         WorldSettings.Delete();
-        ModelRendererSystem.Close();
-        _myTexture.Delete();
-        _normalMap.Delete();
-        GL.DeleteProgram(_shaderProgram.Id);
-        _framebuffer.Delete();
-
-
+        MaterialManager.Delete();
+        MaterialManager.Delete();
+        RenderTexManager.Delete();
+        VertexArrayManager.Delete();
+        FBManager.Delete();
         Console.WriteLine("Done! Closing :)");
         base.OnClosing(e);
     }

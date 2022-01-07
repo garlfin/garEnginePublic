@@ -1,4 +1,4 @@
-﻿namespace garEngine.render
+﻿namespace garEngine.render.utility
 {
     public struct Shader
     {

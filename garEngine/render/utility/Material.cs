@@ -1,9 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace garEngine.render;
+namespace garEngine.render.utility;
 
-public class Material
+public class Material  : Asset
 {
     private readonly ShaderProgram _program;
     public List<ShaderSettingTex> ShaderSettingTexes = new List<ShaderSettingTex>();
@@ -17,9 +17,10 @@ public class Material
     public Material(ShaderProgram program)
     {
         _program = program;
+        MaterialManager.Register(this);
     }
 
-    public void Delete()
+    public override void Delete()
     {
         GL.DeleteProgram(_program.Id);
     }

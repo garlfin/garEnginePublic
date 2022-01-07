@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Assimp;
+﻿using Assimp;
 
 namespace garEngine.render.model;
 

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 
-namespace garEngine.render;
+namespace garEngine.render.window;
 
 public class Window
 {

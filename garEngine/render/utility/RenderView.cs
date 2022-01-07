@@ -1,11 +1,9 @@
 ﻿using garEngine.ecs_sys.component;
-using garEngine.ecs_sys.entity;
 using garEngine.ecs_sys.system;
+using garEngine.render.window;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace garEngine.render;
+namespace garEngine.render.utility;
 
 public static class RenderView
 {
