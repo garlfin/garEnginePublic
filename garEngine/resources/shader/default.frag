@@ -8,6 +8,7 @@ uniform sampler2D shadowMap;
 in vec3 FragPos;
 in vec2 fTexCoord;
 in mat3 TBN;
+in mat4 viewMat;
 in vec3 tangent;
 in vec3 bitangent;
 in vec3 fNormal;
@@ -17,7 +18,9 @@ in vec3 fViewVec;
 in vec3 fLightPos;
 uniform sampler2D normalMap;
 
-out vec4 colorOut;
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 NormalColor;
+layout(location = 2) out vec4 FragPosition;
 
 float heightScale = 0.05;
 
@@ -75,13 +78,15 @@ void main() {
     float fresnel = clamp(1.0 - max(dot(viewPos, normal),0.0),0.0,1.0);
     // light reflected off normal, dot product with view vector
     float spec = clamp(pow(max(0,dot(reflect(lightDir, normal),-viewPos)),pow(12,1.0+specFactor)),0.0,1.0)*specFactor; 
-    vec4 color = (0.15 + shadow) * (texture(albedo, fTexCoord)* ambient + vec4(spec));
+    vec4 color = (0.15 + shadow) * (texture(albedo, fTexCoord) * ambient + vec4(spec));
    
     color = mixMultiply(color, texture(cubemap, reflect(-viewPos, normal)), fresnel * specFactor);
-    color = pow(color, vec4(1.0/1.5));
+    color = pow(color, vec4(1.0/2.2));
     
        
-    colorOut = color;
+    FragColor = color;
+    NormalColor = vec4(vec3(viewMat*vec4(normal,1.0)),1.0);
+    FragPosition = vec4(vec3(viewMat*vec4(FragPos,1.0)),1.0);
 
   
 }

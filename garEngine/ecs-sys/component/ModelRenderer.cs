@@ -10,91 +10,42 @@ namespace garEngine.ecs_sys.component;
 
 public class ModelRenderer : Component
 {
-    private Material _material;
-    private readonly int _vao;
-    private readonly int _vbo;
-    private readonly int _ebo;
-    private readonly int _vtvbo;
     private Transform _modelTransform;
-    private readonly int _nmvbo;
-    private readonly AssimpLoaderTest.MeshStruct _parser;
-    private readonly int _tanvbo;
+    private readonly MeshObject _parser;
     private Matrix4 model;
     private Matrix4 mvp;
+    private Matrix4 view;
 
 
 
 
-    public ModelRenderer(AssimpLoaderTest.MeshStruct loaderTest, Entity entityref, Material material)
+    public ModelRenderer(MeshObject loaderTest)
     {
         _parser = loaderTest;
         ModelRendererSystem.Register(this);
-        _material = material;
-        _vbo = GL.GenBuffer();
-        _vtvbo = GL.GenBuffer();
-        _nmvbo = GL.GenBuffer();
-        _tanvbo = GL.GenBuffer();
-        _ebo = GL.GenBuffer();
-        entity = entityref;
-        
-        _modelTransform = entity.GetComponent<Transform>();
-       
-      
-        _vao = GL.GenVertexArray();
-        GL.BindVertexArray(_vao);
-        
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float)* 3 * _parser.points.Count, _parser.points.ToArray(), BufferUsageHint.StaticCopy);
-
-        GL.EnableVertexAttribArray(0);
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
-        
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _nmvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * 3 * _parser.normal.Count, _parser.normal.ToArray(), BufferUsageHint.StaticCopy);
-
-        GL.EnableVertexAttribArray(1);
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
-
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _vtvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * 2 * _parser.uvs.Count, _parser.uvs.ToArray(), BufferUsageHint.StaticCopy);
-
-        GL.EnableVertexAttribArray(2);
-        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 0, 0);
-        
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _tanvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * 3 * _parser.tangents.Count, _parser.tangents.ToArray(), BufferUsageHint.StaticCopy);
-
-        GL.EnableVertexAttribArray(3);
-        GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, 0, 0);
-        
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, _parser.faces.Count * 3 * sizeof(uint), _parser.faces.ToArray(), BufferUsageHint.StaticCopy);
-       
-    }
-
-    public void ChangeShader(Material material)
-    {
-        _material = material;
     }
 
     public override void Update(float gameTime)
     {
-        _material.Use();
-        //_modelTransform = entity.GetComponent<Transform>();
-       // model = CreateModelMatrix();
-        //mvp =  model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
-        _material.SetUniform("model", ref model);
-        _material.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
-        _material.SetUniform("mvp", ref mvp);
-        _material.SetUniform("lightPos", WorldSettings.LightPos);
-        _material.SetUniform("viewVec", RenderView._camera.Position);
-        _material.SetUniform("cubemap", 0);
-        GL.ActiveTexture(TextureUnit.Texture6);
-        GL.BindTexture(TextureTarget.Texture2D, WorldSettings._texture);
-        _material.SetUniform("shadowMap", 6);
         
-        GL.BindVertexArray(_vao);
-        GL.DrawElements(PrimitiveType.Triangles, _parser.faces.Count * 3, DrawElementsType.UnsignedInt, 0);
+        for (int i = 0; i < _parser.Length(); i++)
+        {
+            Material currentMaterial = entity.GetComponent<MaterialComponent>().GetMaterial(i);
+            currentMaterial.Use();
+            currentMaterial.SetUniform("model", ref model);
+            currentMaterial.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
+            currentMaterial.SetUniform("mvp", ref mvp);
+            currentMaterial.SetUniform("view", ref view);
+            currentMaterial.SetUniform("lightPos", WorldSettings.LightPos);
+            currentMaterial.SetUniform("viewVec", RenderView._camera.Position);
+            currentMaterial.SetUniform("cubemap", 0);
+            GL.ActiveTexture(TextureUnit.Texture6);
+            GL.BindTexture(TextureTarget.Texture2D, WorldSettings._texture);
+            currentMaterial.SetUniform("shadowMap", 6);
+            _parser.Render(i);
+        }
+        
+        
     }
 
     private Matrix4 CreateModelMatrix()
@@ -106,12 +57,7 @@ public class ModelRenderer : Component
 
     public override void Close()
     {
-        Console.WriteLine($"Deleted Vertex Array: {_vao}");
-        GL.DeleteVertexArray( _vao);
-        GL.DeleteBuffer( _vbo);
-        GL.DeleteBuffer( _ebo);
-        GL.DeleteBuffer( _vtvbo);
-        GL.DeleteBuffer( _nmvbo);
+      
     }
 
 
@@ -129,11 +75,11 @@ public class ModelRenderer : Component
         {
             WorldSettings.DepthMaterial.Use();
             mvp =  model * RenderView._camera.GetViewMatrix() * RenderView._camera.GetProjectionMatrix();
+            view = RenderView._camera.GetViewMatrix();
             WorldSettings.DepthMaterial.SetUniform("model", ref model);
             WorldSettings.DepthMaterial.SetUniform("mvp", ref mvp);
         }
-        GL.BindVertexArray(_vao);
-        GL.DrawElements(PrimitiveType.Triangles, _parser.faces.Count * 3, DrawElementsType.UnsignedInt, 0);
+        _parser.RenderAll();
     }
   
 }

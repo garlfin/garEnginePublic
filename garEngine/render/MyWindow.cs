@@ -74,8 +74,8 @@ public class MyWindow : GameWindow
         RenderView._Window = this;
         
         
-        MeshStruct cubeObject = new AssimpLoaderTest("resources/model/teapot.obj").getMesh(0);
-        MeshStruct sphereObject = new AssimpLoaderTest("resources/model/plane.dae").getMesh(0);
+        MeshObject cubeObject =new MeshObject(new AssimpLoaderTest("resources/model/teapot.obj"));
+        MeshObject sphereObject = new MeshObject(new AssimpLoaderTest("resources/model/plane.dae"));
 
  
 
@@ -83,13 +83,13 @@ public class MyWindow : GameWindow
         entity2.AddComponent(new Transform());
         entity2.GetComponent<Transform>().Location = new Vector3(0, -10, 0);
         entity2.GetComponent<Transform>().Scale = new Vector3(20);
-        ModelRenderer modelRenderer2 = new ModelRenderer(sphereObject, entity2, defaultShader);
-        entity2.AddComponent(modelRenderer2);
+        entity2.AddComponent(new MaterialComponent(sphereObject, defaultShader));
+        entity2.AddComponent( new ModelRenderer(sphereObject));
         
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
-        ModelRenderer modelRenderer = new ModelRenderer(cubeObject, entity1, defaultShader);
-        entity1.AddComponent(modelRenderer);
+        entity1.AddComponent(new MaterialComponent(cubeObject, defaultShader));
+        entity1.AddComponent(new ModelRenderer(cubeObject));
         
         Entity camera = new Entity();
         camera.AddComponent(new Transform());

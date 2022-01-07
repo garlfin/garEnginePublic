@@ -5,7 +5,7 @@ namespace garEngine.render;
 
 public class Framebuffer
 {
-    private readonly int _fbo, _fboTex, _rbo, _rectVao, _rectVbo, _rectVboUv;
+    private readonly int _fbo, _rbo, _rectVao, _rectVbo, _rectVboUv;
     
     
     private float[] rectangleVertices =
@@ -33,6 +33,8 @@ public class Framebuffer
 
 
     private Material _material;
+    private RenderTexture fragTex, normalTex, positionTex;
+
     
 
     public Framebuffer(Material material)
@@ -40,16 +42,17 @@ public class Framebuffer
         _material = material;
         _fbo = GL.GenFramebuffer();
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
-        _fboTex = GL.GenTexture();
-        
-        GL.BindTexture(TextureTarget.Texture2D, _fboTex);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 1280, 720, 0, PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _fboTex, 0);
 
+        fragTex = new(1280, 720);
+        normalTex = new(1280, 720);
+        positionTex = new(1280, 720);
+        
+        GL.DrawBuffers(3, new [] { DrawBuffersEnum.ColorAttachment0 , DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2});
+        
+       fragTex.BindToFramebuffer(_fbo, FramebufferAttachment.ColorAttachment0);
+       normalTex.BindToFramebuffer(_fbo, FramebufferAttachment.ColorAttachment1);
+       positionTex.BindToFramebuffer(_fbo, FramebufferAttachment.ColorAttachment2);
+       
         _rbo = GL.GenRenderbuffer();
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _rbo);
         GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, 1280, 720);
@@ -85,8 +88,15 @@ public class Framebuffer
         GL.Disable(EnableCap.DepthTest);
 
         GL.BindVertexArray(_rectVao);
-        GL.BindTexture(TextureTarget.Texture2D, _fboTex);
+        GL.ActiveTexture(TextureUnit.Texture0);
+        GL.BindTexture(TextureTarget.Texture2D, fragTex.GetTex());
+        GL.ActiveTexture(TextureUnit.Texture1);
+        GL.BindTexture(TextureTarget.Texture2D, normalTex.GetTex());
+        GL.ActiveTexture(TextureUnit.Texture2);
+        GL.BindTexture(TextureTarget.Texture2D, positionTex.GetTex());
         _material.SetUniform("screenTexture", 0);
+        _material.SetUniform("normalTexture", 1);
+        _material.SetUniform("positionTexture", 2);
         GL.DrawArrays(BeginMode.Triangles, 0, 6);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.DepthTest);
@@ -107,7 +117,9 @@ public class Framebuffer
         GL.DeleteBuffer(_rectVboUv);
         GL.DeleteRenderbuffer(_rbo);
         GL.DeleteFramebuffer(_fbo);
-        GL.DeleteTexture(_fboTex);
+        fragTex.Delete();
+        normalTex.Delete();
+        positionTex.Delete();
 
     }
 }
