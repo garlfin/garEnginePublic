@@ -29,6 +29,7 @@ public class MyWindow : GameWindow
     {
         
         // Settings
+        GL.Enable(EnableCap.TextureCubeMapSeamless);
         GL.Enable(EnableCap.CullFace | EnableCap.DepthTest);
         GL.ClearColor(0f,0f,1f, 1f);
         
@@ -60,7 +61,7 @@ public class MyWindow : GameWindow
         _shaderProgram = ShaderLoader.LoadShaderProgram("resources/shader/default.vert", "resources/shader/default.frag");
         _myTexture = new Texture("resources/texture/brick_albedo.tif");
         _normalMap = new Texture("resources/texture/brick_normal.tif");
-        
+
         Material defaultShader = new(_shaderProgram);
         defaultShader.AddSetting("albedo", _myTexture);
         defaultShader.AddSetting("normalMap", _normalMap);
@@ -73,7 +74,7 @@ public class MyWindow : GameWindow
         RenderView._Window = this;
         
         
-        MeshObject cubeObject =new MeshObject(new AssimpLoaderTest("resources/model/teapot.obj"));
+        MeshObject cubeObject = new MeshObject(new AssimpLoaderTest("resources/model/teapot.obj"));
         MeshObject sphereObject = new MeshObject(new AssimpLoaderTest("resources/model/plane.dae"));
 
  
@@ -89,7 +90,7 @@ public class MyWindow : GameWindow
         entity1.AddComponent(new Transform());
         entity1.AddComponent(new MaterialComponent(cubeObject, defaultShader));
         entity1.AddComponent(new ModelRenderer(cubeObject));
-        
+
         Entity camera = new Entity();
         camera.AddComponent(new Transform());
         camera.AddComponent(new Camera(30f, 0.1f, 1000f, 0.3f));
@@ -161,6 +162,7 @@ public class MyWindow : GameWindow
         MaterialManager.Delete();
         RenderTexManager.Delete();
         VertexArrayManager.Delete();
+        TextureManager.Delete();
         FBManager.Delete();
         Console.WriteLine("Done! Closing :)");
         base.OnClosing(e);

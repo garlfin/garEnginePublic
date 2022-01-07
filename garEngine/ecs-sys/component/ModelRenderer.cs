@@ -29,7 +29,7 @@ public class ModelRenderer : Component
         
         for (int i = 0; i < _parser.Length(); i++)
         {
-            Material currentMaterial = entity.GetComponent<MaterialComponent>().GetMaterial(i);
+            Material currentMaterial = entity.GetComponent<MaterialComponent>().GetMaterial(_parser.GetMeshMatIndex(i));
             currentMaterial.Use();
             currentMaterial.SetUniform("model", ref model);
             currentMaterial.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);

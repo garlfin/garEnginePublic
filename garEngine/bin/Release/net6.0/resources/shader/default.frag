@@ -78,7 +78,7 @@ void main() {
     float fresnel = clamp(1.0 - max(dot(viewPos, normal),0.0),0.0,1.0);
     // light reflected off normal, dot product with view vector
     float spec = clamp(pow(max(0,dot(reflect(lightDir, normal),-viewPos)),pow(12,1.0+specFactor)),0.0,1.0)*specFactor; 
-    vec4 color = (0.15 + shadow) * (texture(albedo, fTexCoord) * ambient + vec4(spec));
+    vec4 color = textureLod(cubemap, normal, 10) * (texture(albedo, fTexCoord) * ambient + vec4(spec));
    
     color = mixMultiply(color, texture(cubemap, reflect(-viewPos, normal)), fresnel * specFactor);
     color = pow(color, vec4(1.0/2.2));
@@ -87,6 +87,6 @@ void main() {
     FragColor = color;
     NormalColor = vec4(vec3(viewMat*vec4(normal,1.0)),1.0);
     FragPosition = vec4(vec3(viewMat*vec4(FragPos,1.0)),1.0);
-
+    
   
 }

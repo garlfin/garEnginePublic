@@ -13,6 +13,11 @@ public class VertexArray : Asset
     private readonly int _nmvbo;
     private readonly int _tanvbo;
 
+    public AssimpLoaderTest.MeshStruct GetMeshStruct()
+    {
+        return _parser;
+    }
+    
     public VertexArray(AssimpLoaderTest.MeshStruct parser)
     {
         VertexArrayManager.Register(this);

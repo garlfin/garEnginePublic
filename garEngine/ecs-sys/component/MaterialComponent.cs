@@ -10,8 +10,8 @@ public class MaterialComponent : Component
 
     public MaterialComponent(MeshObject meshObject, Material baseMaterial)
     {
-        _materials = new Material[meshObject.Length()];
-        for (int i = 0; i < meshObject.Length(); i++)
+        _materials = new Material[meshObject.GetMatLength()];
+        for (int i = 0; i < meshObject.GetMatLength(); i++)
         {
             _materials[i] = baseMaterial;
         }

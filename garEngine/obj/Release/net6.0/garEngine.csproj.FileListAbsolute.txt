@@ -73,3 +73,6 @@ C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\te
 C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\texture\normal_mapping_normal_map.png
 C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\shader\framebuffer.frag
 C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\shader\framebuffer.vert
+C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\model\sponza.obj
+C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\texture\sponza_column_b_ddn.png
+C:\Users\scion\RiderProjects\garEngine\garEngine\bin\Release\net6.0\resources\texture\sponza_column_b_diff.png

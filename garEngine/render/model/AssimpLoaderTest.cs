@@ -6,7 +6,6 @@ public class AssimpLoaderTest
 {
     private Scene _scene;
     private List<MeshStruct> _meshes = new List<MeshStruct>();
-    public List<MaterialStruct> _Materials = new();
     public struct Intvec3{
         int x;
         int y;
@@ -32,12 +31,12 @@ public class AssimpLoaderTest
         public List<Vector3D> tangents;
         public List<Vector2D> uvs;
         public List<Intvec3> faces;
-        public string name;
+        public int MaterialIndex;
     }
 
     public AssimpLoaderTest(string path,
         PostProcessSteps flags = PostProcessSteps.Triangulate | PostProcessSteps.CalculateTangentSpace |
-                                 PostProcessSteps.FindInvalidData)
+                                 PostProcessSteps.FindInvalidData | PostProcessSteps.OptimizeMeshes | PostProcessSteps.OptimizeGraph)
     {
         _scene = assimpContextClass.get().ImportFile(path, flags);
         if (_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
@@ -49,15 +48,7 @@ public class AssimpLoaderTest
         {
             throw new Exception("No meshes in the file");
         }
-
-        foreach (Assimp.Material material in _scene.Materials)
-        {
-            _Materials.Add(new MaterialStruct()
-            {
-                albedo = material.TextureDiffuse.FilePath,
-                normal = material.TextureNormal.FilePath
-            });
-        }
+        
         foreach (Mesh mesh in _scene.Meshes)
         {
             List<Intvec3> tmpfaces = new();
@@ -85,10 +76,15 @@ public class AssimpLoaderTest
                 faces = tmpfaces,
                 tangents = mesh.Tangents,
                 uvs = tmpUvs,
-                name = mesh.Name
+                MaterialIndex = mesh.MaterialIndex
             });
 
         }
+    }
+
+    public List<Material> GetMaterials()
+    {
+        return _scene.Materials;
     }
 
     public List<MeshStruct> getAllMeshes()
@@ -99,17 +95,10 @@ public class AssimpLoaderTest
     {
         return _meshes[index];
     }
-    public MeshStruct? getMesh(string name)
-    {
-        foreach (MeshStruct mesh in _meshes)
-        {
-            if (mesh.name == name)
-            {
-                return mesh;
-            }
-        }
 
-        return null;
+    public int MaterialLength()
+    {
+        return _scene.MaterialCount;
     }
 
 }

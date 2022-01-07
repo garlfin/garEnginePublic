@@ -7,6 +7,8 @@ public class Material  : Asset
 {
     private readonly ShaderProgram _program;
     public List<ShaderSettingTex> ShaderSettingTexes = new List<ShaderSettingTex>();
+    public string Name;
+    
     private List<TextureUnit> availableTargets =
         new List<TextureUnit>
         {
