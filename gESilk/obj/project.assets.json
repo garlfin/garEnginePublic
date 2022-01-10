@@ -1,0 +1,1052 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0": {
+      "Microsoft.CSharp/4.7.0": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/_._": {}
+        }
+      },
+      "Microsoft.DotNet.PlatformAbstractions/3.1.6": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.DotNet.PlatformAbstractions.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.DotNet.PlatformAbstractions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.DependencyModel/3.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Text.Json": "4.7.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyModel.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyModel.dll": {}
+        }
+      },
+      "Silk.NET/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.GLFW": "2.12.0",
+          "Silk.NET.Input": "2.12.0",
+          "Silk.NET.OpenAL": "2.12.0",
+          "Silk.NET.OpenGL": "2.12.0",
+          "Silk.NET.Vulkan": "2.12.0",
+          "Silk.NET.Vulkan.Extensions.KHR": "2.12.0",
+          "Silk.NET.Windowing": "2.12.0"
+        }
+      },
+      "Silk.NET.Core/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.DotNet.PlatformAbstractions": "3.1.6",
+          "Microsoft.Extensions.DependencyModel": "3.1.1",
+          "System.Memory": "4.5.4",
+          "System.Numerics.Vectors": "4.5.0",
+          "System.Runtime.CompilerServices.Unsafe": "4.7.0"
+        },
+        "compile": {
+          "lib/net6.0/Silk.NET.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/Silk.NET.Core.dll": {}
+        }
+      },
+      "Silk.NET.GLFW/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Ultz.Native.GLFW": "3.3.3.1"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.GLFW.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.GLFW.dll": {}
+        }
+      },
+      "Silk.NET.Input/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Input.Common": "2.12.0",
+          "Silk.NET.Input.Glfw": "2.12.0",
+          "Silk.NET.Input.Sdl": "2.12.0"
+        }
+      },
+      "Silk.NET.Input.Common/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Windowing.Common": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Input.Common.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Input.Common.dll": {}
+        }
+      },
+      "Silk.NET.Input.Glfw/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Input.Common": "2.12.0",
+          "Silk.NET.Windowing.Glfw": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Input.Glfw.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Input.Glfw.dll": {}
+        }
+      },
+      "Silk.NET.Input.Sdl/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Input.Common": "2.12.0",
+          "Silk.NET.Windowing.Sdl": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Input.Sdl.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Input.Sdl.dll": {}
+        }
+      },
+      "Silk.NET.Maths/2.12.0": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Silk.NET.Maths.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Maths.dll": {}
+        }
+      },
+      "Silk.NET.OpenAL/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "System.Buffers": "4.5.1",
+          "System.Numerics.Vectors": "4.5.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.OpenAL.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.OpenAL.dll": {}
+        }
+      },
+      "Silk.NET.OpenGL/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.Maths": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.OpenGL.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.OpenGL.dll": {}
+        }
+      },
+      "Silk.NET.SDL/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.Maths": "2.12.0",
+          "Ultz.Native.SDL": "2.0.14.1"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.SDL.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.SDL.dll": {}
+        }
+      },
+      "Silk.NET.Vulkan/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Vulkan.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Vulkan.dll": {}
+        }
+      },
+      "Silk.NET.Vulkan.Extensions.KHR/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.Vulkan": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Vulkan.Extensions.KHR.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Vulkan.Extensions.KHR.dll": {}
+        }
+      },
+      "Silk.NET.Windowing/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Windowing.Common": "2.12.0",
+          "Silk.NET.Windowing.Glfw": "2.12.0"
+        }
+      },
+      "Silk.NET.Windowing.Common/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.Maths": "2.12.0"
+        },
+        "compile": {
+          "lib/netstandard2.1/Silk.NET.Windowing.Common.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/Silk.NET.Windowing.Common.dll": {}
+        }
+      },
+      "Silk.NET.Windowing.Glfw/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.GLFW": "2.12.0",
+          "Silk.NET.Windowing.Common": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Windowing.Glfw.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Windowing.Glfw.dll": {}
+        }
+      },
+      "Silk.NET.Windowing.Sdl/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.SDL": "2.12.0",
+          "Silk.NET.Windowing.Common": "2.12.0"
+        },
+        "compile": {
+          "lib/net6.0/Silk.NET.Windowing.Sdl.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/Silk.NET.Windowing.Sdl.dll": {}
+        }
+      },
+      "System.Buffers/4.5.1": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/_._": {}
+        }
+      },
+      "System.Memory/4.5.4": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.1/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/_._": {}
+        }
+      },
+      "System.Numerics.Vectors/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/_._": {}
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/4.7.0": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+        }
+      },
+      "System.Text.Json/4.7.0": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.0/System.Text.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/System.Text.Json.dll": {}
+        }
+      },
+      "Ultz.Native.GLFW/3.3.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libglfw.so.3": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-arm64/native/libglfw.3.dylib": {
+            "assetType": "native",
+            "rid": "osx-arm64"
+          },
+          "runtimes/osx-x64/native/libglfw.3.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-x64/native/glfw3.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/glfw3.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
+        }
+      },
+      "Ultz.Native.SDL/2.0.14.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libSDL2-2.0.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-x64/native/libSDL2-2.0.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-x64/native/SDL2.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Microsoft.CSharp/4.7.0": {
+      "sha512": "pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "type": "package",
+      "path": "microsoft.csharp/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/netcore50/Microsoft.CSharp.dll",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.3/Microsoft.CSharp.dll",
+        "lib/netstandard2.0/Microsoft.CSharp.dll",
+        "lib/netstandard2.0/Microsoft.CSharp.xml",
+        "lib/portable-net45+win8+wp8+wpa81/_._",
+        "lib/uap10.0.16299/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "microsoft.csharp.4.7.0.nupkg.sha512",
+        "microsoft.csharp.nuspec",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/netcore50/Microsoft.CSharp.dll",
+        "ref/netcore50/Microsoft.CSharp.xml",
+        "ref/netcore50/de/Microsoft.CSharp.xml",
+        "ref/netcore50/es/Microsoft.CSharp.xml",
+        "ref/netcore50/fr/Microsoft.CSharp.xml",
+        "ref/netcore50/it/Microsoft.CSharp.xml",
+        "ref/netcore50/ja/Microsoft.CSharp.xml",
+        "ref/netcore50/ko/Microsoft.CSharp.xml",
+        "ref/netcore50/ru/Microsoft.CSharp.xml",
+        "ref/netcore50/zh-hans/Microsoft.CSharp.xml",
+        "ref/netcore50/zh-hant/Microsoft.CSharp.xml",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard1.0/Microsoft.CSharp.dll",
+        "ref/netstandard1.0/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/de/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/es/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/fr/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/it/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/ja/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/ko/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/ru/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/zh-hans/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/zh-hant/Microsoft.CSharp.xml",
+        "ref/netstandard2.0/Microsoft.CSharp.dll",
+        "ref/netstandard2.0/Microsoft.CSharp.xml",
+        "ref/portable-net45+win8+wp8+wpa81/_._",
+        "ref/uap10.0.16299/_._",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Microsoft.DotNet.PlatformAbstractions/3.1.6": {
+      "sha512": "jek4XYaQ/PGUwDKKhwR8K47Uh1189PFzMeLqO83mXrXQVIpARZCcfuDedH50YDTepBkfijCZN5U/vZi++erxtg==",
+      "type": "package",
+      "path": "microsoft.dotnet.platformabstractions/3.1.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net45/Microsoft.DotNet.PlatformAbstractions.dll",
+        "lib/net45/Microsoft.DotNet.PlatformAbstractions.xml",
+        "lib/netstandard1.3/Microsoft.DotNet.PlatformAbstractions.dll",
+        "lib/netstandard1.3/Microsoft.DotNet.PlatformAbstractions.xml",
+        "lib/netstandard2.0/Microsoft.DotNet.PlatformAbstractions.dll",
+        "lib/netstandard2.0/Microsoft.DotNet.PlatformAbstractions.xml",
+        "microsoft.dotnet.platformabstractions.3.1.6.nupkg.sha512",
+        "microsoft.dotnet.platformabstractions.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.DependencyModel/3.1.1": {
+      "sha512": "JjNCPx5Jbk7WTjaFI9Kyq+ZRVwMJ7Ee2AmgLKraQUS8AuciAO+euxHAhlhv0AWCsVyibyRr+5USxjyc7U6VsMA==",
+      "type": "package",
+      "path": "microsoft.extensions.dependencymodel/3.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net451/Microsoft.Extensions.DependencyModel.dll",
+        "lib/net451/Microsoft.Extensions.DependencyModel.xml",
+        "lib/netstandard1.3/Microsoft.Extensions.DependencyModel.dll",
+        "lib/netstandard1.3/Microsoft.Extensions.DependencyModel.xml",
+        "lib/netstandard1.6/Microsoft.Extensions.DependencyModel.dll",
+        "lib/netstandard1.6/Microsoft.Extensions.DependencyModel.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.DependencyModel.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.DependencyModel.xml",
+        "microsoft.extensions.dependencymodel.3.1.1.nupkg.sha512",
+        "microsoft.extensions.dependencymodel.nuspec"
+      ]
+    },
+    "Silk.NET/2.12.0": {
+      "sha512": "WRb5wWJrxc24WVtQcB8MY6cpQjUqFN+mtX2wtFPREWGiHdBNTNmQbC2IsWjiQYqsdeOzCmr77zfi4FqjU4zzcg==",
+      "type": "package",
+      "path": "silk.net/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "silk.net.2.12.0.nupkg.sha512",
+        "silk.net.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Core/2.12.0": {
+      "sha512": "qJ4nY/tSLsZs3ujEoTf4nW/rjaSdtqtME7VEA4jCQuZE73mADwxoeFNdY2QRCy8d2XSwFKnKXBYhs4vKgHqX8Q==",
+      "type": "package",
+      "path": "silk.net.core/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Core.dll",
+        "lib/net5.0/Silk.NET.Core.xml",
+        "lib/net6.0/Silk.NET.Core.dll",
+        "lib/net6.0/Silk.NET.Core.xml",
+        "lib/netcoreapp3.1/Silk.NET.Core.dll",
+        "lib/netcoreapp3.1/Silk.NET.Core.xml",
+        "lib/netstandard2.0/Silk.NET.Core.dll",
+        "lib/netstandard2.0/Silk.NET.Core.xml",
+        "lib/netstandard2.1/Silk.NET.Core.dll",
+        "lib/netstandard2.1/Silk.NET.Core.xml",
+        "silk.net.core.2.12.0.nupkg.sha512",
+        "silk.net.core.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.GLFW/2.12.0": {
+      "sha512": "ixAhAY+dTrSO0yRHZzn/7oKohTNd/ab8e4Y5LePqHbTIQDsW1rnCGA2wGSR/YBqv/K4q9LELpkqdqDZtWpo46g==",
+      "type": "package",
+      "path": "silk.net.glfw/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.GLFW.dll",
+        "lib/net5.0/Silk.NET.GLFW.xml",
+        "lib/netcoreapp3.1/Silk.NET.GLFW.dll",
+        "lib/netcoreapp3.1/Silk.NET.GLFW.xml",
+        "lib/netstandard2.0/Silk.NET.GLFW.dll",
+        "lib/netstandard2.0/Silk.NET.GLFW.xml",
+        "lib/netstandard2.1/Silk.NET.GLFW.dll",
+        "lib/netstandard2.1/Silk.NET.GLFW.xml",
+        "silk.net.glfw.2.12.0.nupkg.sha512",
+        "silk.net.glfw.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Input/2.12.0": {
+      "sha512": "57cVJcCGiM6zbWH42/hY/NMlBuBm0qBenhiVPI6U7iOJSNNpwKcHdQvrJIhsJpryaDgT09teBjokoZ9FSoeg9g==",
+      "type": "package",
+      "path": "silk.net.input/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "silk.net.input.2.12.0.nupkg.sha512",
+        "silk.net.input.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Input.Common/2.12.0": {
+      "sha512": "JL6lbIDJESh2FamsKViB/RTW3Bpt75MyLsw5RkcQ3RekBMnVLqDZzVV2UmsicSUG2AR71ri1lSLZNcdTDnrttQ==",
+      "type": "package",
+      "path": "silk.net.input.common/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Input.Common.dll",
+        "lib/net5.0/Silk.NET.Input.Common.xml",
+        "lib/netcoreapp3.1/Silk.NET.Input.Common.dll",
+        "lib/netcoreapp3.1/Silk.NET.Input.Common.xml",
+        "lib/netstandard2.0/Silk.NET.Input.Common.dll",
+        "lib/netstandard2.0/Silk.NET.Input.Common.xml",
+        "lib/netstandard2.1/Silk.NET.Input.Common.dll",
+        "lib/netstandard2.1/Silk.NET.Input.Common.xml",
+        "silk.net.input.common.2.12.0.nupkg.sha512",
+        "silk.net.input.common.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Input.Glfw/2.12.0": {
+      "sha512": "7p8/H1Vdpg5ca241UVza5b/aK9FQvpNPBA2ysVbTNl7ldUP/7MIY6r9IAb6nv1+X6OKVk5qi5p+POtcMViSZjA==",
+      "type": "package",
+      "path": "silk.net.input.glfw/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Input.Glfw.dll",
+        "lib/net5.0/Silk.NET.Input.Glfw.xml",
+        "lib/netcoreapp3.1/Silk.NET.Input.Glfw.dll",
+        "lib/netcoreapp3.1/Silk.NET.Input.Glfw.xml",
+        "lib/netstandard2.0/Silk.NET.Input.Glfw.dll",
+        "lib/netstandard2.0/Silk.NET.Input.Glfw.xml",
+        "lib/netstandard2.1/Silk.NET.Input.Glfw.dll",
+        "lib/netstandard2.1/Silk.NET.Input.Glfw.xml",
+        "silk.net.input.glfw.2.12.0.nupkg.sha512",
+        "silk.net.input.glfw.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Input.Sdl/2.12.0": {
+      "sha512": "msJNhYhULaDH3MmAo5BsZ51zrlSo/EDOVYZwfidte5QCW8PwC1+OFoSF2b5RH5Yd8ahGPq5VunFajbqjajwsyg==",
+      "type": "package",
+      "path": "silk.net.input.sdl/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Input.Sdl.dll",
+        "lib/net5.0/Silk.NET.Input.Sdl.xml",
+        "lib/netcoreapp3.1/Silk.NET.Input.Sdl.dll",
+        "lib/netcoreapp3.1/Silk.NET.Input.Sdl.xml",
+        "lib/netstandard2.0/Silk.NET.Input.Sdl.dll",
+        "lib/netstandard2.0/Silk.NET.Input.Sdl.xml",
+        "lib/netstandard2.1/Silk.NET.Input.Sdl.dll",
+        "lib/netstandard2.1/Silk.NET.Input.Sdl.xml",
+        "silk.net.input.sdl.2.12.0.nupkg.sha512",
+        "silk.net.input.sdl.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Maths/2.12.0": {
+      "sha512": "IcdtyjW/hpaamhEs+bQ/iLX5JfKB/LMrKIrXbmiQufNoFIahD6/zyYslr5JgTYqPkL9yvL6Jasw7K/uTjfuCBg==",
+      "type": "package",
+      "path": "silk.net.maths/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Maths.dll",
+        "lib/net5.0/Silk.NET.Maths.xml",
+        "lib/netcoreapp3.1/Silk.NET.Maths.dll",
+        "lib/netcoreapp3.1/Silk.NET.Maths.xml",
+        "lib/netstandard2.0/Silk.NET.Maths.dll",
+        "lib/netstandard2.0/Silk.NET.Maths.xml",
+        "lib/netstandard2.1/Silk.NET.Maths.dll",
+        "lib/netstandard2.1/Silk.NET.Maths.xml",
+        "silk.net.maths.2.12.0.nupkg.sha512",
+        "silk.net.maths.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.OpenAL/2.12.0": {
+      "sha512": "8Q3GDIb8gh2LH5FCFAn+V3s7AYtVreBlPbG6Qo0bCOgwUnDB6Ke9DMm7MUE8jGh3P1pmqkwYoU95V2rh3x0GFw==",
+      "type": "package",
+      "path": "silk.net.openal/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.OpenAL.dll",
+        "lib/net5.0/Silk.NET.OpenAL.xml",
+        "lib/netcoreapp3.1/Silk.NET.OpenAL.dll",
+        "lib/netcoreapp3.1/Silk.NET.OpenAL.xml",
+        "lib/netstandard2.0/Silk.NET.OpenAL.dll",
+        "lib/netstandard2.0/Silk.NET.OpenAL.xml",
+        "lib/netstandard2.1/Silk.NET.OpenAL.dll",
+        "lib/netstandard2.1/Silk.NET.OpenAL.xml",
+        "silk.net.openal.2.12.0.nupkg.sha512",
+        "silk.net.openal.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.OpenGL/2.12.0": {
+      "sha512": "mPnfaZSl3dwppFRBePO7u6svR3kpO5uHqEgtsTGYOH5kgQ6iTMbO+0Pgi6cpDdqlEeUVoEO2FnkHg9Ow6n+0KA==",
+      "type": "package",
+      "path": "silk.net.opengl/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.OpenGL.dll",
+        "lib/net5.0/Silk.NET.OpenGL.xml",
+        "lib/netcoreapp3.1/Silk.NET.OpenGL.dll",
+        "lib/netcoreapp3.1/Silk.NET.OpenGL.xml",
+        "lib/netstandard2.0/Silk.NET.OpenGL.dll",
+        "lib/netstandard2.0/Silk.NET.OpenGL.xml",
+        "lib/netstandard2.1/Silk.NET.OpenGL.dll",
+        "lib/netstandard2.1/Silk.NET.OpenGL.xml",
+        "silk.net.opengl.2.12.0.nupkg.sha512",
+        "silk.net.opengl.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.SDL/2.12.0": {
+      "sha512": "5BRNyOrWoNOhmPq/F2D6QtHcvEZBwCQuzUyZ5oibKJl63eDprX8PoQEq/sq9flZtU9j5zZHiK732Kneor0sGsA==",
+      "type": "package",
+      "path": "silk.net.sdl/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.SDL.dll",
+        "lib/net5.0/Silk.NET.SDL.xml",
+        "lib/netcoreapp3.1/Silk.NET.SDL.dll",
+        "lib/netcoreapp3.1/Silk.NET.SDL.xml",
+        "lib/netstandard2.0/Silk.NET.SDL.dll",
+        "lib/netstandard2.0/Silk.NET.SDL.xml",
+        "lib/netstandard2.1/Silk.NET.SDL.dll",
+        "lib/netstandard2.1/Silk.NET.SDL.xml",
+        "silk.net.sdl.2.12.0.nupkg.sha512",
+        "silk.net.sdl.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Vulkan/2.12.0": {
+      "sha512": "GV9JGOjnMQcKah11lgaq+V+YZSPyadGFfMsG7WQPkVThGQJeXxvfNizN+9Gwun9TKuuGHEJqpNQc8J8faV0mBw==",
+      "type": "package",
+      "path": "silk.net.vulkan/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Vulkan.dll",
+        "lib/net5.0/Silk.NET.Vulkan.xml",
+        "lib/netcoreapp3.1/Silk.NET.Vulkan.dll",
+        "lib/netcoreapp3.1/Silk.NET.Vulkan.xml",
+        "lib/netstandard2.0/Silk.NET.Vulkan.dll",
+        "lib/netstandard2.0/Silk.NET.Vulkan.xml",
+        "lib/netstandard2.1/Silk.NET.Vulkan.dll",
+        "lib/netstandard2.1/Silk.NET.Vulkan.xml",
+        "silk.net.vulkan.2.12.0.nupkg.sha512",
+        "silk.net.vulkan.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Vulkan.Extensions.KHR/2.12.0": {
+      "sha512": "712KW33HjMD6+9qKy2Lq5sYUbhKPAIyNBnM+hkBI+/Xl0Y4LGZEff5X7iMfJL9zl68OaSYUM4HNAhAAlkSCLCg==",
+      "type": "package",
+      "path": "silk.net.vulkan.extensions.khr/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Vulkan.Extensions.KHR.dll",
+        "lib/net5.0/Silk.NET.Vulkan.Extensions.KHR.xml",
+        "lib/netcoreapp3.1/Silk.NET.Vulkan.Extensions.KHR.dll",
+        "lib/netcoreapp3.1/Silk.NET.Vulkan.Extensions.KHR.xml",
+        "lib/netstandard2.0/Silk.NET.Vulkan.Extensions.KHR.dll",
+        "lib/netstandard2.0/Silk.NET.Vulkan.Extensions.KHR.xml",
+        "lib/netstandard2.1/Silk.NET.Vulkan.Extensions.KHR.dll",
+        "lib/netstandard2.1/Silk.NET.Vulkan.Extensions.KHR.xml",
+        "silk.net.vulkan.extensions.khr.2.12.0.nupkg.sha512",
+        "silk.net.vulkan.extensions.khr.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Windowing/2.12.0": {
+      "sha512": "ZxR0zsRd9hT3n6KexrNohasMQ/m6xa2NebHSp1fiscLJJ5icylnA5i9zN/sM0wrjaFjyB1KfaZNqPvAP55qrLA==",
+      "type": "package",
+      "path": "silk.net.windowing/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "silk.net.windowing.2.12.0.nupkg.sha512",
+        "silk.net.windowing.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Windowing.Common/2.12.0": {
+      "sha512": "bka43zfAljaYjJyq4j0+9tIe8NJlpHgrcCGg048tiju01apdjU/bwy0mdgJmbwmKrWH6XIIsi17ZEc9yQyb34Q==",
+      "type": "package",
+      "path": "silk.net.windowing.common/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard2.0/Silk.NET.Windowing.Common.dll",
+        "lib/netstandard2.0/Silk.NET.Windowing.Common.xml",
+        "lib/netstandard2.1/Silk.NET.Windowing.Common.dll",
+        "lib/netstandard2.1/Silk.NET.Windowing.Common.xml",
+        "silk.net.windowing.common.2.12.0.nupkg.sha512",
+        "silk.net.windowing.common.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Windowing.Glfw/2.12.0": {
+      "sha512": "wpiZ+MEEwQ0i63h5/3t9p5dOiwM3ymCRlm2P9MN6wyGezt18TwKLUSoibaw7zc0iiVOolf2ANUQE8k49lfcqkA==",
+      "type": "package",
+      "path": "silk.net.windowing.glfw/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Windowing.Glfw.dll",
+        "lib/net5.0/Silk.NET.Windowing.Glfw.xml",
+        "lib/netcoreapp3.1/Silk.NET.Windowing.Glfw.dll",
+        "lib/netcoreapp3.1/Silk.NET.Windowing.Glfw.xml",
+        "lib/netstandard2.0/Silk.NET.Windowing.Glfw.dll",
+        "lib/netstandard2.0/Silk.NET.Windowing.Glfw.xml",
+        "lib/netstandard2.1/Silk.NET.Windowing.Glfw.dll",
+        "lib/netstandard2.1/Silk.NET.Windowing.Glfw.xml",
+        "silk.net.windowing.glfw.2.12.0.nupkg.sha512",
+        "silk.net.windowing.glfw.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.Windowing.Sdl/2.12.0": {
+      "sha512": "dQER9xn4R9Pt74kFmOZCTc0QanzRM36BgH/Kk4gvaDsAAiKeWQIvbcEiO6TrVasXniDWi8MDOWShSFoXMp5P3w==",
+      "type": "package",
+      "path": "silk.net.windowing.sdl/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "build/net6.0-ios15.0/Silk.NET.Windowing.Sdl.targets",
+        "build/net6.0-ios15.0/native/libSDL2.a",
+        "build/net6.0-maccatalyst15.0/Silk.NET.Windowing.Sdl.targets",
+        "build/net6.0-maccatalyst15.0/native/libSDL2.a",
+        "lib/net5.0/Silk.NET.Windowing.Sdl.dll",
+        "lib/net5.0/Silk.NET.Windowing.Sdl.xml",
+        "lib/net6.0-android31.0/Silk.NET.Windowing.Sdl.aar",
+        "lib/net6.0-android31.0/Silk.NET.Windowing.Sdl.dll",
+        "lib/net6.0-android31.0/Silk.NET.Windowing.Sdl.xml",
+        "lib/net6.0-ios15.0/Silk.NET.Windowing.Sdl.dll",
+        "lib/net6.0-ios15.0/Silk.NET.Windowing.Sdl.xml",
+        "lib/net6.0-maccatalyst15.0/Silk.NET.Windowing.Sdl.dll",
+        "lib/net6.0-maccatalyst15.0/Silk.NET.Windowing.Sdl.xml",
+        "lib/net6.0/Silk.NET.Windowing.Sdl.dll",
+        "lib/net6.0/Silk.NET.Windowing.Sdl.xml",
+        "lib/netcoreapp3.1/Silk.NET.Windowing.Sdl.dll",
+        "lib/netcoreapp3.1/Silk.NET.Windowing.Sdl.xml",
+        "lib/netstandard2.0/Silk.NET.Windowing.Sdl.dll",
+        "lib/netstandard2.0/Silk.NET.Windowing.Sdl.xml",
+        "lib/netstandard2.1/Silk.NET.Windowing.Sdl.dll",
+        "lib/netstandard2.1/Silk.NET.Windowing.Sdl.xml",
+        "silk.net.windowing.sdl.2.12.0.nupkg.sha512",
+        "silk.net.windowing.sdl.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "System.Buffers/4.5.1": {
+      "sha512": "Rw7ijyl1qqRS0YQD/WycNst8hUUMgrMH4FCn1nNm27M4VxchZ1js3fVjQaANHO5f3sN4isvP4a+Met9Y4YomAg==",
+      "type": "package",
+      "path": "system.buffers/4.5.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.Buffers.dll",
+        "lib/net461/System.Buffers.xml",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.1/System.Buffers.dll",
+        "lib/netstandard1.1/System.Buffers.xml",
+        "lib/netstandard2.0/System.Buffers.dll",
+        "lib/netstandard2.0/System.Buffers.xml",
+        "lib/uap10.0.16299/_._",
+        "ref/net45/System.Buffers.dll",
+        "ref/net45/System.Buffers.xml",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard1.1/System.Buffers.dll",
+        "ref/netstandard1.1/System.Buffers.xml",
+        "ref/netstandard2.0/System.Buffers.dll",
+        "ref/netstandard2.0/System.Buffers.xml",
+        "ref/uap10.0.16299/_._",
+        "system.buffers.4.5.1.nupkg.sha512",
+        "system.buffers.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Memory/4.5.4": {
+      "sha512": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
+      "type": "package",
+      "path": "system.memory/4.5.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.Memory.dll",
+        "lib/net461/System.Memory.xml",
+        "lib/netcoreapp2.1/_._",
+        "lib/netstandard1.1/System.Memory.dll",
+        "lib/netstandard1.1/System.Memory.xml",
+        "lib/netstandard2.0/System.Memory.dll",
+        "lib/netstandard2.0/System.Memory.xml",
+        "ref/netcoreapp2.1/_._",
+        "system.memory.4.5.4.nupkg.sha512",
+        "system.memory.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Numerics.Vectors/4.5.0": {
+      "sha512": "QQTlPTl06J/iiDbJCiepZ4H//BVraReU4O4EoRw1U02H5TLUIT7xn3GnDp9AXPSlJUDyFs4uWjWafNX6WrAojQ==",
+      "type": "package",
+      "path": "system.numerics.vectors/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/System.Numerics.Vectors.dll",
+        "lib/net46/System.Numerics.Vectors.xml",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.0/System.Numerics.Vectors.dll",
+        "lib/netstandard1.0/System.Numerics.Vectors.xml",
+        "lib/netstandard2.0/System.Numerics.Vectors.dll",
+        "lib/netstandard2.0/System.Numerics.Vectors.xml",
+        "lib/portable-net45+win8+wp8+wpa81/System.Numerics.Vectors.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Numerics.Vectors.xml",
+        "lib/uap10.0.16299/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/System.Numerics.Vectors.dll",
+        "ref/net45/System.Numerics.Vectors.xml",
+        "ref/net46/System.Numerics.Vectors.dll",
+        "ref/net46/System.Numerics.Vectors.xml",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard1.0/System.Numerics.Vectors.dll",
+        "ref/netstandard1.0/System.Numerics.Vectors.xml",
+        "ref/netstandard2.0/System.Numerics.Vectors.dll",
+        "ref/netstandard2.0/System.Numerics.Vectors.xml",
+        "ref/uap10.0.16299/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.numerics.vectors.4.5.0.nupkg.sha512",
+        "system.numerics.vectors.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Runtime.CompilerServices.Unsafe/4.7.0": {
+      "sha512": "IpU1lcHz8/09yDr9N+Juc7SCgNUz+RohkCQI+KsWKR67XxpFr8Z6c8t1iENCXZuRuNCc4HBwme/MDHNVCwyAKg==",
+      "type": "package",
+      "path": "system.runtime.compilerservices.unsafe/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll",
+        "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.xml",
+        "system.runtime.compilerservices.unsafe.4.7.0.nupkg.sha512",
+        "system.runtime.compilerservices.unsafe.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "System.Text.Json/4.7.0": {
+      "sha512": "IPq/x/d5nAcnD3vIyM3AbPOaTgcqrh0AqPSx7U53UFu3M6k1TH1u/eXc9/h4jm/3mpP1WRUpevlPY4PACd7AWw==",
+      "type": "package",
+      "path": "system.text.json/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.Text.Json.dll",
+        "lib/net461/System.Text.Json.xml",
+        "lib/netcoreapp3.0/System.Text.Json.dll",
+        "lib/netcoreapp3.0/System.Text.Json.xml",
+        "lib/netstandard2.0/System.Text.Json.dll",
+        "lib/netstandard2.0/System.Text.Json.xml",
+        "system.text.json.4.7.0.nupkg.sha512",
+        "system.text.json.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Ultz.Native.GLFW/3.3.3.1": {
+      "sha512": "7eUNO/A1+BXZt0HF1i67HByjmQFo/FfdFatdHUlupv1qnu5tKr5RLreZ7O1Fr0oRIcW6kEx7kJY0aPfJBwcJAw==",
+      "type": "package",
+      "path": "ultz.native.glfw/3.3.3.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net461/Ultz.Native.GLFW.props",
+        "lib/net461/_._",
+        "lib/netstandard2.0/_._",
+        "runtimes/linux-x64/native/libglfw.so.3",
+        "runtimes/osx-arm64/native/libglfw.3.dylib",
+        "runtimes/osx-x64/native/libglfw.3.dylib",
+        "runtimes/win-x64/native/glfw3.dll",
+        "runtimes/win-x86/native/glfw3.dll",
+        "ultz.native.glfw.3.3.3.1.nupkg.sha512",
+        "ultz.native.glfw.nuspec"
+      ]
+    },
+    "Ultz.Native.SDL/2.0.14.1": {
+      "sha512": "pqhYzaFfEXGCZag7JsO3YoNHYALBqFHu4a3Ejyz5rjPW51p3Tfjs82Cz8n9GkohzJADZxSRthNYWpa3Hi1Vp6g==",
+      "type": "package",
+      "path": "ultz.native.sdl/2.0.14.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net461/Ultz.Native.SDL.props",
+        "lib/net461/_._",
+        "lib/netstandard2.0/_._",
+        "runtimes/linux-x64/native/libSDL2-2.0.so",
+        "runtimes/osx-x64/native/libSDL2-2.0.dylib",
+        "runtimes/win-x64/native/SDL2.dll",
+        "ultz.native.sdl.2.0.14.1.nupkg.sha512",
+        "ultz.native.sdl.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0": [
+      "Silk.NET >= 2.12.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\scion\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+      "projectName": "gESilk",
+      "projectPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+      "packagesPath": "C:\\Users\\scion\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0": {
+        "targetAlias": "net6.0",
+        "dependencies": {
+          "Silk.NET": {
+            "target": "Package",
+            "version": "[2.12.0, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Users\\scion\\.dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
