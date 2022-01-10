@@ -67,7 +67,7 @@ void main() {
    
     float specFactor = 1.0 - 0.75;
     vec3 viewPos = normalize(fViewVec-FragPos);
-    vec3 normal = texture(normalMap, fTexCoord).rgb;
+    vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1,-1,1) + vec3(0,1,0);
     normal = normalize((normal * 2.0 - 1.0)*TBN);
     vec3 lightDir = normalize(fLightPos);  
    
