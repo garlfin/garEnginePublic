@@ -129,11 +129,50 @@
       <None Update="resources\model\sponza.obj">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="resources\texture\sponza_column_b_ddn.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <None Update="resources\texture\smiley.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="resources\texture\sponza_column_b_diff.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <None Update="resources\texture\sponza\sponza_arch_ddn.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_arch_diff.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_column_a_ddn.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_column_a_diff.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_column_b_ddn.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_column_b_diff.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_thorn_ddn.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\sponza_thorn_diff.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\vase_plant.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\vase_round.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza\vase_round_ddn.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\model\sponza_small.obj">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\model\sponza_small.mtl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\brick_normal.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 

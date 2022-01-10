@@ -48,6 +48,13 @@ public class AssimpLoaderTest
         {
             throw new Exception("No meshes in the file");
         }
+        #if DEBUG
+            foreach (var material in _scene.Materials)
+            {
+                Console.WriteLine(material.Name);
+            }
+        #endif
+        
         
         foreach (Mesh mesh in _scene.Meshes)
         {

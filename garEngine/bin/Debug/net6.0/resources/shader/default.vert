@@ -11,7 +11,9 @@ uniform mat4 model;
 uniform vec3 viewVec;
 uniform vec3 lightPos;
 uniform mat4 lightSpaceMatrix;
+uniform mat4 view;
 
+out mat4 viewMat;
 out vec2 fTexCoord;
 out vec3 FragPos;
 out mat3 TBN;
@@ -40,5 +42,6 @@ void main() {
     FragPos = vec3(model * vec4(vPosition, 1.0));  
     FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
     gl_Position = mvp * vec4(vPosition, 1.0);
+    viewMat = view;
 }
 

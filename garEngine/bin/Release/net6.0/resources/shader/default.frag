@@ -67,7 +67,7 @@ void main() {
    
     float specFactor = 1.0 - 0.75;
     vec3 viewPos = normalize(fViewVec-FragPos);
-    vec3 normal = texture(normalMap, fTexCoord).rgb;
+    vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1,-1,1) + vec3(0,1,0);
     normal = normalize((normal * 2.0 - 1.0)*TBN);
     vec3 lightDir = normalize(fLightPos);  
    
@@ -78,7 +78,7 @@ void main() {
     float fresnel = clamp(1.0 - max(dot(viewPos, normal),0.0),0.0,1.0);
     // light reflected off normal, dot product with view vector
     float spec = clamp(pow(max(0,dot(reflect(lightDir, normal),-viewPos)),pow(12,1.0+specFactor)),0.0,1.0)*specFactor; 
-    vec4 color = textureLod(cubemap, normal, 10) * (texture(albedo, fTexCoord) * ambient + vec4(spec));
+    vec4 color = min(textureLod(cubemap, normal, 10)*2,1) * (texture(albedo, fTexCoord) * ambient + vec4(spec));
    
     color = mixMultiply(color, texture(cubemap, reflect(-viewPos, normal)), fresnel * specFactor);
     color = pow(color, vec4(1.0/2.2));

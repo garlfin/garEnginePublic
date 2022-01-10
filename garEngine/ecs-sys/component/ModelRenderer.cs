@@ -30,6 +30,7 @@ public class ModelRenderer : Component
         for (int i = 0; i < _parser.Length(); i++)
         {
             Material currentMaterial = entity.GetComponent<MaterialComponent>().GetMaterial(_parser.GetMeshMatIndex(i));
+            if (currentMaterial.CullBackface()) GL.Enable(EnableCap.CullFace); else GL.Disable(EnableCap.CullFace);
             currentMaterial.Use();
             currentMaterial.SetUniform("model", ref model);
             currentMaterial.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
@@ -65,6 +66,7 @@ public class ModelRenderer : Component
             WorldSettings.ShadowDepthMaterial.Use();
             WorldSettings.ShadowDepthMaterial.SetUniform("model", ref model);
             WorldSettings.ShadowDepthMaterial.SetUniform("lightSpaceMatrix", ref WorldSettings.lightSpaceMatrix);
+            _parser.RenderAll();
         }
         else
         {
@@ -74,7 +76,17 @@ public class ModelRenderer : Component
             WorldSettings.DepthMaterial.SetUniform("model", ref model);
             WorldSettings.DepthMaterial.SetUniform("mvp", ref mvp);
         }
-        _parser.RenderAll();
+        for (int i = 0; i < _parser.Length(); i++)
+        {
+            Material currentMaterial =
+                entity.GetComponent<MaterialComponent>().GetMaterial(_parser.GetMeshMatIndex(i));
+            GL.ActiveTexture(TextureUnit.Texture1);
+            if (currentMaterial.CullBackface()) GL.Enable(EnableCap.CullFace); else GL.Disable(EnableCap.CullFace);
+
+            GL.BindTexture(TextureTarget.Texture2D,  currentMaterial.GetSetting("albedo").Value.value.id);
+            WorldSettings.ShadowDepthMaterial.SetUniform("albedo", 1);
+            _parser.Render(i);
+        }
     }
   
 }

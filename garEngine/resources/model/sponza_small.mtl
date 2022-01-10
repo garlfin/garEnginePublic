@@ -1,0 +1,59 @@
+# Blender MTL File: 'None'
+# Material Count: 5
+
+newmtl LeafVase
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\vase_plant.tga
+map_d C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\vase_plant.tga
+
+newmtl arch
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\sponza_arch_diff.tga
+
+newmtl column_a
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\sponza_column_a_diff.tga
+
+newmtl leaf
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\sponza_thorn_diff.tga
+map_d C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\sponza_thorn_diff.tga
+
+newmtl vase_round
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\scion\\RiderProjects\\garEngine\\garEngine\\resources\\texture\\vase_round.tga

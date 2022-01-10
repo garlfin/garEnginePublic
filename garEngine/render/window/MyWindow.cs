@@ -2,12 +2,14 @@
 using garEngine.ecs_sys.component;
 using garEngine.ecs_sys.entity;
 using garEngine.ecs_sys.system;
+using garEngine.render.debug;
 using garEngine.render.model;
 using garEngine.render.utility;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Boolean = System.Boolean;
 using Camera = garEngine.ecs_sys.component.Camera;
 using Vector3 = OpenTK.Mathematics.Vector3;
 
@@ -23,6 +25,16 @@ public class MyWindow : GameWindow
     private Framebuffer _framebuffer;
     public MyWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
     {
+    }
+
+    public Material CreateFromTex(string albedo, string normal, Boolean cull = true)
+    {
+        Material defaultShader = new(_shaderProgram, cull);
+        _myTexture = new Texture("resources/texture/sponza/"+albedo);
+        _normalMap = new Texture("resources/texture/sponza/"+normal);
+        defaultShader.AddSetting("albedo", _myTexture);
+        defaultShader.AddSetting("normalMap", _normalMap);
+        return defaultShader;
     }
     
     protected override void OnLoad()
@@ -60,7 +72,7 @@ public class MyWindow : GameWindow
         
         _shaderProgram = ShaderLoader.LoadShaderProgram("resources/shader/default.vert", "resources/shader/default.frag");
         _myTexture = new Texture("resources/texture/brick_albedo.tif");
-        _normalMap = new Texture("resources/texture/brick_normal.tif");
+        _normalMap = new Texture("resources/texture/brick_normal.png");
 
         Material defaultShader = new(_shaderProgram);
         defaultShader.AddSetting("albedo", _myTexture);
@@ -70,18 +82,23 @@ public class MyWindow : GameWindow
         var framebufferMaterial = new Material(framebufferShader);
         _framebuffer = new Framebuffer(framebufferMaterial);
 
+        Material Leaf = CreateFromTex("vase_plant.png", "vase_round_ddn.png", false);
+        Material Column = CreateFromTex("sponza_column_a_diff.png", "sponza_column_a_ddn.png");
+        Material Arch = CreateFromTex("sponza_arch_diff.png", "sponza_arch_ddn.png");
+        Material Thorn = CreateFromTex("sponza_thorn_diff.png", "sponza_thorn_ddn.png", false);
+        Material Vase = CreateFromTex("vase_round.png", "vase_round_ddn.png");
 
         RenderView._Window = this;
         
         
-        MeshObject cubeObject = new MeshObject(new AssimpLoaderTest("resources/model/teapot.obj"));
+        MeshObject cubeObject = new MeshObject(new AssimpLoaderTest("resources/model/sponza_small.obj"));
         MeshObject sphereObject = new MeshObject(new AssimpLoaderTest("resources/model/plane.dae"));
 
  
 
         Entity entity2 = new Entity();
         entity2.AddComponent(new Transform());
-        entity2.GetComponent<Transform>().Location = new Vector3(0, -10, 0);
+        entity2.GetComponent<Transform>().Location = new Vector3(0, -0.25f, 0);
         entity2.GetComponent<Transform>().Scale = new Vector3(20);
         entity2.AddComponent(new MaterialComponent(sphereObject, defaultShader));
         entity2.AddComponent( new ModelRenderer(sphereObject));
@@ -89,6 +106,11 @@ public class MyWindow : GameWindow
         Entity entity1 = new Entity();
         entity1.AddComponent(new Transform());
         entity1.AddComponent(new MaterialComponent(cubeObject, defaultShader));
+        entity1.GetComponent<MaterialComponent>().SetMaterial(1, Leaf);
+        entity1.GetComponent<MaterialComponent>().SetMaterial(2, Arch);
+        entity1.GetComponent<MaterialComponent>().SetMaterial(3, Column);
+        entity1.GetComponent<MaterialComponent>().SetMaterial(4, Thorn);
+        entity1.GetComponent<MaterialComponent>().SetMaterial(5, Vase);
         entity1.AddComponent(new ModelRenderer(cubeObject));
 
         Entity camera = new Entity();
@@ -144,29 +166,36 @@ public class MyWindow : GameWindow
         WorldSettings.renderSkybox();
         
         _framebuffer.Render();
-        
-        Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
-        Console.WriteLine(args.Time);
-        
-        
-        
-        
+
+        if (!AlreadyClosed)
+        {
+            Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
+            Console.WriteLine(args.Time);
+        }
+
+
+
         SwapBuffers();
         base.OnRenderFrame(args);
     }
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        WorldSettings.Delete();
-        MaterialManager.Delete();
-        MaterialManager.Delete();
-        RenderTexManager.Delete();
-        VertexArrayManager.Delete();
-        TextureManager.Delete();
-        FBManager.Delete();
-        Console.WriteLine("Done! Closing :)");
-        base.OnClosing(e);
+        if (!AlreadyClosed)
+        {
+            AlreadyClosed = true;
+            WorldSettings.Delete();
+            MaterialManager.Delete();
+            RenderTexManager.Delete();
+            VertexArrayManager.Delete();
+            TextureManager.Delete();
+            FBManager.Delete();
+            Console.WriteLine("Done! Closing :D ");
+            base.OnClosing(e);
+        }
     }
+
+    private bool AlreadyClosed { get; set; }
 
     protected override void OnMouseMove(MouseMoveEventArgs e)
     {
