@@ -41,6 +41,14 @@
             "Silk.NET": {
               "target": "Package",
               "version": "[2.12.0, )"
+            },
+            "Silk.NET.Assimp": {
+              "target": "Package",
+              "version": "[2.12.0, )"
+            },
+            "Silk.NET.OpenGLES": {
+              "target": "Package",
+              "version": "[2.12.0, )"
             }
           },
           "imports": [

@@ -45,6 +45,20 @@
           "Silk.NET.Windowing": "2.12.0"
         }
       },
+      "Silk.NET.Assimp/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.Maths": "2.12.0",
+          "Ultz.Native.Assimp": "5.0.1.2"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.Assimp.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.Assimp.dll": {}
+        }
+      },
       "Silk.NET.Core/2.12.0": {
         "type": "package",
         "dependencies": {
@@ -155,6 +169,19 @@
         },
         "runtime": {
           "lib/net5.0/Silk.NET.OpenGL.dll": {}
+        }
+      },
+      "Silk.NET.OpenGLES/2.12.0": {
+        "type": "package",
+        "dependencies": {
+          "Silk.NET.Core": "2.12.0",
+          "Silk.NET.Maths": "2.12.0"
+        },
+        "compile": {
+          "lib/net5.0/Silk.NET.OpenGLES.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Silk.NET.OpenGLES.dll": {}
         }
       },
       "Silk.NET.SDL/2.12.0": {
@@ -285,6 +312,30 @@
         },
         "runtime": {
           "lib/netcoreapp3.0/System.Text.Json.dll": {}
+        }
+      },
+      "Ultz.Native.Assimp/5.0.1.2": {
+        "type": "package",
+        "build": {
+          "build/netstandard2.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libassimp.so.5": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-x64/native/libassimp.5.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-x64/native/Assimp64.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/Assimp32.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
         }
       },
       "Ultz.Native.GLFW/3.3.3.1": {
@@ -468,6 +519,27 @@
         "silkdotnet_v3.png"
       ]
     },
+    "Silk.NET.Assimp/2.12.0": {
+      "sha512": "Fz5TKbA1iglLsjFbY39TzdfCP3hUhftB0GqP8C/WIjVydKidF66jtKHz3bsxPo7HR5eZ5HHUt/rdqJnBX3ETIg==",
+      "type": "package",
+      "path": "silk.net.assimp/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.Assimp.dll",
+        "lib/net5.0/Silk.NET.Assimp.xml",
+        "lib/netcoreapp3.1/Silk.NET.Assimp.dll",
+        "lib/netcoreapp3.1/Silk.NET.Assimp.xml",
+        "lib/netstandard2.0/Silk.NET.Assimp.dll",
+        "lib/netstandard2.0/Silk.NET.Assimp.xml",
+        "lib/netstandard2.1/Silk.NET.Assimp.dll",
+        "lib/netstandard2.1/Silk.NET.Assimp.xml",
+        "silk.net.assimp.2.12.0.nupkg.sha512",
+        "silk.net.assimp.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
     "Silk.NET.Core/2.12.0": {
       "sha512": "qJ4nY/tSLsZs3ujEoTf4nW/rjaSdtqtME7VEA4jCQuZE73mADwxoeFNdY2QRCy8d2XSwFKnKXBYhs4vKgHqX8Q==",
       "type": "package",
@@ -648,6 +720,27 @@
         "lib/netstandard2.1/Silk.NET.OpenGL.xml",
         "silk.net.opengl.2.12.0.nupkg.sha512",
         "silk.net.opengl.nuspec",
+        "silkdotnet_v3.png"
+      ]
+    },
+    "Silk.NET.OpenGLES/2.12.0": {
+      "sha512": "vWj0ibl63V5yWsfvh8iS0HT99mzj2J0uwx6WZKOfQP3KzxGS54UNl3HoFAghiQSvlm6WuNPAmq0Ka5HJDnHGqA==",
+      "type": "package",
+      "path": "silk.net.opengles/2.12.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net5.0/Silk.NET.OpenGLES.dll",
+        "lib/net5.0/Silk.NET.OpenGLES.xml",
+        "lib/netcoreapp3.1/Silk.NET.OpenGLES.dll",
+        "lib/netcoreapp3.1/Silk.NET.OpenGLES.xml",
+        "lib/netstandard2.0/Silk.NET.OpenGLES.dll",
+        "lib/netstandard2.0/Silk.NET.OpenGLES.xml",
+        "lib/netstandard2.1/Silk.NET.OpenGLES.dll",
+        "lib/netstandard2.1/Silk.NET.OpenGLES.xml",
+        "silk.net.opengles.2.12.0.nupkg.sha512",
+        "silk.net.opengles.nuspec",
         "silkdotnet_v3.png"
       ]
     },
@@ -946,6 +1039,23 @@
         "version.txt"
       ]
     },
+    "Ultz.Native.Assimp/5.0.1.2": {
+      "sha512": "d6Jz7X9oOIi21sARCMNyAXE+d107qS0JxWrJiUBVYNbhlyRQzGWuIkPo7Ky+6/Xijx2nrG/F5Y8fS9lE3aHEIA==",
+      "type": "package",
+      "path": "ultz.native.assimp/5.0.1.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net461/Ultz.Native.Assimp.props",
+        "build/netstandard2.0/_._",
+        "runtimes/linux-x64/native/libassimp.so.5",
+        "runtimes/osx-x64/native/libassimp.5.dylib",
+        "runtimes/win-x64/native/Assimp64.dll",
+        "runtimes/win-x86/native/Assimp32.dll",
+        "ultz.native.assimp.5.0.1.2.nupkg.sha512",
+        "ultz.native.assimp.nuspec"
+      ]
+    },
     "Ultz.Native.GLFW/3.3.3.1": {
       "sha512": "7eUNO/A1+BXZt0HF1i67HByjmQFo/FfdFatdHUlupv1qnu5tKr5RLreZ7O1Fr0oRIcW6kEx7kJY0aPfJBwcJAw==",
       "type": "package",
@@ -985,7 +1095,9 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Silk.NET >= 2.12.0"
+      "Silk.NET >= 2.12.0",
+      "Silk.NET.Assimp >= 2.12.0",
+      "Silk.NET.OpenGLES >= 2.12.0"
     ]
   },
   "packageFolders": {
@@ -1026,6 +1138,14 @@
         "targetAlias": "net6.0",
         "dependencies": {
           "Silk.NET": {
+            "target": "Package",
+            "version": "[2.12.0, )"
+          },
+          "Silk.NET.Assimp": {
+            "target": "Package",
+            "version": "[2.12.0, )"
+          },
+          "Silk.NET.OpenGLES": {
             "target": "Package",
             "version": "[2.12.0, )"
           }

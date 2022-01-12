@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "qCp1CHXjQdb6T2rvyFnvoJTprqIXv2+6Cc0AmaXOp9MZPJoew7vQvlm8sjSHUZ4ryouUNOdCtthrJwWv/13x9w==",
+  "dgSpecHash": "SyDaMpT+YBMsGYeqx1pF7+zg9DAaBLItBnsK/gyywk7Ng8bgwAbApxdtdZsf5ABdWLdIaVTJjgxR5si6hAuHdw==",
   "success": true,
   "projectFilePath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.dotnet.platformabstractions\\3.1.6\\microsoft.dotnet.platformabstractions.3.1.6.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.extensions.dependencymodel\\3.1.1\\microsoft.extensions.dependencymodel.3.1.1.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net\\2.12.0\\silk.net.2.12.0.nupkg.sha512",
+    "C:\\Users\\scion\\.nuget\\packages\\silk.net.assimp\\2.12.0\\silk.net.assimp.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.core\\2.12.0\\silk.net.core.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.glfw\\2.12.0\\silk.net.glfw.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.input\\2.12.0\\silk.net.input.2.12.0.nupkg.sha512",
@@ -17,6 +18,7 @@
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.maths\\2.12.0\\silk.net.maths.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.openal\\2.12.0\\silk.net.openal.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.opengl\\2.12.0\\silk.net.opengl.2.12.0.nupkg.sha512",
+    "C:\\Users\\scion\\.nuget\\packages\\silk.net.opengles\\2.12.0\\silk.net.opengles.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.sdl\\2.12.0\\silk.net.sdl.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.vulkan\\2.12.0\\silk.net.vulkan.2.12.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\silk.net.vulkan.extensions.khr\\2.12.0\\silk.net.vulkan.extensions.khr.2.12.0.nupkg.sha512",
@@ -29,6 +31,7 @@
     "C:\\Users\\scion\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.0\\system.runtime.compilerservices.unsafe.4.7.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\system.text.json\\4.7.0\\system.text.json.4.7.0.nupkg.sha512",
+    "C:\\Users\\scion\\.nuget\\packages\\ultz.native.assimp\\5.0.1.2\\ultz.native.assimp.5.0.1.2.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\ultz.native.glfw\\3.3.3.1\\ultz.native.glfw.3.3.3.1.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\ultz.native.sdl\\2.0.14.1\\ultz.native.sdl.2.0.14.1.nupkg.sha512"
   ],

@@ -38,3 +38,9 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Debug\net6.0\gESilk.d
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Debug\net6.0\ref\gESilk.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Debug\net6.0\gESilk.pdb
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Debug\net6.0\gESilk.genruntimeconfig.cache
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\Silk.NET.Assimp.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\Silk.NET.OpenGLES.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\linux-x64\native\libassimp.so.5
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\osx-x64\native\libassimp.5.dylib
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\win-x64\native\Assimp64.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\win-x86\native\Assimp32.dll
