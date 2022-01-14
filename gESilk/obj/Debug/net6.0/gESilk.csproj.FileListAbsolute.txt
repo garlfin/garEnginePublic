@@ -45,3 +45,8 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\win-x64\native\Assimp64.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\win-x86\native\Assimp32.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\cube.obj
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\AssimpNet.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\linux-x64\native\libassimp.so
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\osx-x64\native\libassimp.dylib
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\win-x64\native\assimp.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Debug\net6.0\runtimes\win-x86\native\assimp.dll

@@ -5,7 +5,7 @@ namespace gESilk.engine.render;
 
 public class ShaderProgram
 {
-    uint shaderId;
+    private uint _shaderId;
 
     public ShaderProgram(string path)
     {
@@ -16,8 +16,13 @@ public class ShaderProgram
         gl.ShaderSource(fragment, file[1]);
     }
 
+    public void Use()
+    {
+        gl.UseProgram(_shaderId);
+    }
+
     public uint Get()
     {
-        return shaderId;
+        return _shaderId;
     }
 }
