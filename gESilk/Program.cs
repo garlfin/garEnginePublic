@@ -16,8 +16,8 @@ public static class Program
         material.AddSetting(new ShaderSetting<int>("blah", 10));
         material.Use();
 
-        //_window = new(1280, 720, "garEngineSilk");
-        //_window.Run();
+        _window = new(1280, 720, "garEngineSilk");
+        _window.Run();
 
     }
 }
