@@ -15,15 +15,8 @@ public static class ShaderLoader
         GL.CompileShader(shaderId);
 
         string shaderLog = GL.GetShaderInfoLog(shaderId);
-        if (!string.IsNullOrEmpty(shaderLog))
-        {
-            Console.WriteLine(shaderLog);
-        }
-        else
-        {
-            Console.WriteLine($"{shaderLocation}: Shader Initialized");
-        }
-    
+        Console.WriteLine(!string.IsNullOrEmpty(shaderLog) ? shaderLog : $"{shaderLocation}: Shader Initialized");
+
         return new Shader {Id = shaderId};
     }
 
@@ -43,14 +36,7 @@ public static class ShaderLoader
 
         string programLog = OpenTK.Graphics.OpenGL.GL.GetProgramInfoLog(shaderProgram);
 
-        if (!string.IsNullOrEmpty(programLog))
-        {
-            Console.WriteLine(programLog);
-        }
-        else
-        {
-            Console.WriteLine($"{shaderProgram}: Program Initialized");
-        }
+        Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{shaderProgram}: Program Initialized");
 
         return new ShaderProgram { Id = shaderProgram };
 

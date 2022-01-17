@@ -10,9 +10,11 @@
 
     <ItemGroup>
       <PackageReference Include="AssimpNet" Version="4.1.0" />
+      <PackageReference Include="OpenTK.Mathematics" Version="4.6.7" />
       <PackageReference Include="Silk.NET" Version="2.12.0" />
       <PackageReference Include="Silk.NET.Assimp" Version="2.12.0" />
       <PackageReference Include="Silk.NET.OpenGLES" Version="2.12.0" />
+      <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="System.Windows.Forms, Version=6.0.1.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-        <HintPath>..\..\..\..\..\..\Program Files\dotnet\x64\shared\Microsoft.WindowsDesktop.App\6.0.1\System.Windows.Forms.dll</HintPath>
+      <Reference Include="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.0\System.Windows.Forms.dll</HintPath>
       </Reference>
     </ItemGroup>
 

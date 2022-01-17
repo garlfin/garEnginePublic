@@ -1,4 +1,5 @@
-﻿using gESilk.engine.assimp;
+﻿using gESilk.engine;
+using gESilk.engine.assimp;
 using gESilk.engine.render;
 using gESilk.engine.window;
 
@@ -10,14 +11,7 @@ public static class Program
     
     static void Main(string[] args)
     {
-        Mesh loader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
-
-        Material material = new();
-        material.AddSetting(new ShaderSetting<int>("blah", 10));
-        material.Use();
-
         _window = new(1280, 720, "garEngineSilk");
         _window.Run();
-
     }
 }

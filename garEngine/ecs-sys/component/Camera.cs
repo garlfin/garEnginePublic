@@ -27,7 +27,7 @@ public class Camera : Component
         _sensitivity = sensitivity * 0.1f;
         fov = fov_;
         clipStart = clipStart_;
-        clipEnd_ = clipEnd_;
+        clipEnd = clipEnd_;
         CameraSystem.Register(this);
     }
 

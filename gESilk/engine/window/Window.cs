@@ -4,31 +4,38 @@ using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 using static gESilk.engine.Globals;
 using System.Windows.Forms;
+using gESilk.engine.assimp;
+using gESilk.engine.components;
+using gESilk.engine.render;
+using Texture = gESilk.engine.render.Texture;
 
 namespace gESilk.engine.window;
 
 public class Window
 {
-    private IView _Window;
-    private WindowOptions _Options = WindowOptions.Default;
+    private IView _window;
+    private WindowOptions _options = WindowOptions.Default;
+
+    private double prevTime;
+    private double _deltaTime = 0.0;
 
     public Window(int width, int height, string name)
     {
-        _Options.Size = new(width, height);
-        _Options.Title = name;
-        _Options.API = GraphicsAPI.Default;
-        _Options.FramesPerSecond = 0;
-        _Window = Silk.NET.Windowing.Window.Create(_Options);
+        _options.Size = new(width, height);
+        _options.Title = name;
+        _options.API = GraphicsAPI.Default;
+        _options.FramesPerSecond = 0;
+        _window = Silk.NET.Windowing.Window.Create(_options);
     }
 
     public void Run()
     {
         try
         {
-            _Window.Load += OnLoad;
-            _Window.Update += OnUpdate;
-            _Window.Render += OnRender;
-            _Window.Run();
+            _window.Load += OnLoad;
+            _window.Update += OnUpdate;
+            _window.Render += OnRender;
+            _window.Run();
         } catch (GlfwException)
         {
             MessageBox.Show("Error starting OpenGL Window. This machine may not support OpenGL", "OpenGL Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -38,24 +45,46 @@ public class Window
     private protected virtual void OnRender(double obj)
     {
         gl.Clear((ClearBufferMask) 16640); // Precalculated enum for Color and Depth Buffer Bit
+        ModelRendererSystem.Update(0.0f);
+        
     }
     
     private protected virtual void OnUpdate(double obj)
     {
+        _deltaTime = DeltaTime();
         
+    }
+
+    private protected virtual double DeltaTime()
+    {
+        double delta = prevTime - _window.Time;
+        prevTime = _window.Time;
+        return delta;
     }
     
     private protected virtual void OnLoad()
     {
-        Globals.gl = GL.GetApi(_Window);
+        gl = GL.GetApi(_window);
         
         gl.ClearColor(System.Drawing.Color.Aqua);
+        gl.Enable(EnableCap.DepthTest);
         
-        
-        IInputContext input = _Window.CreateInput();
-        for (int i = 0; i < input.Keyboards.Count; i++)
+        Mesh loader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
+
+        ShaderProgram program = new ShaderProgram("../../../default.shader");
+
+        Texture texture = new Texture("../../../cube.obj", 1);
+        Material material = new(program);
+        material.AddSetting(new ShaderSetting<Texture>("albedo", texture));
+
+        Entity entity = new();
+        entity.AddComponent(new ModelRenderer(loader));
+        entity.AddComponent(new MaterialComponent(loader, material));
+
+        IInputContext input = _window.CreateInput();
+        foreach (var t in input.Keyboards)
         {
-            input.Keyboards[i].KeyDown += KeyDown;
+            t.KeyDown += KeyDown;
         }
     }
 
@@ -64,7 +93,7 @@ public class Window
         switch (arg2)
         {
             case Key.Escape:
-                _Window.Close();
+                _window.Close();
                 break;
         }
     }
