@@ -1,7 +1,4 @@
-﻿//using OpenTK.Mathematics;
-
-using OpenTK.Mathematics;
-using Silk.NET.Maths;
+﻿using OpenTK.Mathematics;
 
 namespace garEngine.render.utility;
 
@@ -15,11 +12,11 @@ namespace garEngine.render.utility;
 public class BasicCamera
 {
     // Those vectors are directions pointing outwards from the camera to define how it rotated.
-    private Vector3D<float> _front = -Vector3D<float>.UnitZ;
+    private Vector3 _front = -Vector3.UnitZ;
 
-    private Vector3D<float> _up = Vector3D<float>.UnitY;
+    private Vector3 _up = Vector3.UnitY;
 
-    private Vector3D<float> _right = Vector3D<float>.UnitX;
+    private Vector3 _right = Vector3.UnitX;
 
     // Rotation around the X axis (radians)
     private float _pitch;
@@ -30,23 +27,23 @@ public class BasicCamera
     // The field of view of the camera (radians)
     private float _fov = MathHelper.PiOver2;
 
-    public BasicCamera(Vector3D<float> position, float aspectRatio)
+    public BasicCamera(Vector3 position, float aspectRatio)
     {
         Position = position;
         AspectRatio = aspectRatio;
     }
 
     // The position of the camera
-    public Vector3D<float> Position { get; set; }
+    public Vector3 Position { get; set; }
 
     // This is simply the aspect ratio of the viewport, used for the projection matrix.
     public float AspectRatio { private get; set; }
 
-    public Vector3D<float> Front => _front;
+    public Vector3 Front => _front;
 
-    public Vector3D<float> Up => _up;
+    public Vector3 Up => _up;
 
-    public Vector3D<float> Right => _right;
+    public Vector3 Right => _right;
 
     public float depthNear = 0.1f;
     public float depthFar = 1000f;
@@ -93,16 +90,15 @@ public class BasicCamera
     }
 
     // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
-    public Matrix4X4<float>GetViewMatrix()
+    public Matrix4 GetViewMatrix()
     {
-        return Matrix4X4.CreateLookAt(Position, Position + _front, _up);
+        return Matrix4.LookAt(Position, Position + _front, _up);
     }
 
-
     // Get the projection matrix using the same method we have used up until this point
-    public Matrix4X4<float>GetProjectionMatrix()
+    public Matrix4 GetProjectionMatrix()
     {
-        return Matrix4X4.CreatePerspectiveFieldOfView(_fov, AspectRatio, depthNear, depthFar);
+        return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, depthNear, depthFar);
     }
 
     // This function is going to update the direction vertices using some of the math learned in the web tutorials.
@@ -114,12 +110,12 @@ public class BasicCamera
         _front.Z = MathF.Cos(_pitch) * MathF.Sin(_yaw);
 
         // We need to make sure the vectors are all normalized, as otherwise we would get some funky results.
-        _front = Vector3D.Normalize(_front);
+        _front = Vector3.Normalize(_front);
 
         // Calculate both the right and the up vector using cross product.
         // Note that we are calculating the right from the global up; this behaviour might
         // not be what you need for all cameras so keep this in mind if you do not want a FPS camera.
-        _right = Vector3D.Normalize(Vector3D.Cross(_front, Vector3D<float>.UnitY));
-        _up = Vector3D.Normalize(Vector3D.Cross(_right, _front));
+        _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
+        _up = Vector3.Normalize(Vector3.Cross(_right, _front));
     }
 }

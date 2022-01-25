@@ -1,6 +1,6 @@
 ﻿using Assimp;
 using gESilk.engine.render;
-using Silk.NET.Maths;
+using OpenTK.Mathematics;
 using static gESilk.engine.Globals;
 using Mesh = gESilk.engine.render.Mesh;
 using Vector3D = Assimp.Vector3D;
@@ -52,11 +52,12 @@ public static class AssimpLoader
                 AddXYZ(vert, tempMesh.TexCoord, true);
             }
 
-            tempMesh.MaterialId = _scene.MaterialCount;
+            tempMesh.MaterialId = mesh.MaterialIndex;
             tempMesh.Data = new VertexArray(tempMesh);
             outMesh.AddMesh(tempMesh);
 
         }
+        outMesh.SetMatCount(_scene.MaterialCount);
         return outMesh;
         
     }

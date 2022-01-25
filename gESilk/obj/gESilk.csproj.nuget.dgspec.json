@@ -49,21 +49,17 @@
               "target": "Package",
               "version": "[4.1.0, )"
             },
+            "OpenTK": {
+              "target": "Package",
+              "version": "[4.6.7, )"
+            },
             "OpenTK.Mathematics": {
               "target": "Package",
               "version": "[4.6.7, )"
             },
-            "Silk.NET": {
+            "OpenTK.Windowing.Desktop": {
               "target": "Package",
-              "version": "[2.12.0, )"
-            },
-            "Silk.NET.Assimp": {
-              "target": "Package",
-              "version": "[2.12.0, )"
-            },
-            "Silk.NET.OpenGLES": {
-              "target": "Package",
-              "version": "[2.12.0, )"
+              "version": "[4.6.7, )"
             },
             "System.Drawing.Common": {
               "target": "Package",

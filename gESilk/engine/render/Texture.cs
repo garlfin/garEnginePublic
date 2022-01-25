@@ -1,19 +1,21 @@
-﻿using Silk.NET.OpenGL;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using OpenTK.Graphics.OpenGL4;
+using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
+
 
 namespace gESilk.engine.render;
 
-using System.Drawing;
-using System.Drawing.Imaging;
 using static Globals;
 
 public class Texture : Asset
 {
-    private uint _id;
+    private int _id;
     private uint slot;
     private TextureUnit _unit; 
-    
     private BitmapData _bmpData;
-    public Texture(string path, uint slot, PixelFormat format = PixelFormat.Format32bppArgb)
+    
+    public Texture(string path, uint slot, System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
     {
         this.slot = slot;
         switch (slot)
@@ -26,28 +28,35 @@ public class Texture : Asset
                 break;
                 
         }
-        
+
         //TextureManager.Register(this);
         Bitmap bmp = new Bitmap(path);
         bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-        _id = gl.GenTexture();
-        gl.BindTexture(TextureTarget.Texture2D, _id);
         _bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, format);
-        gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)bmp.Width, (uint)bmp.Height, 0,
-            Silk.NET.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, _bmpData.Scan0);
-        gl.GenerateMipmap(TextureTarget.Texture2D);
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        
+        Load(bmp.Width, bmp.Height, _bmpData.Scan0);
+        
         bmp.UnlockBits(_bmpData);
         bmp.Dispose();
-
+        
+        
+        
+        
     }
 
+    private void Load(int width, int height, IntPtr data)
+    {
+        GL.BindTexture(TextureTarget.Texture2D, _id);
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
+        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+    }
     public override void Delete()
     {
-        gl.DeleteTexture(_id);
+        GL.DeleteTexture(_id);
         Console.WriteLine($"Deleted texture: {_id}");
         _id = 0;
     }
@@ -55,8 +64,8 @@ public class Texture : Asset
     public uint Use()
     {
         
-        gl.ActiveTexture(_unit);
-        gl.BindTexture(TextureTarget.Texture2D, _id);
+        GL.ActiveTexture(_unit);
+        GL.BindTexture(TextureTarget.Texture2D, _id);
         return slot;
     }
 

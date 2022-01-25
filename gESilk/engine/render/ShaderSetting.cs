@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.assimp;
+using OpenTK.Graphics.OpenGL4;
 using static gESilk.engine.Globals;
 
 namespace gESilk.engine.render;
@@ -17,10 +18,10 @@ public class ShaderSetting<T> : ISetting
     {
         if (typeof(T) == typeof(int))
         {
-            gl.ProgramUniform1(program.Get(), gl.GetUniformLocation(program.Get(), _uniformName), (int) (object) _value);        
+            GL.ProgramUniform1(program.Get(), GL.GetUniformLocation(program.Get(), _uniformName), (int) (object) _value);        
         } else if (typeof(T) == typeof(Texture))
         {
-            gl.ProgramUniform1(program.Get(), gl.GetUniformLocation(program.Get(), _uniformName), ((Texture) (object) _value).Use());       
+            GL.ProgramUniform1(program.Get(), GL.GetUniformLocation(program.Get(), _uniformName), ((Texture) (object) _value).Use());       
         }
     }
 }

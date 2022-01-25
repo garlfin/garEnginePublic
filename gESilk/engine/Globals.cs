@@ -2,8 +2,7 @@
 using Assimp;
 using garEngine.render.utility;
 using gESilk.engine.components;
-using Silk.NET.Maths;
-using Silk.NET.OpenGL;
+using OpenTK.Mathematics;
 using Camera = gESilk.engine.components.Camera;
 
 namespace gESilk.engine;
@@ -11,15 +10,14 @@ namespace gESilk.engine;
 
 public static class Globals
 {
-    public static GL gl;
     public static AssimpContext Assimp;
     public static BasicCamera _camera;
-    public static Matrix4X4<float> view, projection;
+    public static Matrix4 view, projection;
 
     static Globals()
     {
         Assimp = new AssimpContext();
-        _camera = new BasicCamera(Vector3D<float>.Zero, (float)1280/720);
+        _camera = new BasicCamera(Vector3.Zero, (float)1280/720);
     }
 
     public static void Update()

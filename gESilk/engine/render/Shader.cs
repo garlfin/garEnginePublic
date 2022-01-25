@@ -1,24 +1,25 @@
-﻿using Silk.NET.OpenGL;
+﻿using OpenTK.Graphics.OpenGL4;
+
 using static gESilk.engine.Globals;
 
 namespace gESilk.engine.render;
 
 public class Shader
 {
-    private readonly uint _id;
+    private readonly int _id;
 
     public Shader(string data, ShaderType type)
     {
         
-        _id = gl.CreateShader(type);
-        gl.ShaderSource(_id, data);
-        gl.CompileShader(_id);
+        _id = GL.CreateShader(type);
+        GL.ShaderSource(_id, data);
+        GL.CompileShader(_id);
 
-        var shaderLog = gl.GetShaderInfoLog(_id);
+        var shaderLog = GL.GetShaderInfoLog(_id);
         Console.WriteLine(!string.IsNullOrEmpty(shaderLog) ? $"{_id}: {shaderLog}" : $"{_id}: Shader Initialized");
     }
 
-    public uint Get()
+    public int Get()
     {
         return _id;
     }

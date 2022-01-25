@@ -10,10 +10,9 @@
 
     <ItemGroup>
       <PackageReference Include="AssimpNet" Version="4.1.0" />
+      <PackageReference Include="OpenTK" Version="4.6.7" />
       <PackageReference Include="OpenTK.Mathematics" Version="4.6.7" />
-      <PackageReference Include="Silk.NET" Version="2.12.0" />
-      <PackageReference Include="Silk.NET.Assimp" Version="2.12.0" />
-      <PackageReference Include="Silk.NET.OpenGLES" Version="2.12.0" />
+      <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.6.7" />
       <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
@@ -21,12 +20,19 @@
       <None Update="cube.obj">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="sponza_column_a_diff.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
       <Reference Include="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
         <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.0\System.Windows.Forms.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="engine\misc\Debug.cs" />
     </ItemGroup>
 
 </Project>

@@ -2,12 +2,13 @@
 using gESilk.engine.assimp;
 using gESilk.engine.render;
 using gESilk.engine.window;
+using OpenTK.Windowing.Desktop;
 
 namespace gESilk;
 
 public static class Program
 {
-    private static GameWindow _window;
+    private static Window _window;
     
     static void Main(string[] args)
     {

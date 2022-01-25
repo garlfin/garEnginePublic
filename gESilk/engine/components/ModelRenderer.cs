@@ -1,6 +1,6 @@
 ﻿using gESilk.engine.assimp;
 using gESilk.engine.render;
-using Silk.NET.Maths;
+using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
 
@@ -21,11 +21,11 @@ public class ModelRenderer : Component
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials()!, CreateModelMatrix());
     }
     
-    private Matrix4X4<float> CreateModelMatrix()
+    private Matrix4 CreateModelMatrix()
     {
-        return Matrix4X4.CreateRotationX(_modelTransform.Rotation.X) * Matrix4X4.CreateRotationY(_modelTransform.Rotation.Y) *
-               Matrix4X4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4X4.CreateScale(_modelTransform.Scale) *
-               Matrix4X4.CreateTranslation(_modelTransform.Location);
+        return Matrix4.CreateRotationX( _modelTransform.Rotation.X) * Matrix4.CreateRotationY( _modelTransform.Rotation.Y) *
+               Matrix4.CreateRotationZ( _modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
+               Matrix4.CreateTranslation(_modelTransform.Location);
     }
     
     

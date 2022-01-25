@@ -1,4 +1,4 @@
-﻿using Silk.NET.Maths;
+﻿using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
 
@@ -8,7 +8,7 @@ public class Camera : Component
     public float clipStart { get; set; } = 0.1f;
     public float clipEnd { get; set; } = 1000f;
     
-    private Vector2D<float> _lastPos = Vector2D<float>.Zero;
+    private Vector2d _lastPos = Vector2d.Zero;
     private bool _firstMove = true;
     
 

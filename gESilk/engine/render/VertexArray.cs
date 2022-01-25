@@ -1,73 +1,76 @@
 ﻿using System.Runtime.InteropServices;
 using gESilk.engine.assimp;
-using Silk.NET.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 using static gESilk.engine.Globals;
 
 namespace gESilk.engine.render;
 
 public class VertexArray : Asset
 {
-    private readonly MeshData _mesh;
-    private readonly uint _vao;
-    private readonly uint _vbo;
-    private readonly uint _ebo;
-    private readonly uint _vtvbo;
-    private readonly uint _nmvbo;
-    private readonly uint _tanvbo;
-
-    private static unsafe uint CreateBufferAttribute<T>(int size, List<T> data, BufferUsageARB usageArb,
-        VertexAttribPointerType type, uint index, int sizePerItem = 1) where T : unmanaged
+    private readonly int _vao;
+    private readonly int _vbo;
+    private readonly int _ebo;
+    private readonly int _vtvbo;
+    private readonly int _nmvbo;
+    private readonly int _tanvbo;
+    private readonly int _elementCount;
+    
+    private static int CreateBufferAttribute(int size, List<float> data, BufferUsageHint usageArb,
+        VertexAttribPointerType type, uint index, int sizePerItem = 1)
     {
-        uint buffer = gl.GenBuffer();
-        gl.BindBuffer(BufferTargetARB.ArrayBuffer, buffer);
-        gl.BufferData(BufferTargetARB.ArrayBuffer,
-            (nuint)(Marshal.SizeOf(data.GetType().GetGenericArguments()[0]) * sizePerItem * data.Count),
-            (ReadOnlySpan<T>)CollectionsMarshal.AsSpan(data), usageArb);
-        gl.VertexAttribPointer(index, size, type, false, 0, null);
-        gl.EnableVertexAttribArray(index);
+        int buffer = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
+        GL.BufferData(BufferTarget.ArrayBuffer, sizeof(float) * data.Count, data.ToArray(), usageArb);
+        GL.VertexAttribPointer(index, size, type, false, 0, 0);
+        GL.EnableVertexAttribArray(index);
         return buffer;
     }
 
-    private static unsafe uint CreateBuffer<T>(List<T> data, BufferUsageARB usageArb) where T : unmanaged
+    private static int CreateBuffer(List<float> data, BufferUsageHint usageArb)
     {
-        uint buffer = gl.GenBuffer();
-        gl.BindBuffer(BufferTargetARB.ArrayBuffer, buffer);
-        gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(sizeof(T) * data.Count), 
-            (ReadOnlySpan<T>)CollectionsMarshal.AsSpan(data), usageArb);
+        int buffer = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
+        GL.BufferData(BufferTarget.ArrayBuffer,sizeof(float) * data.Count, data.ToArray(), usageArb);
+        return buffer;
+    }
+    private static int CreateBuffer(List<int> data, BufferUsageHint usageArb)
+    {
+        int buffer = GL.GenBuffer();
+        GL.BindBuffer(BufferTarget.ArrayBuffer, buffer);
+        GL.BufferData(BufferTarget.ArrayBuffer,sizeof(int) * data.Count, data.ToArray(), usageArb);
         return buffer;
     }
 
     public VertexArray(MeshData mesh)
     {
-        _mesh = mesh;
-        
-        _vao = gl.GenVertexArray();
-        gl.BindVertexArray(_vao);
+        _vao = GL.GenVertexArray();
+        GL.BindVertexArray(_vao);
 
-        _vbo = CreateBufferAttribute(3, mesh.Vert, BufferUsageARB.StaticCopy, VertexAttribPointerType.Float,
+        _vbo = CreateBufferAttribute(3, mesh.Vert, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
             0);
-        _nmvbo = CreateBufferAttribute(3, mesh.Normal, BufferUsageARB.StaticCopy, VertexAttribPointerType.Float,
+        _nmvbo = CreateBufferAttribute(3, mesh.Normal, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
             1);
-        _vtvbo = CreateBufferAttribute(2, mesh.TexCoord, BufferUsageARB.StaticCopy, VertexAttribPointerType.Float,
+        _vtvbo = CreateBufferAttribute(2, mesh.TexCoord, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
             2);
-        _tanvbo = CreateBufferAttribute(3, mesh.Tangent, BufferUsageARB.StaticCopy, VertexAttribPointerType.Float,
+        _tanvbo = CreateBufferAttribute(3, mesh.Tangent, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
             3);
-        _ebo = CreateBuffer(mesh.Faces, BufferUsageARB.StaticCopy);
+        _ebo = CreateBuffer(mesh.Faces, BufferUsageHint.StaticCopy);
+        _elementCount = mesh.Faces.Count;
     }
 
     public void Render()
     {
-        gl.BindVertexArray(_vao);
-        gl.DrawElements(PrimitiveType.Triangles, (uint) _mesh.Faces.Count, DrawElementsType.UnsignedInt, 0);
+        GL.BindVertexArray(_vao);
+        GL.DrawElements(PrimitiveType.Triangles, _elementCount, DrawElementsType.UnsignedInt, 0);
     }
     
     public override void Delete()
     {
-        gl.DeleteVertexArray(_vao);
-        gl.DeleteBuffer(_vbo);
-        gl.DeleteBuffer(_ebo);
-        gl.DeleteBuffer(_nmvbo);
-        gl.DeleteBuffer(_tanvbo);
-        gl.DeleteBuffer(_vtvbo);
+        GL.DeleteVertexArray(_vao);
+        GL.DeleteBuffer(_vbo);
+        GL.DeleteBuffer(_ebo);
+        GL.DeleteBuffer(_nmvbo);
+        GL.DeleteBuffer(_tanvbo);
+        GL.DeleteBuffer(_vtvbo);
     }
 }

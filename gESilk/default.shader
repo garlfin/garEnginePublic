@@ -9,6 +9,9 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 
+out vec3 FragPos;
+out vec2 fTexCoord;
+
 void main() {
     fTexCoord = vTexCoord;
     FragPos = vec3(model * vec4(vPosition, 1.0));  
