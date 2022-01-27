@@ -15,7 +15,7 @@ out vec2 fTexCoord;
 void main() {
     fTexCoord = vTexCoord;
     FragPos = vec3(model * vec4(vPosition, 1.0));  
-    gl_Position = projection * view * model * vec4(vPosition, 1.0);
+    gl_Position = model * view * projection * vec4(vPosition, 1.0);
 }
 
 #FRAGMENT

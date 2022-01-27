@@ -1,36 +1,26 @@
-﻿using System.Data;
-using Assimp;
-using garEngine.render.utility;
-using gESilk.engine.components;
+﻿using Assimp;
+using gESilk.engine.misc;
 using OpenTK.Mathematics;
-using Camera = gESilk.engine.components.Camera;
+using OpenTK.Windowing.Desktop;
 
 namespace gESilk.engine;
-
 
 public static class Globals
 {
     public static AssimpContext Assimp;
-    public static BasicCamera _camera;
-    public static Matrix4 view, projection;
+    public static BasicCamera Camera;
+    public static Matrix4 View, Projection;
+    public static GameWindow Window;
 
     static Globals()
     {
         Assimp = new AssimpContext();
-        _camera = new BasicCamera(Vector3.Zero, (float)1280/720);
-    }
-
-    public static void Update()
-    {
-        _camera.Position = CameraSystem.currentCamera.GetComponent<Transform>()!.Location;
-        _camera.Fov = CameraSystem.currentCamera.GetComponent<Camera>()!.fov;
-        _camera.depthFar = CameraSystem.currentCamera.GetComponent<Camera>()!.clipEnd;
-        _camera.depthNear = CameraSystem.currentCamera.GetComponent<Camera>()!.clipStart;
+        Camera = new BasicCamera(Vector3.Zero, (float)1280 / 720);
     }
 
     public static void UpdateRender()
     {
-        view = _camera.GetViewMatrix();
-        projection = _camera.GetProjectionMatrix();
+        View = Camera.GetViewMatrix();
+        Projection = Camera.GetProjectionMatrix();
     }
 }

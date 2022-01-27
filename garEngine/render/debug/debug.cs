@@ -16,7 +16,7 @@ namespace garEngine.render.debug
 
         public static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
         {
-            Console.WriteLine("Debug: " + Marshal.PtrToStringAnsi(message, length));  
+            Console.WriteLine(Marshal.PtrToStringAnsi(message, length));  
         }
 
     }

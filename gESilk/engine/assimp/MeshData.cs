@@ -1,26 +1,26 @@
-﻿using gESilk.engine.render;
+﻿using Assimp;
+using gESilk.engine.render.assets;
 
 namespace gESilk.engine.assimp;
 
 public struct MeshData
 {
-
     public MeshData()
     {
-        Vert = new();
-        TexCoord = new();
-        Normal = new();
-        Tangent = new();
-        Faces = new();
+        Vert = new List<Vector3D>();
+        TexCoord = new List<Vector2D>();
+        Normal = new List<Vector3D>();
+        Tangent = new List<Vector3D>();
+        Faces = new List<IntVec3>();
         MaterialId = 0;
         Data = null;
     }
-    
-    public List<float> Vert;
-    public List<float> TexCoord;
-    public List<float> Normal;
-    public List<float> Tangent;
-    public List<int> Faces;
-    public int MaterialId = 0;
+
+    public List<Vector3D> Vert;
+    public List<Vector2D> TexCoord;
+    public List<Vector3D> Normal;
+    public List<Vector3D> Tangent;
+    public List<IntVec3> Faces;
+    public int MaterialId;
     public VertexArray? Data;
 }

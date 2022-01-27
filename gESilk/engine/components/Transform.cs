@@ -14,4 +14,6 @@ public class Transform : Component
     }
 }
 
-class TransformSystem : BaseSystem<Transform> { }
+internal class TransformSystem : BaseSystem<Transform>
+{
+}

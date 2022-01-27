@@ -1,8 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-using static gESilk.engine.Globals;
-
-namespace gESilk.engine.render;
+namespace gESilk.engine.render.materialSystem;
 
 public class Shader
 {
@@ -10,7 +8,6 @@ public class Shader
 
     public Shader(string data, ShaderType type)
     {
-        
         _id = GL.CreateShader(type);
         GL.ShaderSource(_id, data);
         GL.CompileShader(_id);

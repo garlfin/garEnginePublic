@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace garEngine.render.utility;
+namespace gESilk.engine.misc;
 
 // This is the camera class as it could be set up after the tutorials on the website.
 // It is important to note there are a few ways you could have set up this camera.
@@ -45,9 +45,9 @@ public class BasicCamera
 
     public Vector3 Right => _right;
 
-    public float depthNear = 0.1f;
-    public float depthFar = 1000f;
-    
+    public float DepthNear = 0.1f;
+    public float DepthFar = 1000f;
+
 
     // We convert from degrees to radians as soon as the property is set to improve performance.
     public float Pitch
@@ -98,7 +98,7 @@ public class BasicCamera
     // Get the projection matrix using the same method we have used up until this point
     public Matrix4 GetProjectionMatrix()
     {
-        return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, depthNear, depthFar);
+        return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, DepthNear, DepthFar);
     }
 
     // This function is going to update the direction vertices using some of the math learned in the web tutorials.

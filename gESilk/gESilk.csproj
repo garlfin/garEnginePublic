@@ -23,6 +23,12 @@
       <None Update="sponza_column_a_diff.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="skybox.shader">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="default.shader">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -33,6 +39,7 @@
 
     <ItemGroup>
       <Compile Remove="engine\misc\Debug.cs" />
+      <Compile Include="engine\misc\debug.cs" />
     </ItemGroup>
 
 </Project>

@@ -1,20 +1,17 @@
-﻿using gESilk.engine.assimp;
-using gESilk.engine.render;
+﻿using gESilk.engine.render.assets;
+using gESilk.engine.render.materialSystem;
 
 namespace gESilk.engine.components;
 
 public class MaterialComponent : Component
 {
-    private List<Material> _materials = new List<Material>();
+    private List<Material> _materials = new();
 
     public MaterialComponent(Mesh mesh, Material defaultMaterial)
     {
-        for (int i = 0; i < mesh.GetMatCount(); i++)
-        {
-            _materials.Add(defaultMaterial);
-        }
+        for (var i = 0; i < mesh.GetMatCount(); i++) _materials.Add(defaultMaterial);
     }
-    
+
     public MaterialComponent(List<Material> materials)
     {
         _materials = materials;
@@ -23,8 +20,8 @@ public class MaterialComponent : Component
     public void ChangeMaterial(int index, Material material)
     {
         _materials[index] = material;
-    } 
-    
+    }
+
     public void ChangeMaterial(List<Material> materials)
     {
         _materials = materials;
@@ -39,5 +36,4 @@ public class MaterialComponent : Component
     {
         return _materials[index];
     }
-
 }

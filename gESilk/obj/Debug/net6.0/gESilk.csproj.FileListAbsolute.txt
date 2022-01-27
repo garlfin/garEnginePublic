@@ -157,3 +157,5 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Debug\net6.0\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Debug\net6.0\ref\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Debug\net6.0\gESilk.pdb
 C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Debug\net6.0\gESilk.genruntimeconfig.cache
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\default.shader
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\skybox.shader

@@ -1,30 +1,32 @@
 ﻿using gESilk.engine.assimp;
+using gESilk.engine.render.materialSystem;
 using OpenTK.Mathematics;
 
-namespace gESilk.engine.render;
+namespace gESilk.engine.render.assets;
 
 public class Mesh
 {
-    private List<MeshData> _meshes = new();
-    private int materialCount;
-    
+    private readonly List<MeshData> _meshes = new();
+    private int _materialCount;
+
     public void Render(List<Material> materials, Matrix4 model)
     {
         foreach (var mesh in _meshes)
         {
             materials[mesh.MaterialId].Use(model);
-            mesh.Data.Render();
+            mesh.Data?.Render();
+            materials[mesh.MaterialId].Cleanup();
         }
     }
 
     public int GetMatCount()
     {
-        return materialCount;
+        return _materialCount;
     }
 
     public void SetMatCount(int length)
     {
-        materialCount = length;
+        _materialCount = length;
     }
 
     public void Render(int index, List<Material> materials, Matrix4 model)
@@ -32,6 +34,7 @@ public class Mesh
         materials[_meshes[index].MaterialId].Use(model);
         _meshes[index].Data?.Render();
     }
+
     public void Render(int index, Material material, Matrix4 model)
     {
         material.Use(model);
@@ -47,5 +50,4 @@ public class Mesh
     {
         return _meshes.Count;
     }
-    
 }

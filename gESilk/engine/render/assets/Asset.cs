@@ -1,4 +1,4 @@
-﻿namespace gESilk.engine.render;
+﻿namespace gESilk.engine.render.assets;
 
 public class Asset
 {
