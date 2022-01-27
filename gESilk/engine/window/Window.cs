@@ -117,9 +117,11 @@ public class Window
         var skyboxTexture = new CubemapTexture(paths, 0);
         var skyboxProgram = new ShaderProgram("../../../skybox.shader");
         Material skyboxMaterial = new(skyboxProgram);
+        
         skyboxMaterial.AddSetting(new CubemapSetting("skybox", skyboxTexture));
         skyboxMaterial.AddSetting(new DepthFuncSetting("", DepthFunction.Lequal));
-
+        skyboxMaterial.ClearTranslation(true);
+        
         var skybox = new Entity();
         skybox.AddComponent(new MaterialComponent(loader, skyboxMaterial));
         skybox.AddComponent(new ModelRenderer(loader));
