@@ -11,7 +11,7 @@ public class Material
     private readonly List<ShaderSetting> _settings = new();
     private readonly DepthFunction _function;
 
-    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less)
+    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Equal)
     {
         _program = program;
         _function = function;

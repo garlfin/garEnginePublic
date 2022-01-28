@@ -16,7 +16,7 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials()!,
+        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(),
             _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity);
     }
 

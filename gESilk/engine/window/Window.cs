@@ -28,7 +28,7 @@ public class Window
 
         var nws = NativeWindowSettings.Default;
         // Setup
-        nws.APIVersion = Version.Parse("4.6");
+        nws.APIVersion = new Version(4,6);
         nws.Size = new Vector2i(width, height);
         nws.Title = name;
         nws.IsEventDriven = false;
@@ -71,11 +71,13 @@ public class Window
         GL.DepthMask(true);
         
         ModelRendererSystem.Update(false);
+        CubemapMManager.Update(false);
         
         GL.ColorMask(true, true, true, true);
         GL.DepthMask(false);
         
         ModelRendererSystem.Update((float)args.Time);
+        CubemapMManager.Update((float)args.Time);
         
         if (!_alreadyClosed)
         {
@@ -111,8 +113,8 @@ public class Window
         
         var loader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
-        skyboxLoader.ClearCameraTranslation(true);
-
+        skyboxLoader.IsSkybox(true);
+        
         var program = new ShaderProgram("../../../default.shader");
 
         var texture = new Texture("../../../brick_albedo.tif", 1);
@@ -134,13 +136,13 @@ public class Window
 
         var skyboxTexture = new CubemapTexture(paths, 0);
         var skyboxProgram = new ShaderProgram("../../../skybox.shader");
-        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal);
+        Material skyboxMaterial = new(skyboxProgram);
         
         skyboxMaterial.AddSetting(new CubemapSetting("skybox", skyboxTexture));
 
         var skybox = new Entity();
-        skybox.AddComponent(new MaterialComponent(loader, skyboxMaterial));
-        skybox.AddComponent(new ModelRenderer(skyboxLoader));
+        skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
+        skybox.AddComponent(new CubemapRenderer(skyboxLoader));
 
         Entity entity = new();
         entity.AddComponent(new Transform());

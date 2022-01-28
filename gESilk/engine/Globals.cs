@@ -8,7 +8,7 @@ using Material = Assimp.Material;
 
 namespace gESilk.engine;
 
-using gESilk.engine.render.materialSystem;
+using render.materialSystem;
 
 public static class Globals
 {

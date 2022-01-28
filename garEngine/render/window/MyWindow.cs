@@ -172,9 +172,7 @@ public class MyWindow : GameWindow
             Console.SetCursorPosition(Console.CursorLeft, Console.CursorTop - 1);
             Console.WriteLine(args.Time);
         }
-
-
-
+        
         SwapBuffers();
         base.OnRenderFrame(args);
     }

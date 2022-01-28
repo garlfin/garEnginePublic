@@ -8,19 +8,19 @@ public class Mesh
 {
     private readonly List<MeshData> _meshes = new();
     private int _materialCount;
-    private bool clearTranslation;
+    private bool _isSkybox;
 
-    public void ClearCameraTranslation(bool clear)
+    public void IsSkybox(bool value)
     {
-        clearTranslation = clear;
+        _isSkybox = value;
     }
-
+    
     public void Render(List<Material> materials, Matrix4 model)
     {
         for (var index = 0; index < _meshes.Count; index++)
         {
             var mesh = _meshes[index];
-            materials[mesh.MaterialId].Use(model, clearTranslation);
+            materials[mesh.MaterialId].Use(model, _isSkybox);
             mesh.Data?.Render();
         }
     }
@@ -29,7 +29,7 @@ public class Mesh
     {
         foreach (var mesh in _meshes)
         {
-            material.Use(model, clearTranslation);
+            material.Use(model, _isSkybox);
             mesh.Data?.Render();
         }
     }
@@ -46,13 +46,13 @@ public class Mesh
 
     public void Render(int index, List<Material> materials, Matrix4 model)
     {
-        materials[_meshes[index].MaterialId].Use(model, clearTranslation);
+        materials[_meshes[index].MaterialId].Use(model, _isSkybox);
         _meshes[index].Data?.Render();
     }
 
     public void Render(int index, Material material, Matrix4 model)
     {
-        material.Use(model, clearTranslation);
+        material.Use(model, _isSkybox);
         _meshes[index].Data?.Render();
     }
 
