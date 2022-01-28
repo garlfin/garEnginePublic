@@ -9,30 +9,28 @@ public class Material
 {
     private readonly ShaderProgram _program;
     private readonly List<ShaderSetting> _settings = new();
-    private bool _clearTranslation;
+    private readonly DepthFunction _function;
 
-    public Material(ShaderProgram program)
+    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less)
     {
         _program = program;
+        _function = function;
     }
+    
 
-    public void ClearTranslation(bool value)
+    public void Use(Matrix4 model, bool clearTranslation)
     {
-        _clearTranslation = value;
-    }
-
-    public void Use(Matrix4 model)
-    {
+        GL.DepthFunc(_function);
         _program.Use();
-        _program.SetUniform("view", _clearTranslation ? View.ClearTranslation() : View);
+        _program.SetUniform("view", clearTranslation ? View.ClearTranslation() : View);
         _program.SetUniform("projection", Projection);
         _program.SetUniform("model", model);
-        foreach (var setting in _settings) setting.Use(_program);
-    }
-
-    public void Cleanup()
-    {
-        foreach (var setting in _settings) setting.Cleanup();
+        _program.SetUniform("viewPos", Camera.Position);
+        for (var i = 0; i < _settings.Count; i++)
+        {
+            var setting = _settings[i];
+            setting.Use(_program);
+        }
     }
 
     public void AddSetting(ShaderSetting setting)

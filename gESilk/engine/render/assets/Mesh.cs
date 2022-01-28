@@ -8,14 +8,29 @@ public class Mesh
 {
     private readonly List<MeshData> _meshes = new();
     private int _materialCount;
+    private bool clearTranslation;
+
+    public void ClearCameraTranslation(bool clear)
+    {
+        clearTranslation = clear;
+    }
 
     public void Render(List<Material> materials, Matrix4 model)
     {
+        for (var index = 0; index < _meshes.Count; index++)
+        {
+            var mesh = _meshes[index];
+            materials[mesh.MaterialId].Use(model, clearTranslation);
+            mesh.Data?.Render();
+        }
+    }
+
+    public void Render(Material material, Matrix4 model)
+    {
         foreach (var mesh in _meshes)
         {
-            materials[mesh.MaterialId].Use(model);
+            material.Use(model, clearTranslation);
             mesh.Data?.Render();
-            materials[mesh.MaterialId].Cleanup();
         }
     }
 
@@ -31,13 +46,13 @@ public class Mesh
 
     public void Render(int index, List<Material> materials, Matrix4 model)
     {
-        materials[_meshes[index].MaterialId].Use(model);
+        materials[_meshes[index].MaterialId].Use(model, clearTranslation);
         _meshes[index].Data?.Render();
     }
 
     public void Render(int index, Material material, Matrix4 model)
     {
-        material.Use(model);
+        material.Use(model, clearTranslation);
         _meshes[index].Data?.Render();
     }
 

@@ -16,7 +16,6 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _modelTransform = Entity.GetComponent<Transform>() ?? null;
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials()!,
             _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity);
     }
@@ -32,6 +31,9 @@ public class ModelRenderer : Component
 
     public override void Update(bool isShadow)
     {
+        _modelTransform = Entity.GetComponent<Transform>() ?? null;
+        _mesh.Render(Globals.DepthMaterial,
+            _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity);
     }
 
     public override void UpdateMouse()

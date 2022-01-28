@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
+using gESilk.engine.misc;
 using OpenTK.Graphics.OpenGL4;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
@@ -62,4 +63,8 @@ public class CubemapTexture : Asset
     {
         GL.DeleteTexture(_id);
     }
+}
+
+internal class CubemapManager : AssetManager<Texture>
+{
 }

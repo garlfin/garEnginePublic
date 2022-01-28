@@ -32,6 +32,7 @@ public class Window
         nws.Size = new Vector2i(width, height);
         nws.Title = name;
         nws.IsEventDriven = false;
+        nws.WindowBorder = WindowBorder.Fixed;
         Globals.Window = new GameWindow(gws, nws);
     }
 
@@ -52,10 +53,12 @@ public class Window
     private protected virtual void OnClosing()
     {
         Console.WriteLine();
-        Console.WriteLine("Closing :)");
+        Console.WriteLine("Closing... Deleting assets");
         TextureManager.Delete();
         MeshManager.Delete();
         ShaderProgramManager.Delete();
+        CubemapManager.Delete();
+        Console.WriteLine("Done :)");
     }
 
     private protected virtual void OnRender(FrameEventArgs args)
@@ -63,15 +66,24 @@ public class Window
         CameraSystem.UpdateCamera();
         UpdateRender();
 
-        GL.Clear((ClearBufferMask)16640); // Precalculated enum for Color and Depth Buffer Bit
+        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        GL.ColorMask(false, false,false,false);
+        GL.DepthMask(true);
+        
+        ModelRendererSystem.Update(false);
+        
+        GL.ColorMask(true, true, true, true);
+        GL.DepthMask(false);
+        
         ModelRendererSystem.Update((float)args.Time);
-        Globals.Window.SwapBuffers();
-
+        
         if (!_alreadyClosed)
         {
             Console.Write("FPS: "+1.0/args.Time + new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));
             Console.SetCursorPosition(0, Console.CursorTop-1);
         }
+        
+        Globals.Window.SwapBuffers();
     }
 
     private protected virtual void OnUpdate(FrameEventArgs args)
@@ -93,21 +105,27 @@ public class Window
         
         Globals.Window.CursorGrabbed = true;
         
-        #if DEBUG
-        GlDebug.Init();
-        #endif
+        //#if DEBUG
+            GlDebug.Init();
+        //#endif
         
         var loader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
+        var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
+        skyboxLoader.ClearCameraTranslation(true);
 
         var program = new ShaderProgram("../../../default.shader");
 
-        var texture = new Texture("../../../sponza_column_a_diff.png", 1);
+        var texture = new Texture("../../../brick_albedo.tif", 1);
+        var normal = new Texture("../../../brick_normal.png", 2);
+        
         Material material = new(program);
         material.AddSetting(new TextureSetting("albedo", texture));
-
+        material.AddSetting(new TextureSetting("normalMap", normal));
+        material.AddSetting(new Vec3Setting("lightPos", new Vector3(10, 10, 10)));
+        
         var basePath = "../../../cubemap/";
 
-        var paths = new List<string>()
+        var paths = new List<string>
         {
             basePath + "negx.jpg", basePath + "negy.jpg", basePath + "negz.jpg", basePath + "posx.jpg",
             basePath + "posy.jpg", basePath + "posz.jpg"
@@ -116,15 +134,13 @@ public class Window
 
         var skyboxTexture = new CubemapTexture(paths, 0);
         var skyboxProgram = new ShaderProgram("../../../skybox.shader");
-        Material skyboxMaterial = new(skyboxProgram);
+        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal);
         
         skyboxMaterial.AddSetting(new CubemapSetting("skybox", skyboxTexture));
-        skyboxMaterial.AddSetting(new DepthFuncSetting("", DepthFunction.Lequal));
-        skyboxMaterial.ClearTranslation(true);
-        
+
         var skybox = new Entity();
         skybox.AddComponent(new MaterialComponent(loader, skyboxMaterial));
-        skybox.AddComponent(new ModelRenderer(loader));
+        skybox.AddComponent(new ModelRenderer(skyboxLoader));
 
         Entity entity = new();
         entity.AddComponent(new Transform());

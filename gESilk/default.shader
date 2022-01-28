@@ -8,26 +8,54 @@ layout(location = 3) in vec3 vTangent;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
+uniform vec3 lightPos;
 
 out vec3 FragPos;
 out vec2 fTexCoord;
+out mat3 TBN;
+out vec3 fLightPos;
 
 void main() {
     fTexCoord = vTexCoord;
-    FragPos = vec3(model * vec4(vPosition, 1.0));  
-    gl_Position = model * view * projection * vec4(vPosition, 1.0);
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    vec3 T = normalize(normalMatrix * vTangent);
+    vec3 N = normalize(normalMatrix * vNormal);
+    vec3 B = cross(N, T);
+    TBN = transpose(mat3(T, B, N));
+    FragPos = vec3(model * vec4(vPosition, 1.0));
+    gl_Position = projection * model * view * vec4(vPosition, 1.0);
+    fLightPos = normalize(lightPos);
 }
 
 #FRAGMENT
 #version 330
 
 uniform sampler2D albedo;
+uniform sampler2D normalMap;
+uniform vec3 viewPos;
 
 in vec3 FragPos;
 in vec2 fTexCoord;
+in mat3 TBN;
+in vec3 fLightPos;
 
 out vec4 FragColor;
 
 void main() {
-    FragColor = texture(albedo, fTexCoord);
+    //FragColor = texture(albedo, fTexCoord)*(max(0,dot(normal, lightPos))*0.5+0.5);
+
+    vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1,-1,1) + vec3(0,1,0);
+    normal = normalize((normal * 2.0 - 1.0)*TBN);
+    
+    vec3 viewDir = normalize(viewPos);
+    
+    float ambient = max(dot(fLightPos,normal),0.0)*0.5+0.5;
+
+    viewDir = normalize(-viewPos);
+    
+    float specFac = 1-0.75;
+    float spec = clamp(pow(max(0.0, dot(reflect(fLightPos, normal), viewDir)), pow(1+specFac, 8)),0,1)*specFac;
+    
+    vec4 color = texture(albedo, fTexCoord)*ambient+spec; //vec4(max(0,dot(normal, normalize(lightPos)))*0.5+0.5);
+    FragColor = pow(color, vec4(1/2.2));
 }

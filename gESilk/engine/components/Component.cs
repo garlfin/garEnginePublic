@@ -26,6 +26,11 @@ internal class BaseSystem<T> where T : Component
         Components.Add(component);
     }
 
+    public static void Update(bool isShadow)
+    {
+        foreach (var component in Components) component.Update(isShadow);
+    }
+
     public static void Update(float gameTime)
     {
         foreach (var component in Components) component.Update(gameTime);

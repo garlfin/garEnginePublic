@@ -29,6 +29,12 @@
       <None Update="default.shader">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="brick_albedo.tif">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="brick_normal.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
