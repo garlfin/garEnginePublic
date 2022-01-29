@@ -2,6 +2,7 @@
 using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
+using gESilk.engine.render;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
@@ -17,9 +18,14 @@ namespace gESilk.engine.window;
 public class Window
 {
     private bool _alreadyClosed;
+    private FrameBuffer _frameBuffer;
+    private RenderTexture _renderTexture;
+    private int _width, _height;
 
     public Window(int width, int height, string name)
     {
+        _width = width;
+        _height = height;
         var gws = GameWindowSettings.Default;
         // Setup
         gws.RenderFrequency = 144;
@@ -65,19 +71,21 @@ public class Window
     {
         CameraSystem.UpdateCamera();
         UpdateRender();
-
-        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        
+        _frameBuffer.Bind();
+        
         GL.ColorMask(false, false,false,false);
         GL.DepthMask(true);
-        
         ModelRendererSystem.Update(false);
-        CubemapMManager.Update(false);
-        
-        GL.ColorMask(true, true, true, true);
+        CubemapMManager.Update((float)args.Time);
+        GL.ColorMask(true, true,true,true);
         GL.DepthMask(false);
-        
         ModelRendererSystem.Update((float)args.Time);
         CubemapMManager.Update((float)args.Time);
+
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        FBRendererSystem.Update(0f);
         
         if (!_alreadyClosed)
         {
@@ -102,6 +110,11 @@ public class Window
 
     private protected virtual void OnLoad()
     {
+        
+        _frameBuffer = new FrameBuffer(_width, _height);
+        _renderTexture = new RenderTexture(_width, _height, 3);
+        _renderTexture.BindToFramebuffer(_frameBuffer, FramebufferAttachment.ColorAttachment0);
+
         GL.ClearColor(System.Drawing.Color.Aqua);
         GL.Enable(EnableCap.DepthTest);
         
@@ -115,8 +128,7 @@ public class Window
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
         skyboxLoader.IsSkybox(true);
         
-        var program = new ShaderProgram("../../../default.shader");
-
+        var program = new ShaderProgram("../../../shader/default.shader");
         var texture = new Texture("../../../brick_albedo.tif", 1);
         var normal = new Texture("../../../brick_normal.png", 2);
         
@@ -135,8 +147,8 @@ public class Window
 
 
         var skyboxTexture = new CubemapTexture(paths, 0);
-        var skyboxProgram = new ShaderProgram("../../../skybox.shader");
-        Material skyboxMaterial = new(skyboxProgram);
+        var skyboxProgram = new ShaderProgram("../../../shader/skybox.shader");
+        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal);
         
         skyboxMaterial.AddSetting(new CubemapSetting("skybox", skyboxTexture));
 
@@ -154,5 +166,14 @@ public class Window
         camera.AddComponent(new Transform());
         camera.AddComponent(new Camera(30f, 0.1f, 1000f, 0.3f));
         camera.GetComponent<Camera>()?.Set();
+        
+        var framebufferShader = new ShaderProgram("../../../shader/framebuffer.shader");
+
+        var renderPlane = new Entity();
+        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../plane.dae");
+        renderPlane.AddComponent(new MaterialComponent(renderPlaneMesh, new Material(framebufferShader, DepthFunction.Always)));
+        renderPlane.GetComponent<MaterialComponent>().GetMaterial(0).AddSetting(new RenderTexSetting("screenTexture", _renderTexture));
+        renderPlane.AddComponent(new FBRenderer(renderPlaneMesh));
+        
     }
 }

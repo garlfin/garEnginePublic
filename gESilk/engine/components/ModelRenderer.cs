@@ -14,10 +14,13 @@ public class ModelRenderer : Component
         _mesh = mesh;
     }
 
+    private Matrix4 model;
+
     public override void Update(float gameTime)
     {
-        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(),
-            _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity);
+        //_modelTransform = Entity.GetComponent<Transform>() ?? null;
+        //model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), model);
     }
 
     private Matrix4 CreateModelMatrix()
@@ -32,8 +35,8 @@ public class ModelRenderer : Component
     public override void Update(bool isShadow)
     {
         _modelTransform = Entity.GetComponent<Transform>() ?? null;
-        _mesh.Render(Globals.DepthMaterial,
-            _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity);
+        model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+        _mesh.Render(Globals.DepthMaterial, model);
     }
 
     public override void UpdateMouse()

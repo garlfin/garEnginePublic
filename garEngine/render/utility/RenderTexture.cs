@@ -30,7 +30,7 @@ public class RenderTexture : Asset
         return id;
     }
 
-    public void BindToFramebuffer(int framebufferObject ,FramebufferAttachment attachmentLevel)
+    public void BindToFramebuffer(int framebufferObject, FramebufferAttachment attachmentLevel)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebufferObject);
         GL.BindTexture(TextureTarget.Texture2D, id);

@@ -1,6 +1,10 @@
 ﻿using Assimp;
+using gESilk.engine.assimp;
+using gESilk.engine.components;
 using gESilk.engine.misc;
+using gESilk.engine.render;
 using gESilk.engine.render.materialSystem;
+using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
@@ -16,13 +20,13 @@ public static class Globals
     public static BasicCamera Camera;
     public static Matrix4 View, Projection;
     public static GameWindow Window;
-    public static Material DepthMaterial;
+    public static readonly Material DepthMaterial;
 
     static Globals()
     {
         Assimp = new AssimpContext();
         Camera = new BasicCamera(Vector3.Zero, (float)1280 / 720);
-        ShaderProgram depthProgram = new ShaderProgram("../../../depth.shader");
+        ShaderProgram depthProgram = new ShaderProgram("../../../shader/depth.shader");
         DepthMaterial = new Material(depthProgram, DepthFunction.Less);
     }
 
