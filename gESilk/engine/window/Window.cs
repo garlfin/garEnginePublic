@@ -1,4 +1,5 @@
-﻿using static gESilk.engine.Globals;
+﻿using System.Diagnostics;
+using static gESilk.engine.Globals;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
@@ -64,6 +65,8 @@ public class Window
         MeshManager.Delete();
         ShaderProgramManager.Delete();
         CubemapManager.Delete();
+        _frameBuffer.Delete();
+        _renderTexture.Delete();
         Console.WriteLine("Done :)");
     }
 
@@ -73,16 +76,9 @@ public class Window
         UpdateRender();
         
         _frameBuffer.Bind();
-        
-        GL.ColorMask(false, false,false,false);
-        GL.DepthMask(true);
-        ModelRendererSystem.Update(false);
-        CubemapMManager.Update((float)args.Time);
-        GL.ColorMask(true, true,true,true);
-        GL.DepthMask(false);
+        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
         ModelRendererSystem.Update((float)args.Time);
         CubemapMManager.Update((float)args.Time);
-
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
         FBRendererSystem.Update(0f);
@@ -119,12 +115,10 @@ public class Window
         GL.Enable(EnableCap.DepthTest);
         
         Globals.Window.CursorGrabbed = true;
-        
-        //#if DEBUG
-            GlDebug.Init();
-        //#endif
-        
-        var loader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
+
+        if (Debugger.IsAttached)  GlDebug.Init();
+
+        var loader = AssimpLoader.GetMeshFromFile("../../../sphere.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
         skyboxLoader.IsSkybox(true);
         
@@ -136,7 +130,7 @@ public class Window
         material.AddSetting(new TextureSetting("albedo", texture));
         material.AddSetting(new TextureSetting("normalMap", normal));
         material.AddSetting(new Vec3Setting("lightPos", new Vector3(10, 10, 10)));
-        
+
         var basePath = "../../../cubemap/";
 
         var paths = new List<string>
@@ -148,7 +142,9 @@ public class Window
 
         var skyboxTexture = new CubemapTexture(paths, 0);
         var skyboxProgram = new ShaderProgram("../../../shader/skybox.shader");
+        material.AddSetting(new CubemapSetting("skyBox", skyboxTexture));
         Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal);
+        
         
         skyboxMaterial.AddSetting(new CubemapSetting("skybox", skyboxTexture));
 
@@ -158,7 +154,6 @@ public class Window
 
         Entity entity = new();
         entity.AddComponent(new Transform());
-        entity.GetComponent<Transform>()!.Scale = new Vector3(20);
         entity.AddComponent(new MaterialComponent(loader, material));
         entity.AddComponent(new ModelRenderer(loader));
 

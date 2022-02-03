@@ -1,5 +1,6 @@
 ﻿using gESilk.engine.assimp;
 using gESilk.engine.render.materialSystem;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.render.assets;
@@ -9,6 +10,8 @@ public class Mesh
     private readonly List<MeshData> _meshes = new();
     private int _materialCount;
     private bool _isSkybox;
+
+
 
     public void IsSkybox(bool value)
     {
@@ -25,8 +28,9 @@ public class Mesh
         }
     }
 
-    public void Render(Material material, Matrix4 model)
+    public void Render(Material material, Matrix4 model, DepthFunction? function = null)
     {
+
         foreach (var mesh in _meshes)
         {
             material.Use(model, _isSkybox);
@@ -44,14 +48,16 @@ public class Mesh
         _materialCount = length;
     }
 
-    public void Render(int index, List<Material> materials, Matrix4 model)
+    public void Render(int index, List<Material> materials, Matrix4 model, DepthFunction? function = null)
     {
+      
         materials[_meshes[index].MaterialId].Use(model, _isSkybox);
         _meshes[index].Data?.Render();
     }
 
-    public void Render(int index, Material material, Matrix4 model)
+    public void Render(int index, Material material, Matrix4 model, DepthFunction? function = null)
     {
+        
         material.Use(model, _isSkybox);
         _meshes[index].Data?.Render();
     }

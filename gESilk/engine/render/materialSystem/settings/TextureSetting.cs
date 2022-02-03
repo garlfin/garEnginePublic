@@ -17,6 +17,6 @@ public class TextureSetting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
-        GL.ProgramUniform1(program.Get(), program.GetUniform(UniformName), _value.Use());
+        program.SetUniform(UniformName, _value.Use());
     }
 }

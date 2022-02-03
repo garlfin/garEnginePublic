@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.render.assets;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
@@ -6,7 +7,7 @@ namespace gESilk.engine.components;
 public class ModelRenderer : Component
 {
     private readonly Mesh _mesh;
-    private Transform _modelTransform;
+    private Transform? _modelTransform;
 
     public ModelRenderer(Mesh mesh)
     {
@@ -18,8 +19,8 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        //_modelTransform = Entity.GetComponent<Transform>() ?? null;
-        //model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+        _modelTransform = Entity?.GetComponent<Transform>();
+        model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), model);
     }
 
@@ -34,8 +35,6 @@ public class ModelRenderer : Component
 
     public override void Update(bool isShadow)
     {
-        _modelTransform = Entity.GetComponent<Transform>() ?? null;
-        model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
         _mesh.Render(Globals.DepthMaterial, model);
     }
 

@@ -11,7 +11,8 @@ public class Material
     private readonly List<ShaderSetting> _settings = new();
     private readonly DepthFunction _function;
 
-    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Equal)
+
+    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less)
     {
         _program = program;
         _function = function;
@@ -22,9 +23,9 @@ public class Material
     {
         GL.DepthFunc(_function);
         _program.Use();
+        _program.SetUniform("model", model);
         _program.SetUniform("view", clearTranslation ? View.ClearTranslation() : View);
         _program.SetUniform("projection", Projection);
-        _program.SetUniform("model", model);
         _program.SetUniform("viewPos", Camera.Position);
         for (var i = 0; i < _settings.Count; i++)
         {

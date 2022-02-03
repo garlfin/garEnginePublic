@@ -60,7 +60,7 @@ public class ShaderProgram : Asset
     {
         var uniform = GetUniform(name);
         if (uniform == -1) return;
-        GL.UniformMatrix4(uniform, false, ref value);
+        GL.UniformMatrix4(uniform, true, ref value);
     }
 
     public void SetUniform(string name, Vector3 value)

@@ -27,7 +27,7 @@ public static class Globals
         Assimp = new AssimpContext();
         Camera = new BasicCamera(Vector3.Zero, (float)1280 / 720);
         ShaderProgram depthProgram = new ShaderProgram("../../../shader/depth.shader");
-        DepthMaterial = new Material(depthProgram, DepthFunction.Less);
+        DepthMaterial = new Material(depthProgram);
     }
 
     public static void UpdateRender()
