@@ -18,21 +18,34 @@ public static class Globals
 {
     public static AssimpContext Assimp;
     public static BasicCamera Camera;
+    public static BasicCamera ShadowCamera;
     public static Matrix4 View, Projection;
     public static GameWindow Window;
     public static readonly Material DepthMaterial;
+    
 
     static Globals()
     {
         Assimp = new AssimpContext();
         Camera = new BasicCamera(Vector3.Zero, (float)1280 / 720);
+        ShadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f);
+        ShadowCamera.DepthFar = 100f;
         ShaderProgram depthProgram = new ShaderProgram("../../../shader/depth.shader");
         DepthMaterial = new Material(depthProgram);
     }
 
-    public static void UpdateRender()
+    public static void UpdateRender(bool isShadow = false)
     {
-        View = Camera.GetViewMatrix();
-        Projection = Camera.GetProjectionMatrix();
+        if (!isShadow)
+        {
+            View = Camera.GetViewMatrix();
+            Projection = Camera.GetProjectionMatrix();
+        }
+        else
+        {
+            View =  ShadowCamera.GetViewMatrix(new Vector3(0,0,0));
+            Projection = ShadowCamera.GetOrthoProjectionMatrix();
+        }
+
     }
 }

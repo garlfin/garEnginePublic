@@ -14,9 +14,7 @@ public class FBRenderer : Component
         FBRendererSystem.Register(this);
         _mesh = mesh;
     }
-
-    private Matrix4 model;
-
+    
     public override void Update(float gameTime)
     {
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), Matrix4.Identity);

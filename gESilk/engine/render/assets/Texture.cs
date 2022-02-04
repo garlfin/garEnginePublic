@@ -54,6 +54,6 @@ public class Texture : Asset
     }
 }
 
-internal class TextureManager : AssetManager<Texture>
+class TextureManager : AssetManager<Texture>
 {
 }

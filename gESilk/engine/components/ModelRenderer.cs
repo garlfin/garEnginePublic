@@ -24,17 +24,29 @@ public class ModelRenderer : Component
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), model);
     }
 
+    private float DegreesToRadians(float degrees)
+    {
+        return degrees * (  3.1415926535897931f / 180f);
+    }
+    
     private Matrix4 CreateModelMatrix()
     {
-        return Matrix4.CreateRotationX(_modelTransform.Rotation.X) *
-               Matrix4.CreateRotationY(_modelTransform.Rotation.Y) *
-               Matrix4.CreateRotationZ(_modelTransform.Rotation.Z) * Matrix4.CreateScale(_modelTransform.Scale) *
-               Matrix4.CreateTranslation(_modelTransform.Location);
+        if (_modelTransform != null)
+            return Matrix4.CreateRotationX(DegreesToRadians(_modelTransform.Rotation.X)) *
+                   Matrix4.CreateRotationY(DegreesToRadians(_modelTransform.Rotation.Y)) *
+                   Matrix4.CreateRotationZ(DegreesToRadians(_modelTransform.Rotation.Z)) * 
+                   Matrix4.CreateScale(_modelTransform.Scale) * Matrix4.CreateTranslation(_modelTransform.Location);
+        return Matrix4.Identity;
     }
 
 
     public override void Update(bool isShadow)
     {
+        if (isShadow)
+        {
+            _modelTransform = Entity?.GetComponent<Transform>();
+            model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+        }
         _mesh.Render(Globals.DepthMaterial, model);
     }
 

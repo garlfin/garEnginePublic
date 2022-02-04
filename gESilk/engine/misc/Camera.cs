@@ -90,15 +90,20 @@ public class BasicCamera
     }
 
     // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
-    public Matrix4 GetViewMatrix()
+    public Matrix4 GetViewMatrix(Vector3? lookPos = null)
     {
-        return Matrix4.LookAt(Position, Position + _front, _up);
+        return Matrix4.LookAt(Position,lookPos ?? Position + _front, _up);
     }
 
     // Get the projection matrix using the same method we have used up until this point
     public Matrix4 GetProjectionMatrix()
     {
         return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, DepthNear, DepthFar);
+    }
+
+    public Matrix4 GetOrthoProjectionMatrix()
+    {
+        return Matrix4.CreateOrthographicOffCenter(-10f, 10f, -10f, 10f, DepthNear, DepthFar);
     }
 
     // This function is going to update the direction vertices using some of the math learned in the web tutorials.

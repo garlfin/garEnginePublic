@@ -9,17 +9,20 @@ public class RenderTexture : Asset
     private int _id;
     private readonly int _slot;
 
-    public RenderTexture(int width, int height, int slot)
+    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgb, PixelFormat format = PixelFormat.Rgb, PixelType byteType = PixelType.UnsignedByte)
     {
         _slot = slot;
         //RenderTexManager.Register(this);
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero);
+        GL.TexImage2D(TextureTarget.Texture2D, 0, type, width, height, 0, format, byteType, IntPtr.Zero);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+        
+        float[] borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
     }
 
     public override void Delete()
@@ -35,10 +38,18 @@ public class RenderTexture : Asset
         return _slot;
     }
 
-    public void BindToFramebuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel)
+    public void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
         GL.BindTexture(TextureTarget.Texture2D, _id);
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , attachmentLevel, TextureTarget.Texture2D, _id, 0);
+    }
+    public void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel)
+    {
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer._fbo);
+        GL.BindTexture(TextureTarget.Texture2D, _id);
+        GL.DrawBuffer(DrawBufferMode.None);
+        GL.ReadBuffer(ReadBufferMode.None);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, TextureTarget.Texture2D, _id, 0);
     }
 }

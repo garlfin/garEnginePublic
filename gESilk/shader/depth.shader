@@ -7,14 +7,12 @@ uniform mat4 view;
 uniform mat4 model;
 
 void main() {
-    gl_Position = projection * model * view * vec4(vPosition, 1.0);
+    gl_Position = vec4(vPosition, 1.0) * model * view * projection;
 }
 
     #FRAGMENT
     #version 330
 
-out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(1);
 }

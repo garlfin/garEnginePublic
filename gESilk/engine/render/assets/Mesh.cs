@@ -30,7 +30,7 @@ public class Mesh
 
     public void Render(Material material, Matrix4 model, DepthFunction? function = null)
     {
-
+        GL.DepthFunc(function ?? DepthFunction.Less);
         foreach (var mesh in _meshes)
         {
             material.Use(model, _isSkybox);

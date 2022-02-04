@@ -10,7 +10,7 @@ uniform mat4 model;
 void main()
 {
     TexCoords = aPos;
-    vec4 pos = model * vec4(aPos, 1.0) * view * projection;
+    vec4 pos = vec4(aPos, 1.0) * model * view * projection;
     gl_Position = pos.xyww;
 }
     
@@ -25,5 +25,5 @@ uniform samplerCube skybox;
 
 void main()
 {
-    FragColor = texture(skybox, TexCoords);
+    FragColor = pow(texture(skybox, TexCoords), vec4(1/2.2));
 }
