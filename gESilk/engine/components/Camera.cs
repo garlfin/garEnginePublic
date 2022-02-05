@@ -9,7 +9,7 @@ public class Camera : Component
     public float ClipStart { get; set; }
     public float ClipEnd { get; set; }
     
-    private readonly float _cameraSpeed = 1;
+    private readonly float _cameraSpeed = 4;
     
     private Vector2 _lastPos = Vector2.Zero;
     

@@ -17,7 +17,7 @@ public class Material
         _program = program;
         _function = function;
     }
-    
+
 
     public void Use(Matrix4 model, bool clearTranslation)
     {
@@ -27,6 +27,9 @@ public class Material
         _program.SetUniform("view", clearTranslation ? View.ClearTranslation() : View);
         _program.SetUniform("projection", Projection);
         _program.SetUniform("viewPos", Camera.Position);
+        _program.SetUniform("model", model);
+        _program.SetUniform("lightProjection", ShadowProjection);
+        _program.SetUniform("lightView", ShadowView);
         for (var i = 0; i < _settings.Count; i++)
         {
             var setting = _settings[i];

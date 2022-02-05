@@ -12,6 +12,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
 using Texture = gESilk.engine.render.assets.Texture;
 
 namespace gESilk.engine.window;
@@ -23,6 +24,8 @@ public sealed class Window
     private FrameBuffer _shadowMap;
     private RenderTexture _renderTexture, _shadowTex;
     private readonly int _width, _height;
+    private double _time;
+    Entity entity;
 
     public Window(int width, int height, string name)
     {
@@ -66,16 +69,18 @@ public sealed class Window
         MeshManager.Delete();
         ShaderProgramManager.Delete();
         CubemapManager.Delete();
-        _renderBuffer.Delete();
-        _renderTexture.Delete();
+        RenderBufferManager.Delete();
+        FrameBufferManager.Delete();
+        RenderTexManager.Delete();
         Console.WriteLine("Done :)");
     }
 
     private void OnRender(FrameEventArgs args)
     {
+        _time += args.Time;
         CameraSystem.UpdateCamera();
         UpdateRender(true);
-        _shadowMap.Bind();
+        _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(true);
         _renderBuffer.Bind();
         UpdateRender();
@@ -83,7 +88,7 @@ public sealed class Window
         CubemapMManager.Update((float)args.Time);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         FBRendererSystem.Update(0f);
-        
+        entity.GetComponent<Transform>().Location = (0f, (float) (Math.Sin(_time)/2.0+1.0) , 0f);
         if (!_alreadyClosed)
         {
             Console.Write("FPS: "+1.0/args.Time + new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));
@@ -114,6 +119,7 @@ public sealed class Window
 
         GL.ClearColor(System.Drawing.Color.White);
         GL.Enable(EnableCap.DepthTest);
+        GL.Enable(EnableCap.CullFace);
         
         Globals.Window.CursorGrabbed = true;
 
@@ -152,8 +158,8 @@ public sealed class Window
         var skybox = new Entity();
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
         skybox.AddComponent(new CubemapRenderer(skyboxLoader));
-
-        Entity entity = new();
+        
+        entity = new Entity();
         entity.AddComponent(new Transform());
         entity.AddComponent(new MaterialComponent(loader, material));
         entity.AddComponent(new ModelRenderer(loader));
@@ -181,8 +187,11 @@ public sealed class Window
         regularPlane.GetComponent<Transform>().Rotation = new Vector3(-90f, 0, 0);
         regularPlane.GetComponent<Transform>().Scale = new Vector3(10);
 
-            _shadowMap = new FrameBuffer(1024, 1024); 
-        _shadowTex = new RenderTexture(1024, 1024, 4, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Float);
+        int shadowSize = 1024 * 3;
+        _shadowMap = new FrameBuffer(shadowSize, shadowSize); 
+        _shadowTex = new RenderTexture(shadowSize, shadowSize, 4, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Float, true);
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment);
+        material.AddSetting(new RenderTexSetting("shadowMap", _shadowTex));
+
     }
 }

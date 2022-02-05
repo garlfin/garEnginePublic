@@ -1,4 +1,5 @@
-﻿using gESilk.engine.render.assets;
+﻿using gESilk.engine.misc;
+using gESilk.engine.render.assets;
 using OpenTK.Graphics.OpenGL4;
 
 
@@ -9,18 +10,23 @@ public class RenderTexture : Asset
     private int _id;
     private readonly int _slot;
 
-    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgb, PixelFormat format = PixelFormat.Rgb, PixelType byteType = PixelType.UnsignedByte)
+    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgb, PixelFormat format = PixelFormat.Rgb, PixelType byteType = PixelType.UnsignedByte, bool shadow = false)
     {
         _slot = slot;
-        //RenderTexManager.Register(this);
+        RenderTexManager.Register(this);
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
         GL.TexImage2D(TextureTarget.Texture2D, 0, type, width, height, 0, format, byteType, IntPtr.Zero);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-        
+        if (shadow)
+        {
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode,
+                (int)TextureCompareMode.CompareRefToTexture);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)All.Less);
+        }
         float[] borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
     }
@@ -52,4 +58,9 @@ public class RenderTexture : Asset
         GL.ReadBuffer(ReadBufferMode.None);
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, TextureTarget.Texture2D, _id, 0);
     }
+}
+
+class RenderTexManager : AssetManager<RenderTexture>
+{
+    
 }

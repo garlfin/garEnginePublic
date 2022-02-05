@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using OpenTK.Graphics.OpenGL4;
 
@@ -11,6 +12,7 @@ public class RenderBuffer : Asset
 
     public RenderBuffer(int width, int height)
     {
+        RenderBufferManager.Register(this);
         _width = width;
         _height = height;
         _fbo = GL.GenFramebuffer();
@@ -58,4 +60,9 @@ public class RenderBuffer : Asset
         GL.DeleteFramebuffer(_fbo);
         GL.DeleteRenderbuffer(_rbo);
     }
+}
+
+class RenderBufferManager : AssetManager<RenderBuffer>
+{
+    
 }
