@@ -101,9 +101,9 @@ public class BasicCamera
         return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, DepthNear, DepthFar);
     }
 
-    public Matrix4 GetOrthoProjectionMatrix()
+    public Matrix4 GetOrthoProjectionMatrix(float size)
     {
-        return Matrix4.CreateOrthographicOffCenter(-32f, 32f, -32f, 32f, DepthNear, DepthFar);
+        return Matrix4.CreateOrthographicOffCenter(-size, size, -size, size, DepthNear, DepthFar);
     }
 
     // This function is going to update the direction vertices using some of the math learned in the web tutorials.

@@ -59,6 +59,11 @@ float random(vec3 seed, int i){
 const int pcfCount = 2;
 const float totalTexels = (pcfCount * 2.0+1.0)*(pcfCount*2.0+1.0);
 
+float fresnelSchlick(float cosTheta)
+{
+    return pow(1.0 - cosTheta, 5.0);
+}
+
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -94,10 +99,10 @@ void main() {
     
     float specFac = 1-0.8;
     float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)),0,1)*specFac;
-
-    vec4 color = texture(albedo, fTexCoord)*ambient+spec;
-    //color = texture(skyBox, reflect(viewDir, normal));
-    FragColor = color;
+    vec4 color = texture(albedo, fTexCoord)+spec;
+    color = mix(color, textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)),specFac*clamp(fresnelSchlick(dot(normal, normalize(viewPos))),0,1));
+    
+    FragColor = color*ambient;
     FragLoc = FragPos;
     FragNormal = normal;
 }

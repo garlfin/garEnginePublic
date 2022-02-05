@@ -146,7 +146,7 @@ public sealed class Window
         Material material = new(program);
         material.AddSetting(new TextureSetting("albedo", texture));
         material.AddSetting(new TextureSetting("normalMap", normal));
-        material.AddSetting(new Vec3Setting("lightPos", ref SunPos));
+        material.AddSetting(new Vec3Setting("lightPos", new Vector3(11.8569f, 26.5239f, 5.77871f)));
 
         var basePath = "../../../cubemap/";
 
