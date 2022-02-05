@@ -38,7 +38,9 @@ public static class Globals
     {
         if (isShadow)
         {
-            View = ShadowCamera.GetViewMatrix(new Vector3(0, 0, 0));
+            var currentCameraPos = CameraSystem.CurrentCamera!.GetComponent<Transform>()!.Location;
+            ShadowCamera.Position = new Vector3(10, 10, 10) + currentCameraPos;
+            View = ShadowCamera.GetViewMatrix(currentCameraPos);
             Projection = ShadowCamera.GetOrthoProjectionMatrix();
             ShadowProjection = Projection;
             ShadowView = View;

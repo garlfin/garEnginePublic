@@ -150,7 +150,7 @@ public sealed class Window
         var skyboxTexture = new CubemapTexture(paths, 0);
         var skyboxProgram = new ShaderProgram("../../../shader/skybox.shader");
         material.AddSetting(new CubemapSetting("skyBox", skyboxTexture));
-        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal);
+        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
         
         
         skyboxMaterial.AddSetting(new CubemapSetting("skybox", skyboxTexture));

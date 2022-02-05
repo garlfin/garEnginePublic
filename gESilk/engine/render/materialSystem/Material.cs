@@ -10,12 +10,19 @@ public class Material
     private readonly ShaderProgram _program;
     private readonly List<ShaderSetting> _settings = new();
     private readonly DepthFunction _function;
+    private CullFaceMode _cullFaceMode;
 
 
-    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less)
+    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less, CullFaceMode cullFaceMode = CullFaceMode.Back)
     {
         _program = program;
         _function = function;
+        _cullFaceMode = cullFaceMode;
+    }
+
+    public void SetCullMode(CullFaceMode mode)
+    {
+        _cullFaceMode = mode;
     }
 
 
@@ -23,6 +30,7 @@ public class Material
     {
         GL.DepthFunc(_function);
         _program.Use();
+        GL.CullFace(_cullFaceMode);
         _program.SetUniform("model", model);
         _program.SetUniform("view", clearTranslation ? View.ClearTranslation() : View);
         _program.SetUniform("projection", Projection);
