@@ -112,7 +112,6 @@ public sealed class Window
 
     private void OnLoad()
     {
-        
         _renderBuffer = new RenderBuffer(_width, _height);
         _renderTexture = new RenderTexture(_width, _height, 3);
         _renderTexture.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0);
@@ -120,6 +119,7 @@ public sealed class Window
         GL.ClearColor(System.Drawing.Color.White);
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.TextureCubeMapSeamless);
         
         Globals.Window.CursorGrabbed = true;
 
@@ -129,7 +129,7 @@ public sealed class Window
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
         skyboxLoader.IsSkybox(true);
         
-        var program = new ShaderProgram("../../../shader/default.shader");
+        var program = new ShaderProgram("../../../resources/shader/default.shader");
         var texture = new Texture("../../../brick_albedo.tif", 1);
         var normal = new Texture("../../../brick_normal.png", 2);
         
@@ -148,7 +148,7 @@ public sealed class Window
 
 
         var skyboxTexture = new CubemapTexture(paths, 0);
-        var skyboxProgram = new ShaderProgram("../../../shader/skybox.shader");
+        var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
         material.AddSetting(new CubemapSetting("skyBox", skyboxTexture));
         Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
         
@@ -171,7 +171,7 @@ public sealed class Window
         camera.AddComponent(new Camera(30f, 0.1f, 1000f, 0.3f));
         camera.GetComponent<Camera>()?.Set();
         
-        var framebufferShader = new ShaderProgram("../../../shader/framebuffer.shader");
+        var framebufferShader = new ShaderProgram("../../../resources/shader/framebuffer.shader");
 
         var renderPlane = new Entity();
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../plane.dae");
@@ -187,7 +187,7 @@ public sealed class Window
         regularPlane.GetComponent<Transform>().Rotation = new Vector3(-90f, 0, 0);
         regularPlane.GetComponent<Transform>().Scale = new Vector3(10);
 
-        int shadowSize = 1024 * 3;
+        int shadowSize = 1024 * 2;
         _shadowMap = new FrameBuffer(shadowSize, shadowSize); 
         _shadowTex = new RenderTexture(shadowSize, shadowSize, 4, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Float, true);
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment);

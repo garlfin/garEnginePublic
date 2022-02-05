@@ -28,9 +28,11 @@ public static class Globals
     {
         Assimp = new AssimpContext();
         Camera = new BasicCamera(Vector3.Zero, (float)1280 / 720);
-        ShadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f);
-        ShadowCamera.DepthFar = 50f;
-        ShaderProgram depthProgram = new ShaderProgram("../../../shader/depth.shader");
+        ShadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f)
+        {
+            DepthFar = 50f
+        };
+        ShaderProgram depthProgram = new ShaderProgram("../../../resources/shader/depth.shader");
         DepthMaterial = new Material(depthProgram);
     }
 

@@ -22,5 +22,5 @@ uniform sampler2D screenTexture;
 
 void main()
 {
-    FragColor = pow(texture(screenTexture, texCoords), vec4(1/1.8));
+    FragColor = pow(texture(screenTexture, texCoords), vec4(1/2.2));
 }

@@ -74,6 +74,5 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\linux-
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\brick_albedo.tif
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\brick_normal.png
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\plane.dae
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\shader\default.shader
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\shader\skybox.shader
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\sphere.obj
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\teapot.obj

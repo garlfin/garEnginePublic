@@ -103,7 +103,7 @@ public class BasicCamera
 
     public Matrix4 GetOrthoProjectionMatrix()
     {
-        return Matrix4.CreateOrthographicOffCenter(-25f, 25f, -25f, 25f, DepthNear, DepthFar);
+        return Matrix4.CreateOrthographicOffCenter(-32f, 32f, -32f, 32f, DepthNear, DepthFar);
     }
 
     // This function is going to update the direction vertices using some of the math learned in the web tutorials.
