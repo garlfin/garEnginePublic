@@ -22,7 +22,7 @@ public sealed class Window
     private bool _alreadyClosed;
     private RenderBuffer _renderBuffer;
     private FrameBuffer _shadowMap;
-    private RenderTexture _renderTexture, _shadowTex;
+    private RenderTexture _renderTexture, _shadowTex, _renderNormal, _renderPos;
     private readonly int _width, _height;
     private double _time;
     Entity entity;
@@ -77,6 +77,10 @@ public sealed class Window
 
     private void OnRender(FrameEventArgs args)
     {
+        if (_time > 60)
+        {
+            _time = 0;
+        }
         _time += args.Time;
         CameraSystem.UpdateCamera();
         UpdateRender(true);
@@ -88,7 +92,7 @@ public sealed class Window
         CubemapMManager.Update((float)args.Time);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         FBRendererSystem.Update(0f);
-        entity.GetComponent<Transform>().Location = (0f, (float) (Math.Sin(_time)/2.0+1.0) , 0f);
+        entity.GetComponent<Transform>().Rotation = (0f, (float) _time*30 , 0f);
         if (!_alreadyClosed)
         {
             Console.Write("FPS: "+1.0/args.Time + new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));
@@ -112,20 +116,26 @@ public sealed class Window
 
     private void OnLoad()
     {
+        
+        if (Debugger.IsAttached)  GlDebug.Init();
+        
         _renderBuffer = new RenderBuffer(_width, _height);
-        _renderTexture = new RenderTexture(_width, _height, 3);
+        _renderTexture = new RenderTexture(_width, _height, 1);
+        _renderNormal = new RenderTexture(_width, _height, 2);
+        _renderPos = new RenderTexture(_width, _height, 3);
         _renderTexture.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0);
-
+        _renderNormal.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment1);
+        _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
+        
         GL.ClearColor(System.Drawing.Color.White);
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.TextureCubeMapSeamless);
         
         Globals.Window.CursorGrabbed = true;
+        
 
-        if (Debugger.IsAttached)  GlDebug.Init();
-
-        var loader = AssimpLoader.GetMeshFromFile("../../../sphere.obj");
+        var loader = AssimpLoader.GetMeshFromFile("../../../hut.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
         skyboxLoader.IsSkybox(true);
         
@@ -136,7 +146,7 @@ public sealed class Window
         Material material = new(program);
         material.AddSetting(new TextureSetting("albedo", texture));
         material.AddSetting(new TextureSetting("normalMap", normal));
-        material.AddSetting(new Vec3Setting("lightPos", new Vector3(10, 10, 10)));
+        material.AddSetting(new Vec3Setting("lightPos", ref SunPos));
 
         var basePath = "../../../cubemap/";
 
@@ -164,7 +174,7 @@ public sealed class Window
         entity.AddComponent(new MaterialComponent(loader, material));
         entity.AddComponent(new ModelRenderer(loader));
         entity.AddComponent(new Transform());
-        entity.GetComponent<Transform>().Location = new Vector3(0, 2, 0);
+        
 
         var camera = new Entity();
         camera.AddComponent(new Transform());
@@ -177,21 +187,24 @@ public sealed class Window
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../plane.dae");
         renderPlane.AddComponent(new MaterialComponent(renderPlaneMesh, new Material(framebufferShader, DepthFunction.Always)));
         renderPlane.GetComponent<MaterialComponent>()?.GetMaterial(0).AddSetting(new RenderTexSetting("screenTexture", _renderTexture));
+        renderPlane.GetComponent<MaterialComponent>()?.GetMaterial(0).AddSetting(new RenderTexSetting("screenTextureNormal", _renderNormal));
+        renderPlane.GetComponent<MaterialComponent>()?.GetMaterial(0).AddSetting(new RenderTexSetting("screenTexturePos", _renderPos));
         renderPlane.AddComponent(new FBRenderer(renderPlaneMesh));
 
         var regularPlane = new Entity();
         regularPlane.AddComponent(new MaterialComponent(renderPlaneMesh, material));
         regularPlane.AddComponent(new ModelRenderer(renderPlaneMesh));
         regularPlane.AddComponent(new Transform());
-        regularPlane.GetComponent<Transform>().Location = new Vector3(0, -1, 0);
         regularPlane.GetComponent<Transform>().Rotation = new Vector3(-90f, 0, 0);
         regularPlane.GetComponent<Transform>().Scale = new Vector3(10);
 
-        int shadowSize = 1024 * 2;
+        int shadowSize = 1024 * 4;
         _shadowMap = new FrameBuffer(shadowSize, shadowSize); 
         _shadowTex = new RenderTexture(shadowSize, shadowSize, 4, PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Float, true);
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment);
         material.AddSetting(new RenderTexSetting("shadowMap", _shadowTex));
+
+        SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
 
     }
 }

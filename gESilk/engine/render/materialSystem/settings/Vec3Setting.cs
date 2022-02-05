@@ -12,6 +12,12 @@ public class Vec3Setting : ShaderSetting
         UniformName = name;
         _value = value;
     }
+    
+    public Vec3Setting(string name, ref Vector3 value) : base(name)
+    {
+        UniformName = name;
+        _value = value;
+    }
 
     public override void Use(ShaderProgram program)
     {

@@ -15,6 +15,7 @@ public class CubemapTexture : Asset
 
     public CubemapTexture(IReadOnlyList<string> path, int slot)
     {
+        CubemapManager.Register(this);
         _slot = slot;
         var targets = new List<TextureTarget>()
         {
@@ -65,6 +66,6 @@ public class CubemapTexture : Asset
     }
 }
 
-internal class CubemapManager : AssetManager<Texture>
+internal class CubemapManager : AssetManager<CubemapTexture>
 {
 }

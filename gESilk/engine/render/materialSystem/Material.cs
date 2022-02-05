@@ -11,6 +11,7 @@ public class Material
     private readonly List<ShaderSetting> _settings = new();
     private readonly DepthFunction _function;
     private CullFaceMode _cullFaceMode;
+    private bool _isFrameBuffer;
 
 
     public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less, CullFaceMode cullFaceMode = CullFaceMode.Back)
@@ -20,6 +21,11 @@ public class Material
         _cullFaceMode = cullFaceMode;
     }
 
+    public void SetFrameBuffer(bool isBuffer)
+    {
+        _isFrameBuffer = isBuffer;
+    }
+    
     public void SetCullMode(CullFaceMode mode)
     {
         _cullFaceMode = mode;
@@ -33,7 +39,7 @@ public class Material
         GL.CullFace(_cullFaceMode);
         _program.SetUniform("model", model);
         _program.SetUniform("view", clearTranslation ? View.ClearTranslation() : View);
-        _program.SetUniform("projection", Projection);
+        _program.SetUniform("projection" , Projection);
         _program.SetUniform("viewPos", Camera.Position);
         _program.SetUniform("model", model);
         _program.SetUniform("lightProjection", ShadowProjection);

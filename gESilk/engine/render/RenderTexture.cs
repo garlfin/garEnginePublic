@@ -21,13 +21,11 @@ public class RenderTexture : Asset
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
-        if (shadow)
-        {
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode,
-                (int)TextureCompareMode.CompareRefToTexture);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)All.Less);
-        }
-        float[] borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        if (!shadow) return;
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode,
+            (int)TextureCompareMode.CompareRefToTexture);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)All.Less);
+        float[] borderColor = {1f, 1f, 1f, 1f};
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
     }
 

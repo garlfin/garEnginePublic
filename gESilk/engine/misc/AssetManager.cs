@@ -4,7 +4,7 @@ namespace gESilk.engine.misc;
 
 public class AssetManager<T> where T : Asset
 {
-    private static readonly List<T> Components = new();
+    private static List<T> Components = new();
 
     public static void Register(T asset)
     {
@@ -14,5 +14,17 @@ public class AssetManager<T> where T : Asset
     public static void Delete()
     {
         foreach (var component in Components) component.Delete();
+    }
+
+    public static void Remove(T asset)
+    {
+        for (var index = 0; index < Components.Count; index++)
+        {
+            var item = Components[index];
+            if (asset == item)
+            {
+                Components.RemoveAt(index);
+            }
+        }
     }
 }

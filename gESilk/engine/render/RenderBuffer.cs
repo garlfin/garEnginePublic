@@ -24,11 +24,12 @@ public class RenderBuffer : Asset
             });
 
         _rbo = GL.GenRenderbuffer();
+        GL.DrawBuffers(3, new [] { DrawBuffersEnum.ColorAttachment0 , DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2});
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _rbo);
         GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, width, height);
         GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment,
             RenderbufferTarget.Renderbuffer, _rbo);
-
+        GL.DrawBuffers(3, new [] { DrawBuffersEnum.ColorAttachment0 , DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2});
         var fboStatus = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
         if (fboStatus != FramebufferErrorCode.FramebufferComplete)
         {

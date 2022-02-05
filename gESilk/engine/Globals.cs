@@ -22,6 +22,7 @@ public static class Globals
     public static Matrix4 View, Projection, ShadowView, ShadowProjection;
     public static GameWindow Window;
     public static readonly Material DepthMaterial;
+    public static Vector3 SunPos;
     
 
     static Globals()
@@ -41,8 +42,8 @@ public static class Globals
         if (isShadow)
         {
             var currentCameraPos = CameraSystem.CurrentCamera!.GetComponent<Transform>()!.Location;
-            ShadowCamera.Position = new Vector3(10, 10, 10) + currentCameraPos;
-            View = ShadowCamera.GetViewMatrix(currentCameraPos);
+            ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0,20,0);
+            View = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0,20,0));
             Projection = ShadowCamera.GetOrthoProjectionMatrix();
             ShadowProjection = Projection;
             ShadowView = View;
