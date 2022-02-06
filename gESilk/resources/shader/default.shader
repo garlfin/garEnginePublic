@@ -15,6 +15,8 @@ out vec3 FragPos;
 out vec2 fTexCoord;
 out mat3 TBN;
 out vec4 FragPosLightSpace;
+out vec3 viewFragPos;
+out vec3 viewNormal;
 
 
 void main() {
@@ -28,7 +30,8 @@ void main() {
     FragPos = vec3(worldPos);
     gl_Position = worldPos * view * projection;
     FragPosLightSpace = worldPos * lightView * lightProjection;
-    
+    viewFragPos = vec3(worldPos * view);
+    viewNormal = normalize(vNormal * mat3(transpose(inverse(model*view))));
 }
 
 #FRAGMENT
@@ -40,21 +43,19 @@ uniform sampler2D normalMap;
 uniform sampler2DShadow shadowMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform float emission = 1.0;
 
 in vec3 FragPos;
 in vec2 fTexCoord;
 in mat3 TBN;
 in vec4 FragPosLightSpace;
+in vec3 viewFragPos;
+in vec3 viewNormal;
+
 
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec3 FragNormal;
 layout (location = 2) out vec3 FragLoc;
-
-float random(vec3 seed, int i){
-    vec4 seed4 = vec4(seed,i);
-    float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
-    return fract(sin(dot_product) * 43758.5453);
-}
 
 const int pcfCount = 2;
 const float totalTexels = (pcfCount * 2.0+1.0)*(pcfCount*2.0+1.0);
@@ -119,7 +120,7 @@ void main() {
     vec4 color = texture(albedo, fTexCoord)+spec;
     color = mix(color, textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)),(specFac)*max(fresnelSchlick(dot(normal, normalize(viewPos)),1.450),0));
     
-    FragColor = color*ambient;
-    FragLoc = FragPos;
-    FragNormal = normal;
+    FragColor = vec4(vec3(color*ambient*emission),1.0);
+    FragLoc = viewFragPos;
+    FragNormal = viewNormal;
 }

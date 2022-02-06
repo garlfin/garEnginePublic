@@ -1,26 +1,23 @@
-﻿using gESilk.engine.misc;
-using gESilk.engine.render.assets;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 
-
-namespace gESilk.engine.render;
+namespace gESilk.engine.render.assets;
 
 public class RenderTexture : Asset
 {
     private int _id;
     private readonly int _slot;
 
-    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgb, PixelType byteType = PixelType.Float, bool shadow = false)
+    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgba, PixelType byteType = PixelType.Float, bool shadow = false, TextureWrapMode mode = TextureWrapMode.ClampToBorder, TextureMinFilter minFilter = TextureMinFilter.Linear, TextureMagFilter magFilter = TextureMagFilter.Linear)
     {
         _slot = slot;
-        RenderTexManager.Register(this);
+        AssetManager.Register(this);
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
         GL.TexImage2D(TextureTarget.Texture2D, 0, type, width, height, 0, format, byteType, IntPtr.Zero);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)minFilter);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)magFilter);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)mode);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)mode);
         if (!shadow) return;
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode,
             (int)TextureCompareMode.CompareRefToTexture);
@@ -48,17 +45,16 @@ public class RenderTexture : Asset
         GL.BindTexture(TextureTarget.Texture2D, _id);
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , attachmentLevel, TextureTarget.Texture2D, _id, 0);
     }
-    public void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel)
+    public void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel, bool isShadow = false)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer._fbo);
         GL.BindTexture(TextureTarget.Texture2D, _id);
-        GL.DrawBuffer(DrawBufferMode.None);
-        GL.ReadBuffer(ReadBufferMode.None);
+        if (isShadow)
+        {
+            GL.DrawBuffer(DrawBufferMode.None);
+            GL.ReadBuffer(ReadBufferMode.None);
+        }
+
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, TextureTarget.Texture2D, _id, 0);
     }
-}
-
-class RenderTexManager : AssetManager<RenderTexture>
-{
-    
 }

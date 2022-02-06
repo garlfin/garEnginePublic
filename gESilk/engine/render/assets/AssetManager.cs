@@ -1,12 +1,10 @@
-﻿using gESilk.engine.render.assets;
+﻿namespace gESilk.engine.render.assets;
 
-namespace gESilk.engine.misc;
-
-public class AssetManager<T> where T : Asset
+public class AssetManager
 {
-    private static List<T> Components = new();
+    private static List<Asset> Components = new();
 
-    public static void Register(T asset)
+    public static void Register(Asset asset)
     {
         Components.Add(asset);
     }
@@ -16,7 +14,7 @@ public class AssetManager<T> where T : Asset
         foreach (var component in Components) component.Delete();
     }
 
-    public static void Remove(T asset)
+    public static void Remove(Asset asset)
     {
         for (var index = 0; index < Components.Count; index++)
         {

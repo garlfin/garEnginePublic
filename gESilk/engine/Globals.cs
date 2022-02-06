@@ -3,6 +3,7 @@ using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render;
+using gESilk.engine.render.assets;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;

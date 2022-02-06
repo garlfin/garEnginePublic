@@ -1,9 +1,8 @@
-﻿using gESilk.engine.misc;
-using gESilk.engine.render.assets;
+﻿using gESilk.engine.render.materialSystem;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace gESilk.engine.render.materialSystem;
+namespace gESilk.engine.render.assets;
 
 public class ShaderProgram : Asset
 {
@@ -11,7 +10,7 @@ public class ShaderProgram : Asset
 
     public ShaderProgram(string path)
     {
-        ShaderProgramManager.Register(this);
+        AssetManager.Register(this);
 
         var file = File.ReadAllText(path).Split("#FRAGMENT");
         var vertex = new Shader(file[0], ShaderType.VertexShader).Get();
@@ -56,6 +55,13 @@ public class ShaderProgram : Asset
         GL.Uniform1(uniform, value);
     }
 
+    public void SetUniform(string name, float value)
+    {
+        var uniform = GetUniform(name);
+        if (uniform == -1) return;
+        GL.Uniform1(uniform, value);
+    }
+
     public void SetUniform(string name, Matrix4 value)
     {
         var uniform = GetUniform(name);
@@ -74,8 +80,4 @@ public class ShaderProgram : Asset
     {
         GL.DeleteProgram(_shaderId);
     }
-}
-
-internal class ShaderProgramManager : AssetManager<ShaderProgram>
-{
 }

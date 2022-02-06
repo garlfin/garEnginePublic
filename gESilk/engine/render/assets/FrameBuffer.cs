@@ -1,19 +1,31 @@
-﻿using gESilk.engine.misc;
-using gESilk.engine.render.assets;
-using OpenTK.Graphics.OpenGL;
+﻿using System.Drawing.Text;
+using OpenTK.Graphics.OpenGL4;
 
-namespace gESilk.engine.render;
+namespace gESilk.engine.render.assets;
 
 public class FrameBuffer : Asset
 {
     public int _fbo { get; private set; }
-    private int _width, _height;
+    public int _width {
+        get; private set;
+    }
+    public int _height {
+        get; private set;
+    }
     public FrameBuffer(int width, int height)
     {
-        FrameBufferManager.Register(this);
+        AssetManager.Register(this);
         _width = width;
         _height = height;
         _fbo = GL.GenFramebuffer();
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer,_fbo);
+        GL.DrawBuffers(3,
+            new[]
+            {
+                DrawBuffersEnum.ColorAttachment0, DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2
+            });
+
+
     }
 
     public void Bind(ClearBufferMask mask = ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit)
@@ -27,9 +39,4 @@ public class FrameBuffer : Asset
     {
         GL.DeleteFramebuffer(_fbo);
     }
-}
-
-class FrameBufferManager : AssetManager<FrameBuffer>
-{
-    
 }

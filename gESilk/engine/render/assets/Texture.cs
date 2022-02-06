@@ -22,7 +22,7 @@ public class Texture : Asset
         
         _slot = slot;
         
-        TextureManager.Register(this);
+        AssetManager.Register(this);
         
         var bmp = new Bitmap(path);
         bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -52,8 +52,4 @@ public class Texture : Asset
         GL.BindTexture(TextureTarget.Texture2D, _id);
         return _slot;
     }
-}
-
-class TextureManager : AssetManager<Texture>
-{
 }

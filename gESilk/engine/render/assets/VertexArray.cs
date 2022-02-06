@@ -49,7 +49,7 @@ public class VertexArray : Asset
 
     public VertexArray(MeshData mesh)
     {
-        MeshManager.Register(this);
+        AssetManager.Register(this);
 
         _vao = GL.GenVertexArray();
         GL.BindVertexArray(_vao);
@@ -81,8 +81,4 @@ public class VertexArray : Asset
         GL.DeleteBuffer(_tanvbo);
         GL.DeleteBuffer(_vtvbo);
     }
-}
-
-internal class MeshManager : AssetManager<VertexArray>
-{
 }
