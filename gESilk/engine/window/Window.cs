@@ -77,7 +77,7 @@ public sealed class Window
 
     private void OnRender(FrameEventArgs args)
     {
-        if (_time > 60)
+        if (_time > 12)
         {
             _time = 0;
         }
@@ -92,7 +92,7 @@ public sealed class Window
         CubemapMManager.Update((float)args.Time);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         FBRendererSystem.Update(0f);
-        entity.GetComponent<Transform>().Rotation = (0f, (float) _time*30 , 0f);
+        entity.GetComponent<Transform>().Rotation = (0f, (float) _time * 30 , 0f);
         if (!_alreadyClosed)
         {
             Console.Write("FPS: "+1.0/args.Time + new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));

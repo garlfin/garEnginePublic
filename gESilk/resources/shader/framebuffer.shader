@@ -29,67 +29,58 @@ uniform sampler2D screenTexture;
 uniform sampler2D screenTexturePos;
 uniform sampler2D screenTextureNormal;
 
+
+
 void main()
 {
-    float radius    = 0.6;
-    float bias      = 0.005;
-    float magnitude = 1.1;
-    float contrast  = 1.1;
 
-    vec2 texSize  = textureSize(screenTexturePos, 0).xy;
-    vec2 texCoord = gl_FragCoord.xy / texSize;
 
-    vec4 position = texture(screenTexturePos, texCoord);
-    if (position.a <= 0) { return; }
+    const float gamma = 2.2;
+    const float exposure = 1;
+    
+    //color = texture( screenTexture, texCoords.xy);
 
-    vec3 normal = normalize(texture(screenTextureNormal, texCoord).xyz);
+    int   size       = 5;
+    float separation = 2;
+    float threshold  = 0.9;
+    float amount     = 0.4;
 
-    int  noiseS = int(sqrt(NUM_NOISE));
-    int  noiseX = int(gl_FragCoord.x - 0.5) % noiseS;
-    int  noiseY = int(gl_FragCoord.y - 0.5) % noiseS;
-    vec3 random = noise[noiseX + (noiseY * noiseS)];
+    vec2 texSize = textureSize(screenTexture, 0).xy;
 
-    vec3 tangent  = normalize(random - normal * dot(random, normal));
-    vec3 binormal = cross(normal, tangent);
-    mat3 tbn      = mat3(tangent, binormal, normal);
+    vec4 result = vec4(0.0);
+    vec4 color  = vec4(0.0);
 
-    float occlusion = NUM_SAMPLES;
+    float value = 0.0;
+    float count = 0.0;
 
-    for (int i = 0; i < NUM_SAMPLES; ++i) {
-        vec3 samplePosition = tbn * samples[i];
-        samplePosition = position.xyz + samplePosition * radius;
+    for (int i = -size; i <= size; ++i) {
+        for (int j = -size; j <= size; ++j) {
+            color =
+            texture
+            ( screenTexture
+            ,   (vec2(i, j) * separation + gl_FragCoord.xy)
+            / texSize
+            );
 
-        vec4 offsetUV      = vec4(samplePosition, 1.0);
-        offsetUV      = projection * offsetUV;
-        offsetUV.xyz /= offsetUV.w;
-        offsetUV.xy   = offsetUV.xy * 0.5 + 0.5;
+            // exposure tone mapping
 
-        // Config.prc
-        // gl-coordinate-system  default
-        // textures-auto-power-2 1
-        // textures-power-2      down
+            value = max(color.r, max(color.g, color.b));
+            if (value < threshold) { color = vec4(0.0); }
 
-        vec4 offsetPosition = texture(screenTextureNormal, offsetUV.xy);
-
-        float occluded = 0;
-        if   (samplePosition.y + bias <= offsetPosition.y)
-        { occluded = 0; }
-        else { occluded = 1; }
-
-        float intensity =
-        smoothstep
-        ( 0
-        , 1
-        ,   radius
-        / abs(position.y - offsetPosition.y)
-        );
-        occluded  *= intensity;
-        occlusion -= occluded;
+            result += color;
+            count  += 1.0;
+        }
     }
 
-    occlusion /= NUM_SAMPLES;
-    occlusion  = pow(occlusion, magnitude);
-    occlusion  = contrast * (occlusion - 0.5) + 0.5;
+    result /= count;
+    
+    vec3 hdrColor = texture(screenTexture, texCoords).rgb;
 
-    FragColor = pow(texture(screenTexture, texCoords), vec4(1/2.2));
+    // exposure tone mapping
+    vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
+    // gamma correction 
+    mapped = pow(mapped, vec3(1.0 / gamma));
+
+    FragColor = vec4(mapped + vec3(result), 1.0);
+    
 }

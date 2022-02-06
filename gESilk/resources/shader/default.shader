@@ -24,8 +24,8 @@ void main() {
     vec3 N = normalize(vNormal * normalMatrix);
     vec3 B = cross(N, T);
     TBN = transpose(mat3(T, B, N));
-    FragPos = vec3(vec4(vPosition, 1.0) * model);
     vec4 worldPos = vec4(vPosition, 1.0) * model;
+    FragPos = vec3(worldPos);
     gl_Position = worldPos * view * projection;
     FragPosLightSpace = worldPos * lightView * lightProjection;
     
@@ -59,9 +59,25 @@ float random(vec3 seed, int i){
 const int pcfCount = 2;
 const float totalTexels = (pcfCount * 2.0+1.0)*(pcfCount*2.0+1.0);
 
-float fresnelSchlick(float cosTheta)
+float fresnelSchlick(float cosi, float eta)
 {
-    return pow(1.0 - cosTheta, 5.0);
+    /* compute fresnel reflectance without explicitly computing
+     * the refracted direction */
+    float c = abs(cosi);
+    float g = eta * eta - 1.0 + c * c;
+    float result;
+
+    if (g > 0.0) {
+        g = sqrt(g);
+        float A = (g - c) / (g + c);
+        float B = (c * (g + c) - 1.0) / (c * (g - c) + 1.0);
+        result = 0.5 * A * A * (1.0 + B * B);
+    }
+    else {
+        result = 1.0; /* TIR (no refracted component) */
+    }
+
+    return result;
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
@@ -93,14 +109,15 @@ void main() {
     vec3 noNormalNormal = normalize(vec3(0,0,1)*TBN);
 
     vec3 lightDir = normalize(lightPos);
-    vec4 ambient = FragColor = textureLod(skyBox, normal, 10)*0.25 + (max(dot(lightDir,normal),0.0)*0.5+0.5) * ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir);
+    float ambientLambert = (max(dot(lightDir,normal),0.0)*0.5+0.5);
+    vec4 ambient = textureLod(skyBox, normal, 10)*0.1+ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5,0,1);
 
     vec3 viewDir = normalize(FragPos-viewPos);
     
-    float specFac = 1-0.8;
+    float specFac = 1-0.75;
     float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)),0,1)*specFac;
     vec4 color = texture(albedo, fTexCoord)+spec;
-    color = mix(color, textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)),specFac*clamp(fresnelSchlick(dot(normal, normalize(viewPos))),0,1));
+    color = mix(color, textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)),(specFac)*max(fresnelSchlick(dot(normal, normalize(viewPos)),1.450),0));
     
     FragColor = color*ambient;
     FragLoc = FragPos;

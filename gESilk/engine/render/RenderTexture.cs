@@ -10,7 +10,7 @@ public class RenderTexture : Asset
     private int _id;
     private readonly int _slot;
 
-    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgb, PixelFormat format = PixelFormat.Rgb, PixelType byteType = PixelType.UnsignedByte, bool shadow = false)
+    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgb, PixelType byteType = PixelType.Float, bool shadow = false)
     {
         _slot = slot;
         RenderTexManager.Register(this);
