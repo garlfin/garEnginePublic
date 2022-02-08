@@ -4,35 +4,33 @@ using OpenTK.Mathematics;
 
 namespace gESilk.engine.render.assets;
 
-public class ShaderProgram : Asset
+public class ComputeProgram : Asset
 {
-    private readonly int _shaderId;
 
-    public ShaderProgram(string path)
+    private readonly int _shaderId;
+    
+    public ComputeProgram(string path)
     {
         AssetManager.Register(this);
 
-        var file = File.ReadAllText(path).Split("#FRAGMENT");
-        var vertex = new Shader(file[0], ShaderType.VertexShader).Get();
-        var fragment = new Shader(file[1], ShaderType.FragmentShader).Get();
-
+        var file = File.ReadAllText(path);
+        var compute = new Shader(file, ShaderType.ComputeShader).Get();
+        
         _shaderId = GL.CreateProgram();
 
-        GL.AttachShader(_shaderId, vertex);
-        GL.AttachShader(_shaderId, fragment);
+        GL.AttachShader(_shaderId, compute);
 
         GL.LinkProgram(_shaderId);
 
-        GL.DetachShader(_shaderId, vertex);
-        GL.DetachShader(_shaderId, fragment);
+        GL.DetachShader(_shaderId, compute);
 
-        GL.DeleteShader(vertex);
-        GL.DeleteShader(fragment);
+        GL.DeleteShader(compute);
+  
 
         var programLog = GL.GetProgramInfoLog(_shaderId);
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
     }
-
+    
     public void Use()
     {
         GL.UseProgram(_shaderId);
@@ -42,7 +40,7 @@ public class ShaderProgram : Asset
     {
         return _shaderId;
     }
-
+    
     public int GetUniform(string name)
     {
         return GL.GetUniformLocation(_shaderId, name);
@@ -100,6 +98,6 @@ public class ShaderProgram : Asset
 
     public override void Delete()
     {
-        GL.DeleteProgram(_shaderId);
+       GL.DeleteProgram(_shaderId);
     }
 }

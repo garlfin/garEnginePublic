@@ -2,17 +2,15 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using gESilk.engine.misc;
+using gESilk.engine.render.assets.textures;
 using OpenTK.Graphics.OpenGL4;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace gESilk.engine.render.assets;
 
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
-public class CubemapTexture : Asset
+public class CubemapTexture : ITexture
 {
-    private readonly int _id;
-    private readonly int _slot;
-
     public CubemapTexture(IReadOnlyList<string> path, int slot)
     {
         AssetManager.Register(this);
@@ -53,7 +51,7 @@ public class CubemapTexture : Asset
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
     }
 
-    public int Use()
+    public override int Use()
     {
         GL.ActiveTexture(TextureUnit.Texture0+_slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, _id);

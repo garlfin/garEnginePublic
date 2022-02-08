@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using gESilk.engine.misc;
+using gESilk.engine.render.assets.textures;
 using OpenTK.Graphics.OpenGL4;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
@@ -9,10 +10,9 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 namespace gESilk.engine.render.assets;
 
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
-public class Texture : Asset
+public class Texture : ITexture
 {
-    private readonly int _id;
-    private readonly int _slot;
+    
 
     public Texture(string path, int slot,
         System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
@@ -46,7 +46,7 @@ public class Texture : Asset
         GL.DeleteTexture(_id);
     }
 
-    public int Use()
+    public override int Use()
     {
         GL.ActiveTexture(TextureUnit.Texture0+_slot);
         GL.BindTexture(TextureTarget.Texture2D, _id);

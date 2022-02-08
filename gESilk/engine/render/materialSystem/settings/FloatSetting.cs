@@ -12,6 +12,7 @@ public class FloatSetting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
-        program.SetUniform(UniformName, _value);
+        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
+        program.SetUniform(RealLocation, _value);
     }
 }

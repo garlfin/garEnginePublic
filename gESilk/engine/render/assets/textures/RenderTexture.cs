@@ -1,11 +1,10 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using gESilk.engine.render.assets.textures;
+using OpenTK.Graphics.OpenGL4;
 
 namespace gESilk.engine.render.assets;
 
-public class RenderTexture : Asset
+public class RenderTexture : ITexture
 {
-    private int _id;
-    private readonly int _slot;
 
     public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgba, PixelType byteType = PixelType.Float, bool shadow = false, TextureWrapMode mode = TextureWrapMode.ClampToBorder, TextureMinFilter minFilter = TextureMinFilter.Linear, TextureMagFilter magFilter = TextureMagFilter.Linear)
     {
@@ -32,7 +31,7 @@ public class RenderTexture : Asset
         _id = -1;
     }
 
-    public int Use()
+    public override int Use()
     {
         GL.ActiveTexture(TextureUnit.Texture0+_slot);
         GL.BindTexture(TextureTarget.Texture2D, _id);

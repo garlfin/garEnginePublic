@@ -5,16 +5,18 @@ namespace gESilk.engine.render.materialSystem.settings;
 
 public abstract class ShaderSetting
 {
-    public string UniformName;
+    protected string UniformName;
+    protected int RealLocation = -1;
 
-    public ShaderSetting(string name)
+    protected ShaderSetting(string name)
     {
         UniformName = name;
     }
 
     public virtual void Use(ShaderProgram program)
     {
-        program.SetUniform(UniformName, 0);
+        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
+        program.SetUniform(RealLocation, 0);
     }
 
     public virtual void Cleanup()

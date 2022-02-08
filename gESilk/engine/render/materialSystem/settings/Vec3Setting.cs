@@ -5,7 +5,6 @@ namespace gESilk.engine.render.materialSystem.settings;
 
 public class Vec3Setting : ShaderSetting
 {
-    private new string UniformName;
     private readonly Vector3 _value;
     
     public Vec3Setting(string name, Vector3 value) : base(name)
@@ -22,6 +21,7 @@ public class Vec3Setting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
+        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
         program.SetUniform(UniformName, _value);
     }
 }

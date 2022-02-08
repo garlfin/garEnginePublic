@@ -1,15 +1,16 @@
 ﻿using gESilk.engine.render.assets;
+using gESilk.engine.render.assets.textures;
 using OpenTK.Graphics.OpenGL;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
 public class TextureSetting : ShaderSetting
 {
-    public new string UniformName;
-    private readonly Texture _value;
+    
+    private readonly ITexture _value;
 
 
-    public TextureSetting(string name, Texture value) : base(name)
+    public TextureSetting(string name, ITexture value) : base(name)
     {
         UniformName = name;
         _value = value;
@@ -17,6 +18,7 @@ public class TextureSetting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
-        program.SetUniform(UniformName, _value.Use());
+        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
+        program.SetUniform(RealLocation, _value.Use());
     }
 }
