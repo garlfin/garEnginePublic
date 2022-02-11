@@ -1,3 +1,3 @@
 # garEnginePublic
 > C# Engine - Features: Directional Shadows, Pseudo-PBR, SSAO, Bloom, IBL, ECS, Render/Frame Buffers
-![The engine](https://i.imgur.com/jolTFLE.png)
+![The Engine](https://media.discordapp.net/attachments/865589653066219523/941507689345875968/unknown.png)
