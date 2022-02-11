@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
-using gESilk.engine.misc;
-using gESilk.engine.render.assets.textures;
 using OpenTK.Graphics.OpenGL4;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 
-namespace gESilk.engine.render.assets;
+namespace gESilk.engine.render.assets.textures;
 
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
 public class Texture : ITexture
@@ -17,6 +15,7 @@ public class Texture : ITexture
     public Texture(string path, int slot,
         System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
     {
+        _format = PixelInternalFormat.Rgba;
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
         
@@ -44,6 +43,11 @@ public class Texture : ITexture
     public override void Delete()
     {
         GL.DeleteTexture(_id);
+    }
+    
+    public override void Bind(int slot, TextureAccess access, int level = 0)
+    {
+        GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
 
     public override int Use()

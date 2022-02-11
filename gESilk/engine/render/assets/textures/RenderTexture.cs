@@ -1,13 +1,13 @@
-﻿using gESilk.engine.render.assets.textures;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 
-namespace gESilk.engine.render.assets;
+namespace gESilk.engine.render.assets.textures;
 
 public class RenderTexture : ITexture
 {
 
     public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgba, PixelType byteType = PixelType.Float, bool shadow = false, TextureWrapMode mode = TextureWrapMode.ClampToBorder, TextureMinFilter minFilter = TextureMinFilter.Linear, TextureMagFilter magFilter = TextureMagFilter.Linear)
     {
+        _format = type;
         _slot = slot;
         AssetManager.Register(this);
         _id = GL.GenTexture();
@@ -23,6 +23,11 @@ public class RenderTexture : ITexture
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)All.Less);
         float[] borderColor = {1f, 1f, 1f, 1f};
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
+    }
+    
+    public override void Bind(int slot, TextureAccess access, int level = 0)
+    {
+        GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
 
     public override void Delete()

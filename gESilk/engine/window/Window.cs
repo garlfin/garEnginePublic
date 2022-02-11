@@ -5,6 +5,7 @@ using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render;
 using gESilk.engine.render.assets;
+using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
@@ -12,7 +13,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Texture = gESilk.engine.render.assets.Texture;
+using Texture = gESilk.engine.render.assets.textures.Texture;
 
 namespace gESilk.engine.window;
 
@@ -22,14 +23,20 @@ public sealed class Window
     private RenderBuffer _renderBuffer;
     private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
     private RenderTexture _renderTexture, _shadowTex, _renderNormal, _renderPos, _ssaoTex, _blurTex;
-    private readonly int _width, _height;
+    private readonly int _width, _height, _mBloomComputeWorkGroupSize;
     private double _time;
-    private Entity entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
+    private int _mips;
+    private ComputeProgram _program;
+    private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
+    private EmptyTexture[] _bloomRTs = new EmptyTexture[3];
+    private BloomSettings _bloomSettings = new BloomSettings();
+    private Vector2i _bloomTexSize;
 
     public Window(int width, int height, string name)
     {
         _width = width;
         _height = height;
+        _mBloomComputeWorkGroupSize = 16;
         var gws = GameWindowSettings.Default;
         // Setup
         gws.RenderFrequency = 144;
@@ -68,62 +75,7 @@ public sealed class Window
         Console.WriteLine("Done :)");
     }
 
-    private void OnRender(FrameEventArgs args)
-    {
-        if (_time > 12) // 360 / 30 = 12 : )
-        {
-            _time = 0;
-        }
-
-        //Logic stuff here
-        entity.GetComponent<Transform>().Rotation = (0f, (float)_time * 30, 0f);
-
-
-        _time += args.Time;
-        CameraSystem.UpdateCamera();
-        UpdateRender(true);
-
-        _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
-        ModelRendererSystem.Update(true);
-
-        _renderBuffer.Bind();
-        UpdateRender();
-        ModelRendererSystem.Update((float)args.Time);
-        CubemapMManager.Update((float)args.Time);
-
-        _ssaoMap.Bind();
-        _ssaoEntity.GetComponent<FBRenderer>().Update(0f);
-
-        _blurMap.Bind();
-        _blurEntity.GetComponent<FBRenderer>().Update(0f);
-
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        _finalShadingEntity.GetComponent<FBRenderer>().Update(0f);
-
-        if (!_alreadyClosed)
-        {
-            Console.Write("FPS: " + 1.0 / args.Time +
-                          new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-        }
-
-        Globals.Window.SwapBuffers();
-    }
-
-    private void OnUpdate(FrameEventArgs args)
-    {
-        CameraSystem.Update((float)args.Time);
-        if (Globals.Window.IsKeyDown(Keys.Escape))
-        {
-            if (_alreadyClosed) return;
-            _alreadyClosed = true;
-            OnClosing();
-            Globals.Window.Close();
-        }
-    }
-
-    static float Lerp(float firstFloat, float secondFloat, float by)
+    private static float Lerp(float firstFloat, float secondFloat, float by)
     {
         return firstFloat * (1 - by) + secondFloat * by;
     }
@@ -143,14 +95,28 @@ public sealed class Window
         _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
         _blurTex = new RenderTexture(_width, _height, 2, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);
+        
+        _bloomTexSize = new Vector2i(_width, _height) / 2;
+        _bloomTexSize += new Vector2i(_mBloomComputeWorkGroupSize - (_bloomTexSize.X % _mBloomComputeWorkGroupSize),
+            _mBloomComputeWorkGroupSize - (_bloomTexSize.Y % _mBloomComputeWorkGroupSize));
+        _mips = ITexture.GetMipLevelCount(_width, _height) - 4;
 
+
+        for (int i = 0; i < 3; i++)
+        {
+            _bloomRTs[i] = new EmptyTexture(i+4,_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f,
+                PixelFormat.Rgba, _mips);
+        }
+        
+        
+        _program = new ComputeProgram("../../../resources/shader/compute.shader");
         GL.ClearColor(System.Drawing.Color.White);
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.TextureCubeMapSeamless);
 
         Globals.Window.CursorGrabbed = true;
-
+    
 
         var loader = AssimpLoader.GetMeshFromFile("../../../hut.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
@@ -194,33 +160,32 @@ public sealed class Window
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
         skybox.AddComponent(new CubemapRenderer(skyboxLoader));
 
-        entity = new Entity();
-        entity.AddComponent(new Transform());
-        entity.AddComponent(new MaterialComponent(loader, woodMaterial));
-        entity.AddComponent(new ModelRenderer(loader));
-        entity.AddComponent(new Transform());
+        _entity = new Entity();
+        _entity.AddComponent(new Transform());
+        _entity.AddComponent(new MaterialComponent(loader, woodMaterial));
+        _entity.AddComponent(new ModelRenderer(loader));
+        _entity.AddComponent(new Transform());
 
 
         var camera = new Entity();
         camera.AddComponent(new Transform());
         camera.AddComponent(new Camera(30f, 0.1f, 1000f, 0.3f));
         camera.GetComponent<Camera>()?.Set();
-
-
+        
         var rand = new Random();
 
-        List<Vector3> data = new List<Vector3>();
+        Vector3[] data = new Vector3[64];
 
         for (int i = 0; i < 64; i++)
-        {
-            Vector3 sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
+        {   
+            var sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
                 (float)rand.NextDouble());
             sample.Normalize();
             sample *= (float)rand.NextDouble();
-            float scale = (float)i / 64f;
+            var scale = i / 64f;
             scale = Lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
-            data.Add(sample);
+            data[i] = sample;
         }
 
 
@@ -234,6 +199,9 @@ public sealed class Window
             .AddSetting(new TextureSetting("screenTexture", _renderTexture));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("ao", _blurTex));
+        _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
+            .AddSetting(new TextureSetting("bloom", _bloomRTs[2]));
+
         _finalShadingEntity.AddComponent(new FBRenderer(renderPlaneMesh));
 
         var physicalPlane = new Entity();
@@ -286,7 +254,151 @@ public sealed class Window
         _blurMap = new FrameBuffer(_width, _height);
 
         _blurTex.BindToBuffer(_blurMap, FramebufferAttachment.ColorAttachment0);
-
+        
+        
         SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
+    }
+    
+    private void OnRender(FrameEventArgs args)
+    {
+        
+        
+        if (_time > 12) // 360 / 30 = 12 : )
+        {
+            _time = 0;
+        }
+
+        //Logic stuff here
+        _entity.GetComponent<Transform>().Rotation = (0f, (float)_time * 30, 0f);
+
+
+        _time += args.Time;
+        CameraSystem.UpdateCamera();
+        UpdateRender(true);
+
+        _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
+        ModelRendererSystem.Update(true);
+
+        _renderBuffer.Bind();
+        UpdateRender();
+        ModelRendererSystem.Update((float)args.Time);
+        CubemapMManager.Update((float)args.Time);
+
+        RenderBloom();
+        
+        _ssaoMap.Bind();
+        _ssaoEntity.GetComponent<FBRenderer>().Update(0f);
+
+        _blurMap.Bind();
+        _blurEntity.GetComponent<FBRenderer>().Update(0f);
+
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        
+        _finalShadingEntity.GetComponent<FBRenderer>().Update(0f);
+
+        if (!_alreadyClosed)
+        {
+            Console.Write("FPS: " + 1.0 / args.Time +
+                          new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+        }
+        else
+        {
+            GL.Clear(ClearBufferMask.ColorBufferBit); 
+        }
+        Globals.Window.SwapBuffers();
+    }
+
+    private void RenderBloom()
+    {
+        // Bloom
+        _program.Use();
+        _program.SetUniform("Params", new Vector4(_bloomSettings.Threshold, _bloomSettings.Threshold - _bloomSettings.Knee, _bloomSettings.Knee * 2f, 0.25f/_bloomSettings.Knee));
+        _program.SetUniform("LodAndMode", new Vector2(0,(int) BloomMode.BLOOM_MODE_PREFILTER));
+        _bloomRTs[0].Bind(0, TextureAccess.WriteOnly);
+        _renderTexture.Bind(1);
+        _program.SetUniform("u_Texture", 1);
+        _renderTexture.Bind(2);
+        _program.SetUniform("u_BloomTexture", 2);
+        _program.Dispatch(_bloomTexSize.X, _bloomTexSize.Y);
+
+
+        
+
+        int currentMip = 0;
+        for ( currentMip = 1; currentMip < _mips; currentMip++)
+        {
+            var mipSize =  _bloomRTs[0].GetMipSize(currentMip);
+
+            _program.SetUniform("LodAndMode", new Vector2(currentMip-1f,(int) BloomMode.BLOOM_MODE_DOWNSAMPLE));
+            
+            
+            // Ping 
+            
+            _bloomRTs[1].Bind(0, TextureAccess.WriteOnly, currentMip);
+            
+            _bloomRTs[0].Bind(1);
+            _program.SetUniform("u_Texture", 1);
+            
+            _program.Dispatch((int) mipSize.X, (int) mipSize.Y);
+            
+            
+            // Pong 
+            
+            _program.SetUniform("LodAndMode", new Vector2(currentMip,(int) BloomMode.BLOOM_MODE_DOWNSAMPLE));
+            
+            _bloomRTs[0].Bind(0, TextureAccess.WriteOnly, currentMip);
+            
+            _bloomRTs[1].Bind(1);
+            _program.SetUniform("u_Texture", 1);
+            
+            _program.Dispatch((int) mipSize.X, (int) mipSize.Y);
+            
+
+        }
+        
+        // First Upsample
+
+        _bloomRTs[2].Bind(0, TextureAccess.WriteOnly, _mips - 1);
+         
+        //currentMip--;
+        
+        _program.SetUniform("LodAndMode", new Vector2(_mips-2,(int) BloomMode.BLOOM_MODE_UPSAMPLE_FIRST));
+
+        _bloomRTs[0].Bind(1);
+        _program.SetUniform("u_Texture", 1);
+        
+        var currentMipSize =  _bloomRTs[2].GetMipSize(_mips-1);
+        
+        _program.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
+
+        for (currentMip = _mips - 2; currentMip >= 0; currentMip--)
+        {
+            currentMipSize =  _bloomRTs[2].GetMipSize(currentMip);
+            _bloomRTs[2].Bind(0, TextureAccess.WriteOnly, currentMip);
+            _program.SetUniform("LodAndMode", new Vector2(currentMip,(int) BloomMode.BLOOM_MODE_UPSAMPLE));
+            
+            
+            
+            _bloomRTs[0].Bind(1);
+            _program.SetUniform("u_Texture", 1);
+            
+            _bloomRTs[2].Bind(2);
+            _program.SetUniform("u_BloomTexture", 2);
+            
+            _program.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
+        }
+    }
+    private void OnUpdate(FrameEventArgs args)
+    {
+        CameraSystem.Update((float)args.Time);
+        if (Globals.Window.IsKeyDown(Keys.Escape))
+        {
+            if (_alreadyClosed) return;
+            _alreadyClosed = true;
+            OnClosing();
+            Globals.Window.Close();
+        }
     }
 }

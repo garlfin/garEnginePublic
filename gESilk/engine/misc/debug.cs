@@ -17,6 +17,9 @@ internal static class GlDebug
     public static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length,
         IntPtr message, IntPtr userParam)
     {
-        Console.WriteLine("Debug: " + Marshal.PtrToStringAnsi(message, length));
+        if (severity == DebugSeverity.DebugSeverityHigh)
+        {
+            Console.WriteLine("Debug: " + Marshal.PtrToStringAnsi(message, length));
+        }
     }
 }

@@ -1,9 +1,8 @@
-﻿using gESilk.engine.render.assets.textures;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
-namespace gESilk.engine.render.assets;
+namespace gESilk.engine.render.assets.textures;
 
 public class NoiseTexture : ITexture
 {
@@ -14,6 +13,7 @@ public class NoiseTexture : ITexture
 
     public NoiseTexture(int slot)
     {
+        _format = PixelInternalFormat.Rgb;
         var rand = new Random();
         var pixels = new Vector3[16];
         for (var i = 0; i < 16; i++)
@@ -42,6 +42,11 @@ public class NoiseTexture : ITexture
     public override void Delete()
     {
         GL.DeleteTexture(_id);
+    }
+    
+    public override void Bind(int slot, TextureAccess access, int level = 0)
+    {
+        GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
 
     public override int Use()

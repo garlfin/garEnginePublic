@@ -45,7 +45,13 @@ public class ComputeProgram : Asset
     {
         return GL.GetUniformLocation(_shaderId, name);
     }
-
+   
+    public void Dispatch(int width, int height, int groupx = 16, int groupy = 16)
+    {
+        Use();
+        GL.DispatchCompute(  (int) Math.Ceiling((float) width/groupx), (int) Math.Ceiling((float)height/groupy), 1);
+        GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
+    }
     public void SetUniform(string name, int value)
     {
         var uniform = GetUniform(name);
@@ -82,6 +88,19 @@ public class ComputeProgram : Asset
         if (name == -1) return;
         GL.UniformMatrix4(name, true, ref value);
     }
+    public void SetUniform(string name, Vector2 value)
+    {
+        var uniform = GetUniform(name);
+        if (uniform == -1) return;
+        GL.Uniform2(uniform, value);
+    }
+    public void SetUniform(int name, Vector2 value)
+    {
+        if (name == -1) return;
+        GL.Uniform2(name, value);
+    }
+
+ 
 
     public void SetUniform(string name, Vector3 value)
     {
@@ -94,6 +113,18 @@ public class ComputeProgram : Asset
     {
         if (name == -1) return;
         GL.Uniform3(name, value);
+    }
+    public void SetUniform(string name, Vector4 value)
+    {
+        var uniform = GetUniform(name);
+        if (uniform == -1) return;
+        GL.Uniform4(uniform, value);
+    }
+    
+    public void SetUniform(int name, Vector4 value)
+    {
+        if (name == -1) return;
+        GL.Uniform4(name, value);
     }
 
     public override void Delete()
