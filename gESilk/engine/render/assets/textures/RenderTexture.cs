@@ -5,10 +5,9 @@ namespace gESilk.engine.render.assets.textures;
 public class RenderTexture : ITexture
 {
 
-    public RenderTexture(int width, int height, int slot, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgba, PixelType byteType = PixelType.Float, bool shadow = false, TextureWrapMode mode = TextureWrapMode.ClampToBorder, TextureMinFilter minFilter = TextureMinFilter.Linear, TextureMagFilter magFilter = TextureMagFilter.Linear)
+    public RenderTexture(int width, int height, PixelInternalFormat type = PixelInternalFormat.Rgba16f, PixelFormat format = PixelFormat.Rgba, PixelType byteType = PixelType.Float, bool shadow = false, TextureWrapMode mode = TextureWrapMode.ClampToBorder, TextureMinFilter minFilter = TextureMinFilter.Linear, TextureMagFilter magFilter = TextureMagFilter.Linear)
     {
         _format = type;
-        _slot = slot;
         AssetManager.Register(this);
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
@@ -25,7 +24,7 @@ public class RenderTexture : ITexture
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
     }
     
-    public override void Bind(int slot, TextureAccess access, int level = 0)
+    public override void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
@@ -35,13 +34,7 @@ public class RenderTexture : ITexture
         GL.DeleteTexture(_id);
         _id = -1;
     }
-
-    public override int Use()
-    {
-        GL.ActiveTexture(TextureUnit.Texture0+_slot);
-        GL.BindTexture(TextureTarget.Texture2D, _id);
-        return _slot;
-    }
+    
 
     public void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
     {

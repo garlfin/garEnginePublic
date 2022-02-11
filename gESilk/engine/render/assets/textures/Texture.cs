@@ -12,14 +12,13 @@ public class Texture : ITexture
 {
     
 
-    public Texture(string path, int slot,
-        System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+    public Texture(string path, System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
     {
         _format = PixelInternalFormat.Rgba;
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
         
-        _slot = slot;
+     
         
         AssetManager.Register(this);
         
@@ -45,15 +44,9 @@ public class Texture : ITexture
         GL.DeleteTexture(_id);
     }
     
-    public override void Bind(int slot, TextureAccess access, int level = 0)
+    public override void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
-
-    public override int Use()
-    {
-        GL.ActiveTexture(TextureUnit.Texture0+_slot);
-        GL.BindTexture(TextureTarget.Texture2D, _id);
-        return _slot;
-    }
+    
 }

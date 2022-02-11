@@ -8,17 +8,19 @@ public class TextureSetting : ShaderSetting
 {
     
     private readonly ITexture _value;
+    private readonly int _slot;
 
 
-    public TextureSetting(string name, ITexture value) : base(name)
+    public TextureSetting(string name, ITexture value, int slot) : base(name)
     {
         UniformName = name;
         _value = value;
+        _slot = slot;
     }
 
     public override void Use(ShaderProgram program)
     {
         if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
-        program.SetUniform(RealLocation, _value.Use());
+        program.SetUniform(RealLocation, _value.Use(_slot));
     }
 }

@@ -24,7 +24,7 @@ uniform vec3 Samples[64];
 uniform mat4 projection;
 
 int kernelSize = 64;
-float SSAORadius  = 0.5;
+float SSAORadius  = 0.1;
 float SSAOBias  = 0.025;
 
 // tile noise texture over screen based on screen dimensions divided by noise size

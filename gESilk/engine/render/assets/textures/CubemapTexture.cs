@@ -9,11 +9,10 @@ namespace gESilk.engine.render.assets.textures;
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
 public class CubemapTexture : ITexture
 {
-    public CubemapTexture(IReadOnlyList<string> path, int slot)
+    public CubemapTexture(IReadOnlyList<string> path)
     {
         _format = PixelInternalFormat.Rgba16f;
         AssetManager.Register(this);
-        _slot = slot;
         var targets = new List<TextureTarget>()
         {
             TextureTarget.TextureCubeMapNegativeX,
@@ -50,13 +49,13 @@ public class CubemapTexture : ITexture
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
     }
 
-    public override int Use()
+    public override int Use(int slot)
     {
-        GL.ActiveTexture(TextureUnit.Texture0+_slot);
+        GL.ActiveTexture(TextureUnit.Texture0+slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, _id);
-        return _slot;
+        return slot;
     }
-    public override void Bind(int slot, TextureAccess access, int level = 0)
+    public override void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }

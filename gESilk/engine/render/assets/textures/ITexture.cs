@@ -5,7 +5,6 @@ namespace gESilk.engine.render.assets.textures;
 
 public abstract class ITexture : Asset
 {
-    protected int _slot;
     protected int _id;
     protected PixelInternalFormat _format;
     protected int _width, _height;
@@ -14,15 +13,13 @@ public abstract class ITexture : Asset
     {
     }
 
-    public virtual int Use()
-    {
-        return 0;
-    }
     public virtual int Use(int slot)
     {
+        GL.ActiveTexture(TextureUnit.Texture0+slot);
+        GL.BindTexture(TextureTarget.Texture2D, _id);
         return slot;
     }
-
+  
     public virtual int Get()
     {
         return _id;
@@ -32,13 +29,8 @@ public abstract class ITexture : Asset
     {
     }
     
-    public virtual void Bind(int slot, TextureAccess access, int level = 0)
+    public virtual void Use(int slot, TextureAccess access, int level = 0)
     {
-    }
-    public virtual void Bind(int slot)
-    {
-        GL.ActiveTexture(TextureUnit.Texture0 + slot);
-        GL.BindTexture(TextureTarget.Texture2D, _id);
     }
     public virtual Vector2 GetMipSize(int level)
     {

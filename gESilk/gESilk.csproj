@@ -58,6 +58,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="cubemap" />
       <Folder Include="resources\texture" />
     </ItemGroup>
 

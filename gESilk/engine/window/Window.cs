@@ -85,15 +85,15 @@ public sealed class Window
         if (Debugger.IsAttached) GlDebug.Init();
 
         _renderBuffer = new RenderBuffer(_width, _height);
-        _renderTexture = new RenderTexture(_width, _height, 1);
-        _renderNormal = new RenderTexture(_width, _height, 2, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
+        _renderTexture = new RenderTexture(_width, _height);
+        _renderNormal = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
             PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-        _renderPos = new RenderTexture(_width, _height, 3, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
+        _renderPos = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
             PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
         _renderTexture.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0);
         _renderNormal.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment1);
         _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
-        _blurTex = new RenderTexture(_width, _height, 2, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
+        _blurTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);
         
         _bloomTexSize = new Vector2i(_width, _height) / 2;
@@ -104,12 +104,12 @@ public sealed class Window
 
         for (int i = 0; i < 3; i++)
         {
-            _bloomRTs[i] = new EmptyTexture(i+4,_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f,
+            _bloomRTs[i] = new EmptyTexture(_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f,
                 PixelFormat.Rgba, _mips);
         }
         
         
-        _program = new ComputeProgram("../../../resources/shader/compute.shader");
+        _program = new ComputeProgram("../../../resources/shader/bloom.shader");
         GL.ClearColor(System.Drawing.Color.White);
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
@@ -123,24 +123,24 @@ public sealed class Window
         skyboxLoader.IsSkybox(true);
 
         var program = new ShaderProgram("../../../resources/shader/default.shader");
-        var texture = new Texture("../../../brick_albedo.tif", 1);
-        var normal = new Texture("../../../brick_normal.png", 2);
+        var texture = new Texture("../../../brick_albedo.tif");
+        var normal = new Texture("../../../brick_normal.png");
 
         Material material = new(program);
-        material.AddSetting(new TextureSetting("albedo", texture));
-        material.AddSetting(new TextureSetting("normalMap", normal));
+        material.AddSetting(new TextureSetting("albedo", texture,1));
+        material.AddSetting(new TextureSetting("normalMap", normal, 2));
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
 
         Material woodMaterial = new Material(program);
         woodMaterial.AddSetting(new TextureSetting("albedo",
-            new Texture("../../../resources/texture/rough_wood_diff_1k.jpg", 1)));
+            new Texture("../../../resources/texture/rough_wood_diff_1k.jpg"), 1));
         woodMaterial.AddSetting(new TextureSetting("normalMap",
-            new Texture("../../../resources/texture/rough_wood_nor_dx_1k.jpg", 2)));
+            new Texture("../../../resources/texture/rough_wood_nor_dx_1k.jpg"),2));
         woodMaterial.AddSetting(new GlobalSunPosSetting("lightPos"));
 
-        var basePath = "../../../cubemap/";
+        var basePath = "../../../resources/cubemap/";
 
-
+        
         var paths = new List<string>
         {
             basePath + "negx.jpg", basePath + "negy.jpg", basePath + "negz.jpg", basePath + "posx.jpg",
@@ -148,13 +148,14 @@ public sealed class Window
         };
 
 
-        var skyboxTexture = new CubemapTexture(paths, 0);
+        var skyboxTexture = new CubemapTexture(paths);
         var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
-        material.AddSetting(new TextureSetting("skyBox", skyboxTexture));
+        material.AddSetting(new TextureSetting("skyBox", skyboxTexture,0 ));
+        woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture,0));
         Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
 
 
-        skyboxMaterial.AddSetting(new TextureSetting("skybox", skyboxTexture));
+        skyboxMaterial.AddSetting(new TextureSetting("skybox", skyboxTexture, 0));
 
         var skybox = new Entity();
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
@@ -189,18 +190,18 @@ public sealed class Window
         }
 
 
-        var framebufferShader = new ShaderProgram("../../../resources/shader/framebuffer.shader");
+        var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.shader");
 
         _finalShadingEntity = new Entity();
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../plane.dae");
         _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(framebufferShader, DepthFunction.Always)));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTexture", _renderTexture));
+            .AddSetting(new TextureSetting("screenTexture", _renderTexture, 0));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("ao", _blurTex));
+            .AddSetting(new TextureSetting("ao", _blurTex, 1 ));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("bloom", _bloomRTs[2]));
+            .AddSetting(new TextureSetting("bloom", _bloomRTs[2], 2));
 
         _finalShadingEntity.AddComponent(new FBRenderer(renderPlaneMesh));
 
@@ -214,10 +215,10 @@ public sealed class Window
 
         int shadowSize = 1024 * 4;
         _shadowMap = new FrameBuffer(shadowSize, shadowSize);
-        _shadowTex = new RenderTexture(shadowSize, shadowSize, 4, PixelInternalFormat.DepthComponent,
+        _shadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
             PixelFormat.DepthComponent, PixelType.Float, true);
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment, true);
-        material.AddSetting(new TextureSetting("shadowMap", _shadowTex));
+        material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
 
 
         var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.shader");
@@ -227,17 +228,17 @@ public sealed class Window
         _ssaoEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(framebufferShaderSsao, DepthFunction.Always)));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTextureNormal", _renderNormal));
+            .AddSetting(new TextureSetting("screenTextureNormal", _renderNormal, 0));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTexturePos", _renderPos));
+            .AddSetting(new TextureSetting("screenTexturePos", _renderPos, 1));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new Vec3ArraySetting("Samples", data.ToArray()));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("NoiseTex", new NoiseTexture(5)));
+            .AddSetting(new TextureSetting("NoiseTex", new NoiseTexture(), 2));
         _ssaoEntity.AddComponent(new FBRenderer(renderPlaneMesh));
 
         _ssaoMap = new FrameBuffer(_width, _height);
-        _ssaoTex = new RenderTexture(_width, _height, 1, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
+        _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);
         _ssaoTex.BindToBuffer(_ssaoMap, FramebufferAttachment.ColorAttachment0);
 
@@ -248,7 +249,7 @@ public sealed class Window
         _blurEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(blurShader, DepthFunction.Always)));
         _blurEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("ssaoInput", _ssaoTex));
+            .AddSetting(new TextureSetting("ssaoInput", _ssaoTex, 0));
         _blurEntity.AddComponent(new FBRenderer(renderPlaneMesh));
 
         _blurMap = new FrameBuffer(_width, _height);
@@ -315,11 +316,11 @@ public sealed class Window
         // Bloom
         _program.Use();
         _program.SetUniform("Params", new Vector4(_bloomSettings.Threshold, _bloomSettings.Threshold - _bloomSettings.Knee, _bloomSettings.Knee * 2f, 0.25f/_bloomSettings.Knee));
-        _program.SetUniform("LodAndMode", new Vector2(0,(int) BloomMode.BLOOM_MODE_PREFILTER));
-        _bloomRTs[0].Bind(0, TextureAccess.WriteOnly);
-        _renderTexture.Bind(1);
+        _program.SetUniform("LodAndMode", new Vector2(0,(int) BloomMode.BloomModePrefilter));
+        _bloomRTs[0].Use(0, TextureAccess.WriteOnly);
+        _renderTexture.Use(1);
         _program.SetUniform("u_Texture", 1);
-        _renderTexture.Bind(2);
+        _renderTexture.Use(2);
         _program.SetUniform("u_BloomTexture", 2);
         _program.Dispatch(_bloomTexSize.X, _bloomTexSize.Y);
 
@@ -331,14 +332,14 @@ public sealed class Window
         {
             var mipSize =  _bloomRTs[0].GetMipSize(currentMip);
 
-            _program.SetUniform("LodAndMode", new Vector2(currentMip-1f,(int) BloomMode.BLOOM_MODE_DOWNSAMPLE));
+            _program.SetUniform("LodAndMode", new Vector2(currentMip-1f,(int) BloomMode.BloomModeDownsample));
             
             
             // Ping 
             
-            _bloomRTs[1].Bind(0, TextureAccess.WriteOnly, currentMip);
+            _bloomRTs[1].Use(0, TextureAccess.WriteOnly, currentMip);
             
-            _bloomRTs[0].Bind(1);
+            _bloomRTs[0].Use(1);
             _program.SetUniform("u_Texture", 1);
             
             _program.Dispatch((int) mipSize.X, (int) mipSize.Y);
@@ -346,11 +347,11 @@ public sealed class Window
             
             // Pong 
             
-            _program.SetUniform("LodAndMode", new Vector2(currentMip,(int) BloomMode.BLOOM_MODE_DOWNSAMPLE));
+            _program.SetUniform("LodAndMode", new Vector2(currentMip,(int) BloomMode.BloomModeDownsample));
             
-            _bloomRTs[0].Bind(0, TextureAccess.WriteOnly, currentMip);
+            _bloomRTs[0].Use(0, TextureAccess.WriteOnly, currentMip);
             
-            _bloomRTs[1].Bind(1);
+            _bloomRTs[1].Use(1);
             _program.SetUniform("u_Texture", 1);
             
             _program.Dispatch((int) mipSize.X, (int) mipSize.Y);
@@ -360,13 +361,13 @@ public sealed class Window
         
         // First Upsample
 
-        _bloomRTs[2].Bind(0, TextureAccess.WriteOnly, _mips - 1);
+        _bloomRTs[2].Use(0, TextureAccess.WriteOnly, _mips - 1);
          
         //currentMip--;
         
-        _program.SetUniform("LodAndMode", new Vector2(_mips-2,(int) BloomMode.BLOOM_MODE_UPSAMPLE_FIRST));
+        _program.SetUniform("LodAndMode", new Vector2(_mips-2,(int) BloomMode.BloomModeUpsampleFirst));
 
-        _bloomRTs[0].Bind(1);
+        _bloomRTs[0].Use(1);
         _program.SetUniform("u_Texture", 1);
         
         var currentMipSize =  _bloomRTs[2].GetMipSize(_mips-1);
@@ -376,15 +377,13 @@ public sealed class Window
         for (currentMip = _mips - 2; currentMip >= 0; currentMip--)
         {
             currentMipSize =  _bloomRTs[2].GetMipSize(currentMip);
-            _bloomRTs[2].Bind(0, TextureAccess.WriteOnly, currentMip);
-            _program.SetUniform("LodAndMode", new Vector2(currentMip,(int) BloomMode.BLOOM_MODE_UPSAMPLE));
-            
-            
-            
-            _bloomRTs[0].Bind(1);
+            _bloomRTs[2].Use(0, TextureAccess.WriteOnly, currentMip);
+            _program.SetUniform("LodAndMode", new Vector2(currentMip,(int) BloomMode.BloomModeUpsample));
+
+            _bloomRTs[0].Use(1);
             _program.SetUniform("u_Texture", 1);
             
-            _bloomRTs[2].Bind(2);
+            _bloomRTs[2].Use(2);
             _program.SetUniform("u_BloomTexture", 2);
             
             _program.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);

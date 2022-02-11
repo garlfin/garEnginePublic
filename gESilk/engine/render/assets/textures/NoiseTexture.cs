@@ -7,11 +7,9 @@ namespace gESilk.engine.render.assets.textures;
 public class NoiseTexture : ITexture
 {
  
-    private int _id;
-    private new readonly int _slot;
 
 
-    public NoiseTexture(int slot)
+    public NoiseTexture()
     {
         _format = PixelInternalFormat.Rgb;
         var rand = new Random();
@@ -24,8 +22,7 @@ public class NoiseTexture : ITexture
         
         _id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _id);
-            
-        _slot = slot;
+       
             
         AssetManager.Register(this);
 
@@ -44,16 +41,16 @@ public class NoiseTexture : ITexture
         GL.DeleteTexture(_id);
     }
     
-    public override void Bind(int slot, TextureAccess access, int level = 0)
+    public override void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
 
-    public override int Use()
+    public override int Use(int slot)
     {
-        GL.ActiveTexture(TextureUnit.Texture0+_slot);
+        GL.ActiveTexture(TextureUnit.Texture0+slot);
         GL.BindTexture(TextureTarget.Texture2D, _id);
-        return _slot;
+        return slot;
     }
 }
 
