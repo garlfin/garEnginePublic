@@ -19,7 +19,7 @@ public abstract class ShaderSetting
         program.SetUniform(RealLocation, 0);
     }
 
-    public virtual void Cleanup()
+    public virtual void Cleanup(ShaderProgram program)
     {
     }
 }

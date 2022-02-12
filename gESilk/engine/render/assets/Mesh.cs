@@ -25,6 +25,7 @@ public class Mesh
             var mesh = _meshes[index];
             materials[mesh.MaterialId].Use(model, _isSkybox);
             mesh.Data?.Render();
+            materials[mesh.MaterialId].Cleanup();
         }
     }
 
@@ -35,6 +36,7 @@ public class Mesh
         {
             material.Use(model, _isSkybox);
             mesh.Data?.Render();
+            material.Cleanup();
         }
     }
 
@@ -53,6 +55,7 @@ public class Mesh
       
         materials[_meshes[index].MaterialId].Use(model, _isSkybox);
         _meshes[index].Data?.Render();
+        materials[_meshes[index].MaterialId].Cleanup();
     }
 
     public void Render(int index, Material material, Matrix4 model, DepthFunction? function = null)
@@ -60,6 +63,7 @@ public class Mesh
         
         material.Use(model, _isSkybox);
         _meshes[index].Data?.Render();
+        material.Cleanup();
     }
 
     public void AddMesh(MeshData mesh)

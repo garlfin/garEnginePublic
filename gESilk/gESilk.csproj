@@ -17,32 +17,32 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="cube.obj">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="sponza_column_a_diff.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="brick_albedo.tif">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="brick_normal.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
       <None Update="shader\default.shader">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="shader\skybox.shader">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="plane.dae">
+      <None Update="resources\texture\brick_albedo.tif">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\brick_normal.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\models\cube.obj">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="sphere.obj">
+      <None Update="resources\models\plane.dae">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="teapot.obj">
+      <None Update="resources\models\sphere.obj">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\models\teapot.obj">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="resources\texture\sponza_column_a_diff.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
@@ -59,7 +59,6 @@
 
     <ItemGroup>
       <Folder Include="cubemap" />
-      <Folder Include="resources\texture" />
     </ItemGroup>
 
 </Project>

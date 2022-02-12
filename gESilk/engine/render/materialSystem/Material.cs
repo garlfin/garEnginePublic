@@ -53,6 +53,14 @@ public class Material
         }
     }
 
+    public void Cleanup()
+    {
+        foreach (var setting in _settings)
+        {
+            setting.Cleanup(_program);
+        }
+    }
+
     public void AddSetting(ShaderSetting setting)
     {
         _settings.Add(setting);

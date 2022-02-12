@@ -17,6 +17,7 @@ out mat3 TBN;
 out vec4 FragPosLightSpace;
 out vec3 viewFragPos;
 out vec3 viewNormal;
+out vec3 noNormalNormal;
 
 
 void main() {
@@ -32,6 +33,7 @@ void main() {
     FragPosLightSpace = worldPos * lightView * lightProjection;
     viewFragPos = vec3(worldPos * view);
     viewNormal = normalize(vNormal * mat3(transpose(inverse(model*view))));
+    noNormalNormal = N;
 }
 
 #FRAGMENT
@@ -44,6 +46,8 @@ uniform sampler2DShadow shadowMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform float emission = 1.0;
+uniform float roughness = 0.8;
+uniform float ior = 1.450;
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -51,13 +55,14 @@ in mat3 TBN;
 in vec4 FragPosLightSpace;
 in vec3 viewFragPos;
 in vec3 viewNormal;
+in vec3 noNormalNormal;
 
 
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec3 FragNormal;
+layout (location = 1) out vec4 FragNormal;
 layout (location = 2) out vec3 FragLoc;
 
-const int pcfCount = 2;
+const int pcfCount = 4;
 const float totalTexels = (pcfCount * 2.0+1.0)*(pcfCount*2.0+1.0);
 
 float fresnelSchlick(float cosi, float eta)
@@ -86,7 +91,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
     float currentDepth = projCoords.z;
-    float bias = max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
+    float bias = max(0.001 * (1.0 - dot(normal, lightDir)), 0.001);
     float visibility = 0;
 
     float texelSize = 1.0/textureSize(shadowMap,0).x;
@@ -107,20 +112,20 @@ void main() {
 
     vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1,-1,1) + vec3(0,1,0);
     normal = normalize((normal * 2.0 - 1.0)*TBN);
-    vec3 noNormalNormal = normalize(vec3(0,0,1)*TBN);
+    vec3 viewDir = normalize(FragPos-viewPos);
 
     vec3 lightDir = normalize(lightPos);
-    float ambientLambert = (max(dot(lightDir,normal),0.0)*0.5+0.5);
-    vec4 ambient = textureLod(skyBox, normal, 10)*0.1+ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5,0,1);
-
-    vec3 viewDir = normalize(FragPos-viewPos);
-    
-    float specFac = 1-0.75;
+    vec4 ambient = textureLod(skyBox, normal, 10)*0.2;
+    float ambientLambert = max(dot(lightDir,normal),0.0)*0.5+0.5;
+    float specFac = 1-roughness;
     float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)),0,1)*specFac;
-    vec4 color = texture(albedo, fTexCoord)+spec;
-    color = mix(color, textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)),(specFac)*max(fresnelSchlick(dot(normal, normalize(viewPos)),1.450),0));
+    ambient = ambient + ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5,0,1);
+
     
-    FragColor = vec4(vec3(color*ambient*emission),1.0);
+    vec4 color = texture(albedo, fTexCoord);
+    color = (color + (textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10))*(specFac*max(fresnelSchlick(dot(normal, viewDir),ior),0))));
+    
+    FragColor = vec4(vec3(color*ambient*emission+spec),1.0); //vec4(vec3(max(fresnelSchlick(dot(normal, viewDir),ior),0)),1.0);
     FragLoc = viewFragPos;
-    FragNormal = viewNormal;
+    FragNormal = vec4(viewNormal, dot(noNormalNormal, viewDir));
 }

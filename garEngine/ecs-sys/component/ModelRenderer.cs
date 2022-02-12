@@ -43,6 +43,7 @@ public class ModelRenderer : Component
             GL.BindTexture(TextureTarget.Texture2D, WorldSettings._texture);
             currentMaterial.SetUniform("shadowMap", 6);
             _parser.Render(i);
+            currentMaterial.Cleanup();
         }
         
         

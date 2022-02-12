@@ -24,22 +24,18 @@ uniform vec3 Samples[64];
 uniform mat4 projection;
 
 int kernelSize = 64;
-float SSAORadius  = 0.1;
-float SSAOBias  = 0.025;
-
+float SSAORadius  = 0.25;
+float SSAOBias = 0.025;
 // tile noise texture over screen based on screen dimensions divided by noise size
-const vec2 NoiseScale = vec2(1280/4.0, 720/4.0);
+const vec2 NoiseScale = vec2(1280.0/4.0, 720.0/4.0);
 
 void main()
 {
-    
-
     vec2 texSize = vec2(1280, 720);
-
+    vec4 fragPosWA = texture(screenTexturePos, TexCoord);
     vec3 fragPos = texture(screenTexturePos, TexCoord).xyz;
     vec3 normal = texture(screenTextureNormal, TexCoord).rgb;
     vec3 randomVec = texture(NoiseTex, TexCoord * NoiseScale).xyz;
-
     vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
     vec3 bitangent = cross(normal, tangent);
     mat3 TBN = mat3(tangent, bitangent, normal);

@@ -118,18 +118,19 @@ public sealed class Window
         Globals.Window.CursorGrabbed = true;
     
 
-        var loader = AssimpLoader.GetMeshFromFile("../../../hut.obj");
-        var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../cube.obj");
+        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/hut.obj");
+        var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         skyboxLoader.IsSkybox(true);
 
         var program = new ShaderProgram("../../../resources/shader/default.shader");
-        var texture = new Texture("../../../brick_albedo.tif");
-        var normal = new Texture("../../../brick_normal.png");
+        var texture = new Texture("../../../resources/texture/brick_albedo.tif");
+        var normal = new Texture("../../../resources/texture/brick_normal.png");
 
         Material material = new(program);
         material.AddSetting(new TextureSetting("albedo", texture,1));
         material.AddSetting(new TextureSetting("normalMap", normal, 2));
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
+        material.AddSetting(new FloatSetting("roughness", 0));
 
         Material woodMaterial = new Material(program);
         woodMaterial.AddSetting(new TextureSetting("albedo",
@@ -170,7 +171,7 @@ public sealed class Window
 
         var camera = new Entity();
         camera.AddComponent(new Transform());
-        camera.AddComponent(new Camera(30f, 0.1f, 1000f, 0.3f));
+        camera.AddComponent(new Camera(72f, 0.1f, 1000f, 0.3f));
         camera.GetComponent<Camera>()?.Set();
         
         var rand = new Random();
@@ -193,7 +194,7 @@ public sealed class Window
         var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.shader");
 
         _finalShadingEntity = new Entity();
-        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../plane.dae");
+        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
         _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(framebufferShader, DepthFunction.Always)));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
@@ -201,8 +202,7 @@ public sealed class Window
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("ao", _blurTex, 1 ));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("bloom", _bloomRTs[2], 2));
-
+            .AddSetting(new TextureSetting("bloom", _bloomRTs[2], 2)); ;
         _finalShadingEntity.AddComponent(new FBRenderer(renderPlaneMesh));
 
         var physicalPlane = new Entity();
