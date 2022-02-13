@@ -39,14 +39,4 @@ public class Texture : ITexture
         bmp.Dispose();
     }
 
-    public override void Delete()
-    {
-        GL.DeleteTexture(_id);
-    }
-    
-    public override void Use(int slot, TextureAccess access, int level = 0)
-    {
-        GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
-    }
-    
 }

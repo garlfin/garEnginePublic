@@ -14,7 +14,7 @@ internal static class GlDebug
         GL.Enable(EnableCap.DebugOutput);
     }
 
-    public static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length,
+    private static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length,
         IntPtr message, IntPtr userParam)
     {
         if (severity == DebugSeverity.DebugSeverityHigh)

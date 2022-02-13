@@ -27,11 +27,10 @@ public abstract class ITexture : Asset
 
     public override void Delete()
     {
+        GL.DeleteTexture(_id);
     }
     
-    public virtual void Use(int slot, TextureAccess access, int level = 0)
-    {
-    }
+    
     public virtual Vector2 GetMipSize(int level)
     {
         int width = _width;
@@ -49,5 +48,27 @@ public abstract class ITexture : Asset
     public static int GetMipLevelCount(int width, int height)
     {
         return (int) Math.Floor(Math.Log2(Math.Min(width, height)));
+    }
+    public virtual void Use(int slot, TextureAccess access, int level = 0)
+    {
+        GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
+    }
+    public virtual void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
+    {
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
+        GL.BindTexture(TextureTarget.Texture2D, _id);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , attachmentLevel, TextureTarget.Texture2D, _id, 0);
+    }
+    public virtual void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel, bool isShadow = false)
+    {
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer._fbo);
+        GL.BindTexture(TextureTarget.Texture2D, _id);
+        if (isShadow)
+        {
+            GL.DrawBuffer(DrawBufferMode.None);
+            GL.ReadBuffer(ReadBufferMode.None);
+        }
+
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, TextureTarget.Texture2D, _id, 0);
     }
 }

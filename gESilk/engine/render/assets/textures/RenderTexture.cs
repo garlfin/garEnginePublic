@@ -23,26 +23,17 @@ public class RenderTexture : ITexture
         float[] borderColor = {1f, 1f, 1f, 1f};
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, borderColor);
     }
-    
     public override void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
     }
-
-    public override void Delete()
-    {
-        GL.DeleteTexture(_id);
-        _id = -1;
-    }
-    
-
-    public void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
+    public override void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
         GL.BindTexture(TextureTarget.Texture2D, _id);
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer , attachmentLevel, TextureTarget.Texture2D, _id, 0);
     }
-    public void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel, bool isShadow = false)
+    public override void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel, bool isShadow = false)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer._fbo);
         GL.BindTexture(TextureTarget.Texture2D, _id);

@@ -4,7 +4,7 @@ namespace gESilk.engine.render.assets.textures;
 
 public class EmptyTexture : ITexture
 {
-    public EmptyTexture( int width, int height, PixelInternalFormat format, PixelFormat format2, int mipLevels)
+    public EmptyTexture(int width, int height, PixelInternalFormat format, int mipLevels)
     {
         AssetManager.Register(this);
         _id = GL.GenTexture();
@@ -24,16 +24,9 @@ public class EmptyTexture : ITexture
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
         
     }
-    
-
-
     public override void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, _id, level, false, 0, access, (SizedInternalFormat) _format);
     }
 
-    public override void Delete()
-    {
-        GL.DeleteTexture(_id);
-    }
 }

@@ -8,6 +8,7 @@ using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
+using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -31,6 +32,7 @@ public sealed class Window
     private EmptyTexture[] _bloomRTs = new EmptyTexture[3];
     private BloomSettings _bloomSettings = new BloomSettings();
     private Vector2i _bloomTexSize;
+    private ImGuiController _controller;
 
     public Window(int width, int height, string name)
     {
@@ -82,7 +84,10 @@ public sealed class Window
 
     private void OnLoad()
     {
+     
         if (Debugger.IsAttached) GlDebug.Init();
+
+        //_controller = new(_width, _height);
 
         _renderBuffer = new RenderBuffer(_width, _height);
         _renderTexture = new RenderTexture(_width, _height);
@@ -95,7 +100,10 @@ public sealed class Window
         _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
         _blurTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);
-        
+        //var _depthPassTex = new RenderTexture(_width, _height, PixelInternalFormat.DepthComponent,
+            //PixelFormat.DepthComponent);
+        //_depthPassTex.BindToBuffer(_renderBuffer, FramebufferAttachment.DepthAttachment);
+
         _bloomTexSize = new Vector2i(_width, _height) / 2;
         _bloomTexSize += new Vector2i(_mBloomComputeWorkGroupSize - (_bloomTexSize.X % _mBloomComputeWorkGroupSize),
             _mBloomComputeWorkGroupSize - (_bloomTexSize.Y % _mBloomComputeWorkGroupSize));
@@ -104,8 +112,7 @@ public sealed class Window
 
         for (int i = 0; i < 3; i++)
         {
-            _bloomRTs[i] = new EmptyTexture(_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f,
-                PixelFormat.Rgba, _mips);
+            _bloomRTs[i] = new EmptyTexture(_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f, _mips);
         }
         
         
@@ -220,7 +227,6 @@ public sealed class Window
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment, true);
         material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
 
-
         var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.shader");
 
 
@@ -258,11 +264,12 @@ public sealed class Window
         
         
         SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
+        
+
     }
     
     private void OnRender(FrameEventArgs args)
     {
-        
         
         if (_time > 12) // 360 / 30 = 12 : )
         {
@@ -300,14 +307,16 @@ public sealed class Window
 
         if (!_alreadyClosed)
         {
-            Console.Write("FPS: " + 1.0 / args.Time +
-                          new string(' ', Console.WindowWidth - args.Time.ToString().Length - 5));
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.Write("FPS: " + 1.0 / args.Time + "          ");
+            Console.SetCursorPosition(0, Console.CursorTop);
         }
         else
         {
             GL.Clear(ClearBufferMask.ColorBufferBit); 
         }
+        //_controller.Update((float)_time);
+        //ImGui.ShowDemoWindow();
+        //_controller.Render();
         Globals.Window.SwapBuffers();
     }
 

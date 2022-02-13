@@ -35,22 +35,5 @@ public class NoiseTexture : ITexture
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
     }
-
-    public override void Delete()
-    {
-        GL.DeleteTexture(_id);
-    }
-    
-    public override void Use(int slot, TextureAccess access, int level = 0)
-    {
-        GL.BindImageTexture(slot, _id, 0, false, 0, access, (SizedInternalFormat) _format);
-    }
-
-    public override int Use(int slot)
-    {
-        GL.ActiveTexture(TextureUnit.Texture0+slot);
-        GL.BindTexture(TextureTarget.Texture2D, _id);
-        return slot;
-    }
 }
 
