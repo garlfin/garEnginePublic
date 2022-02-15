@@ -35,10 +35,15 @@ public class Material
         _cullFaceMode = mode;
     }
 
-
-    public void Use(Matrix4 model, bool clearTranslation)
+    public DepthFunction GetDepthFunction()
     {
-        GL.DepthFunc(_function);
+        return _function;
+    }
+
+
+    public void Use(Matrix4 model, bool clearTranslation, DepthFunction? function = null)
+    {
+        GL.DepthFunc(function ?? _function);
         _program.Use();
         GL.CullFace(_cullFaceMode);
         _program.SetUniform(_model, model);

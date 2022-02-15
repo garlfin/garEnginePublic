@@ -60,7 +60,7 @@ in vec3 noNormalNormal;
 
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 FragNormal;
-layout (location = 2) out vec3 FragLoc;
+layout (location = 2) out vec4 FragLoc;
 
 const int pcfCount = 4;
 const float totalTexels = (pcfCount * 2.0+1.0)*(pcfCount*2.0+1.0);
@@ -126,6 +126,6 @@ void main() {
     color = (color + (textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)) * (specFac*max(fresnelSchlick(dot(normal, viewDir),ior),0))));
     
     FragColor = vec4(vec3(color*ambient*emission+spec),1.0); //vec4(vec3(max(fresnelSchlick(dot(normal, viewDir),ior),0)),1.0);
-    FragLoc = viewFragPos;
+    FragLoc = vec4(viewFragPos,1.0);
     FragNormal = vec4(viewNormal, dot(noNormalNormal, viewDir));
 }

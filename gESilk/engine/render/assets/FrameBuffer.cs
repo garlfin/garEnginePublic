@@ -30,6 +30,7 @@ public class FrameBuffer : Asset
 
     public void Bind(ClearBufferMask mask = ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit)
     {
+        GL.DepthMask(true);
         GL.Viewport(0,0,_width, _height);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer,_fbo);
         GL.Clear(mask);

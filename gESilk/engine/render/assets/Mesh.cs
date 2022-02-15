@@ -20,21 +20,39 @@ public class Mesh
     
     public void Render(List<Material> materials, Matrix4 model)
     {
-        for (var index = 0; index < _meshes.Count; index++)
+        foreach (var mesh in _meshes)
         {
-            var mesh = _meshes[index];
             materials[mesh.MaterialId].Use(model, _isSkybox);
             mesh.Data?.Render();
             materials[mesh.MaterialId].Cleanup();
         }
     }
-
-    public void Render(Material material, Matrix4 model, DepthFunction? function = null)
+    public void Render(List<Material> materials, Matrix4 model, DepthFunction function)
     {
-        GL.DepthFunc(function ?? DepthFunction.Less);
         foreach (var mesh in _meshes)
         {
-            material.Use(model, _isSkybox);
+            materials[mesh.MaterialId].Use(model, _isSkybox, function);
+            mesh.Data?.Render();
+            materials[mesh.MaterialId].Cleanup();
+        }
+    }
+
+    public void Render(Material material, Matrix4 model, List<Material> materials)
+    {
+        for (var index = 0; index < _meshes.Count; index++)
+        {
+            var mesh = _meshes[index];
+            material.Use(model, _isSkybox, materials[index].GetDepthFunction());
+            mesh.Data?.Render();
+            material.Cleanup();
+        }
+    }
+    
+    public void Render(Material material, Matrix4 model, DepthFunction function)
+    {
+        foreach (var mesh in _meshes)
+        {
+            material.Use(model, _isSkybox, function);
             mesh.Data?.Render();
             material.Cleanup();
         }

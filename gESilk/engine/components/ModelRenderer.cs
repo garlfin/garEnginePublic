@@ -8,6 +8,7 @@ public class ModelRenderer : Component
 {
     private readonly Mesh _mesh;
     private Transform? _modelTransform;
+    private MaterialComponent? _materialComponent;
 
     public ModelRenderer(Mesh mesh)
     {
@@ -19,9 +20,9 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _modelTransform = Entity?.GetComponent<Transform>();
-        model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
-        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), model);
+        //_modelTransform = Entity?.GetComponent<Transform>();
+        //model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), model, DepthFunction.Equal);
     }
 
     private float DegreesToRadians(float degrees)
@@ -46,8 +47,13 @@ public class ModelRenderer : Component
         {
             _modelTransform = Entity?.GetComponent<Transform>();
             model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+            _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials());
         }
-        _mesh.Render(Globals.DepthMaterial, model);
+        else
+        {
+            _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials());
+        }
+        
     }
 
     public override void UpdateMouse()

@@ -34,7 +34,7 @@ void main()
     
         vec2 texSize = vec2(1280, 720);
         vec4 fragPosWA = texture(screenTexturePos, TexCoord);
-        vec3 fragPos = texture(screenTexturePos, TexCoord).xyz;
+        vec3 fragPos = fragPosWA.xyz;
         vec3 normal = texture(screenTextureNormal, TexCoord).rgb;
         vec3 randomVec = texture(NoiseTex, TexCoord * NoiseScale).xyz;
         vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
@@ -43,25 +43,31 @@ void main()
 
         float occlusion = 0.0;
 
-        for(int i = 0; i < 64; i++)
-        {
-            vec3 Sample= Samples[i];
-            Sample= TBN * Sample;
-            Sample= fragPos + Sample* SSAORadius;
+        if (fragPosWA.w == 1 ) {
 
-            vec4 offset = vec4(Sample, 1.0);
-            offset = offset * projection;
-            offset.xyz /= offset.w;
-            offset.xyz  = offset.xyz * 0.5 + 0.5;
 
-            float sampleDepth = texture(screenTexturePos, offset.xy).z;
+            for (int i = 0; i < 64; i++)
+            {
+                vec3 Sample= Samples[i];
+                Sample= TBN * Sample;
+                Sample= fragPos + Sample* SSAORadius;
 
-            float rangeCheck = smoothstep(0.0, 1.0, SSAORadius / abs(fragPos.z - sampleDepth));
+                vec4 offset = vec4(Sample, 1.0);
+                offset = offset * projection;
+                offset.xyz /= offset.w;
+                offset.xyz  = offset.xyz * 0.5 + 0.5;
 
-            occlusion += (sampleDepth >= Sample.z + SSAOBias ? 1.0 : 0.0) * rangeCheck;
+                float sampleDepth = texture(screenTexturePos, offset.xy).z;
+
+                float rangeCheck = smoothstep(0.0, 1.0, SSAORadius / abs(fragPos.z - sampleDepth));
+
+                occlusion += (sampleDepth >= Sample.z + SSAOBias ? 1.0 : 0.0) * rangeCheck;
+            }
+            occlusion = 1.0 - (occlusion / kernelSize);
+
+            FragColor = occlusion;
+            
+        } else {
+            FragColor = 1.0;
         }
-        occlusion = 1.0 - (occlusion / kernelSize);
-
-        FragColor = occlusion;   
-    
 }

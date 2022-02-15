@@ -286,12 +286,18 @@ public sealed class Window
 
         _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(true);
-
+        
         _renderBuffer.Bind();
         UpdateRender();
+        GL.ColorMask(false, false,false,false);
+        ModelRendererSystem.Update(false);
+        GL.ColorMask(true, true, true, true);
+        GL.DepthMask(false);
+        
         ModelRendererSystem.Update((float)args.Time);
         CubemapMManager.Update((float)args.Time);
-
+        
+     
         RenderBloom();
         
         _ssaoMap.Bind();
