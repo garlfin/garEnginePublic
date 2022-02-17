@@ -1,4 +1,5 @@
-﻿using gESilk.engine.render.assets;
+﻿using gESilk.engine.components;
+using gESilk.engine.render.assets;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -41,16 +42,18 @@ public class Material
     }
 
 
-    public void Use(Matrix4 model, bool clearTranslation, DepthFunction? function = null)
+    public void Use(Matrix4 model, bool clearTranslation, DepthFunction? function = null, bool isShadow = false)
     {
         GL.DepthFunc(function ?? _function);
         _program.Use();
         GL.CullFace(_cullFaceMode);
         _program.SetUniform(_model, model);
-        _program.SetUniform(_view, clearTranslation ? View.ClearTranslation() : View);
-        _program.SetUniform(_projection , Projection);
-        _program.SetUniform(_viewPos, Camera.Position);
-        _program.SetUniform(_lightProj, ShadowProjection);
+        _program.SetUniform(_view, isShadow ? ShadowView : clearTranslation
+            ? CameraSystem.CurrentCamera.View.ClearTranslation()
+            : CameraSystem.CurrentCamera.View );
+        _program.SetUniform(_projection , isShadow ? ShadowProjetion : CameraSystem.CurrentCamera.Projection);
+        _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location);
+        _program.SetUniform(_lightProj, ShadowProjetion);
         _program.SetUniform(_lightView, ShadowView);
         foreach (var setting in _settings)
         {

@@ -18,9 +18,8 @@ using render.materialSystem;
 public static class Globals
 {
     public static AssimpContext Assimp;
-    public static BasicCamera Camera;
     public static BasicCamera ShadowCamera;
-    public static Matrix4 View, Projection, ShadowView, ShadowProjection;
+    public static Matrix4 ShadowView, ShadowProjetion;
     public static GameWindow Window;
     public static readonly Material DepthMaterial;
     public static Vector3 SunPos;
@@ -29,7 +28,6 @@ public static class Globals
     static Globals()
     {
         Assimp = new AssimpContext();
-        Camera = new BasicCamera(Vector3.Zero, (float)1280 / 720);
         ShadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f)
         {
             DepthFar = 50f
@@ -38,21 +36,11 @@ public static class Globals
         DepthMaterial = new Material(depthProgram);
     }
 
-    public static void UpdateRender(bool isShadow = false)
+    public static void UpdateShadow()
     {
-        if (isShadow)
-        {
-            var currentCameraPos = CameraSystem.CurrentCamera!.GetComponent<Transform>()!.Location;
-            ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0,20,0);
-            View = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0,20,0));
-            Projection = ShadowCamera.GetOrthoProjectionMatrix(20f);
-            ShadowProjection = Projection;
-            ShadowView = View;
-        }
-        else
-        {
-            View = Camera.GetViewMatrix();
-            Projection = Camera.GetProjectionMatrix();
-        }
+        var currentCameraPos = CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location;
+        ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0,20,0);
+        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0,20,0));
+        ShadowProjetion = ShadowCamera.GetOrthoProjectionMatrix(20f);
     }
 }

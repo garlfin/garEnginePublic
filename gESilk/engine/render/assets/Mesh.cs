@@ -37,12 +37,12 @@ public class Mesh
         }
     }
 
-    public void Render(Material material, Matrix4 model, List<Material> materials)
+    public void Render(Material material, Matrix4 model, List<Material> materials, bool isShadow = false)
     {
         for (var index = 0; index < _meshes.Count; index++)
         {
             var mesh = _meshes[index];
-            material.Use(model, _isSkybox, materials[index].GetDepthFunction());
+            material.Use(model, _isSkybox, materials[index].GetDepthFunction(), isShadow);
             mesh.Data?.Render();
             material.Cleanup();
         }

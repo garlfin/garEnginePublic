@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using gESilk.engine.misc;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace gESilk.engine.components;
@@ -20,6 +21,9 @@ public class Camera : Component
 
     private float _sensitivity;
 
+    private BasicCamera _camera;
+    public Matrix4 View, Projection;
+
     public Camera(float fov, float clipStart, float clipEnd, float sensitivity)
     {
         _sensitivity = sensitivity * 0.1f;
@@ -27,28 +31,40 @@ public class Camera : Component
         ClipStart = clipStart;
         ClipEnd = clipEnd;
         CameraSystem.Register(this);
+        _camera = new BasicCamera(Vector3.Zero, (float) 1280/720);
     }
 
     public void Set()
     {
-        CameraSystem.CurrentCamera = Entity;
+        CameraSystem.CurrentCamera = this;
     }
 
     public override void Update(float gameTime)
     {
-        _entityTransform = Entity.GetComponent<Transform>();
+       _entityTransform = Entity.GetComponent<Transform>();
         var input = Globals.Window.KeyboardState.GetSnapshot();
-        if (input.IsKeyDown(Keys.W)) _entityTransform.Location += Globals.Camera.Front * _cameraSpeed * gameTime; // Forward
-        if (input.IsKeyDown(Keys.S)) _entityTransform.Location -= Globals.Camera.Front * _cameraSpeed * gameTime; // Backwards
-        if (input.IsKeyDown(Keys.A)) _entityTransform.Location -= Globals.Camera.Right * (_cameraSpeed / 2) * gameTime; // Left
-        if (input.IsKeyDown(Keys.D))
-            _entityTransform.Location += Globals.Camera.Right * (_cameraSpeed / 2) * gameTime; // Right
-        if (input.IsKeyDown(Keys.Space)) _entityTransform.Location += Globals.Camera.Up * _cameraSpeed * gameTime; // Up
-        if (input.IsKeyDown(Keys.C)) _entityTransform.Location -= Globals.Camera.Up * _cameraSpeed * gameTime; // Down
+        if (input.IsKeyDown(Keys.W)) _entityTransform.Location += _camera.Front * _cameraSpeed * gameTime; // Forward
+        if (input.IsKeyDown(Keys.S)) _entityTransform.Location -= _camera.Front * _cameraSpeed * gameTime; // Backwards
+        if (input.IsKeyDown(Keys.A)) _entityTransform.Location -= _camera.Right * (_cameraSpeed / 2) * gameTime; // Left
+        if (input.IsKeyDown(Keys.D)) _entityTransform.Location += _camera.Right * (_cameraSpeed / 2) * gameTime; // Right
+        if (input.IsKeyDown(Keys.Space)) _entityTransform.Location += _camera.Up * _cameraSpeed * gameTime; // Up
+        if (input.IsKeyDown(Keys.C)) _entityTransform.Location -= _camera.Up * _cameraSpeed * gameTime; // Down
+
+        _camera.Fov = Fov;
+        _camera.Position = _entityTransform.Location;
+        
+
+    }
+
+    public void UpdateMatrices()
+    {
+        View = _camera.GetViewMatrix();
+        Projection = _camera.GetProjectionMatrix();
     }
 
     public override void UpdateMouse()
     {
+        _entityTransform = Entity.GetComponent<Transform>();
         var mouse = Globals.Window.MousePosition;
         if (_firstMove) // This bool variable is initially set to true.
         {
@@ -63,22 +79,26 @@ public class Camera : Component
             _lastPos = new Vector2(mouse.X, mouse.Y);
 
             // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
-            Globals.Camera.Yaw += deltaX * _sensitivity;
-            Globals.Camera.Pitch -= deltaY * _sensitivity; // Reversed since y-coordinates range from bottom to top
+            _entityTransform.Rotation.Y += deltaX * _sensitivity;
+            _entityTransform.Rotation.X -= deltaY * _sensitivity; // Reversed since y-coordinates range from bottom to top
+            _camera.Yaw = _entityTransform.Rotation.Y;
+            _camera.Pitch = _entityTransform.Rotation.X;
         }
     }
 }
 
+
+
 internal class CameraSystem : BaseSystem<Camera>
 {
-    public static Entity? CurrentCamera;
+    public static Camera CurrentCamera;
 
     public static void UpdateCamera()
     {
-        Globals.Camera.Position = CurrentCamera.GetComponent<Transform>().Location;
-        Globals.Camera.Fov = CurrentCamera.GetComponent<Camera>().Fov;
-        Globals.Camera.AspectRatio = (float)1280 / 720;
-        Globals.Camera.DepthFar = CurrentCamera.GetComponent<Camera>().ClipEnd;
-        Globals.Camera.DepthNear = CurrentCamera.GetComponent<Camera>().ClipStart;
+        foreach (var camera in Components)
+        {
+            camera.UpdateMatrices();
+        }
     }
+    
 }

@@ -279,18 +279,16 @@ public sealed class Window
 
         //Logic stuff here
         _entity.GetComponent<Transform>().Rotation = (0f, (float)_time * 30, 0f);
-
-
+        
         _time += args.Time;
         CameraSystem.UpdateCamera();
-        UpdateRender(true);
+        UpdateShadow();
 
         _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(true);
         
         
         _renderBuffer.Bind();
-        UpdateRender();
         GL.ColorMask(false, false,false,false);
         ModelRendererSystem.Update(false);
         GL.ColorMask(true, true, true, true);

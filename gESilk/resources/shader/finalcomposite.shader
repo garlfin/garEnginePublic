@@ -17,8 +17,8 @@ out vec4 FragColor;
 
 in vec2 TexCoord;
 
-
-
+const float gamma = 2.2;
+const float exposure = 1;
 
 uniform sampler2D screenTexture;
 uniform sampler2D ao;
@@ -26,10 +26,6 @@ uniform sampler2D bloom;
 
 void main()
 {
-
-
-    const float gamma = 2.2;
-    const float exposure = 1;
     
 
 
@@ -41,5 +37,5 @@ void main()
     // gamma correction 
     mapped = pow(mapped, vec3(1.0 / gamma));
     float aoData = texture(ao,TexCoord).r;
-    FragColor = vec4(mapped * mix(1,aoData, ScreenTex.w), 1.0);
+    FragColor = vec4(mapped * aoData, 1.0);
 }

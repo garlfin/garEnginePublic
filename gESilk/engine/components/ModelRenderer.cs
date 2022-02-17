@@ -47,11 +47,11 @@ public class ModelRenderer : Component
         {
             _modelTransform = Entity?.GetComponent<Transform>();
             model = CreateModelMatrix();
-            _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials());
+            _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials(), isShadow);
         }
         else
         {
-            _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials());
+            _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials(), isShadow);
         }
         
     }
