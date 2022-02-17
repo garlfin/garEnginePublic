@@ -65,6 +65,10 @@
               "target": "Package",
               "version": "[4.6.7, )"
             },
+            "SharpFont": {
+              "target": "Package",
+              "version": "[4.0.1, )"
+            },
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[6.0.0, )"

@@ -46,7 +46,7 @@ public class ModelRenderer : Component
         if (isShadow)
         {
             _modelTransform = Entity?.GetComponent<Transform>();
-            model = _modelTransform != null ? CreateModelMatrix() : Matrix4.Identity;
+            model = CreateModelMatrix();
             _mesh.Render(Globals.DepthMaterial, model, Entity.GetComponent<MaterialComponent>()?.GetMaterials());
         }
         else
@@ -61,6 +61,6 @@ public class ModelRenderer : Component
     }
 }
 
-internal class ModelRendererSystem : BaseSystem<ModelRenderer>
+class ModelRendererSystem : BaseSystem<ModelRenderer>
 {
 }

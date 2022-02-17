@@ -47,6 +47,7 @@ uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform float emission = 1.0;
 uniform float roughness = 0.8;
+uniform float metallic = 0.0;
 uniform float ior = 1.450;
 
 in vec3 FragPos;
@@ -123,9 +124,11 @@ void main() {
 
     
     vec4 color = texture(albedo, fTexCoord);
-    color = (color + (textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10)) * (specFac*max(fresnelSchlick(dot(normal, viewDir),ior),0))));
+    float fresnelFac = (specFac*max(fresnelSchlick(dot(normal, viewDir),ior),0));
+    vec4 specWithSkybox = textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10))+spec;
+    color = mix( color + (specWithSkybox*fresnelFac), color * specWithSkybox, metallic);
     
-    FragColor = vec4(vec3(color*ambient*emission+spec),1.0); //vec4(vec3(max(fresnelSchlick(dot(normal, viewDir),ior),0)),1.0);
+    FragColor = vec4(vec3(color*mix(ambient, vec4(1), metallic)*emission),1.0); //vec4(vec3(max(fresnelSchlick(dot(normal, viewDir),ior),0)),1.0);
     FragLoc = vec4(viewFragPos,1.0);
     FragNormal = vec4(viewNormal, dot(noNormalNormal, viewDir));
 }

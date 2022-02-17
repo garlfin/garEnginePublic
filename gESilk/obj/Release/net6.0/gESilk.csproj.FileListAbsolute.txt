@@ -81,3 +81,4 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\linux-
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\osx-x64\native\libcimgui.dylib
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win-x64\native\cimgui.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win-x86\native\cimgui.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\SharpFont.dll.config

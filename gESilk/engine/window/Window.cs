@@ -3,18 +3,19 @@ using static gESilk.engine.Globals;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
-using gESilk.engine.render;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
-using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
-using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Camera = gESilk.engine.components.Camera;
+using Material = gESilk.engine.render.materialSystem.Material;
 using Texture = gESilk.engine.render.assets.textures.Texture;
+using TextureWrapMode = OpenTK.Graphics.OpenGL4.TextureWrapMode;
+
 
 namespace gESilk.engine.window;
 
@@ -30,7 +31,7 @@ public sealed class Window
     private ComputeProgram _program;
     private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
     private EmptyTexture[] _bloomRTs = new EmptyTexture[3];
-    private BloomSettings _bloomSettings = new BloomSettings();
+    private BloomSettings _bloomSettings = new();
     private Vector2i _bloomTexSize;
     private ImGuiController _controller;
 
@@ -287,6 +288,7 @@ public sealed class Window
         _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(true);
         
+        
         _renderBuffer.Bind();
         UpdateRender();
         GL.ColorMask(false, false,false,false);
@@ -300,14 +302,14 @@ public sealed class Window
      
         RenderBloom();
         
-        _ssaoMap.Bind();
+        _ssaoMap.Bind(null);
         _ssaoEntity.GetComponent<FBRenderer>().Update(0f);
 
-        _blurMap.Bind();
+        _blurMap.Bind(null);
         _blurEntity.GetComponent<FBRenderer>().Update(0f);
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
         _finalShadingEntity.GetComponent<FBRenderer>().Update(0f);
 
