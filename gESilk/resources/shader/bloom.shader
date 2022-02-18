@@ -1,6 +1,5 @@
 ﻿#version 430
-// Thanks sam for the help with this method of bloom : )
-
+// Thanks Cherno for the code and Sam for the implementation : ) 
 
 layout(binding = 0, rgba16f) restrict writeonly uniform image2D o_Image;
 
