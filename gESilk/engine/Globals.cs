@@ -20,10 +20,8 @@ public static class Globals
     public static AssimpContext Assimp;
     public static BasicCamera ShadowCamera;
     public static Matrix4 ShadowView, ShadowProjetion;
-    public static GameWindow Window;
     public static readonly Material DepthMaterial;
     public static Vector3 SunPos;
-    
 
     static Globals()
     {

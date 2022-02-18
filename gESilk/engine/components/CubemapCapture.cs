@@ -45,7 +45,7 @@ public class CubemapCapture : Component
     }
     
 
-    public override void UpdateMouse()
+    public override void UpdateMouse(float gameTime)
     {
         
     }

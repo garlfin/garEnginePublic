@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using static gESilk.engine.Globals;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
@@ -34,7 +35,8 @@ public sealed class Window
     private BloomSettings _bloomSettings = new();
     private Vector2i _bloomTexSize;
     private ImGuiController _controller;
-
+    private GameWindow _Window;
+    private EngineState _state;
     public Window(int width, int height, string name)
     {
         _width = width;
@@ -53,21 +55,31 @@ public sealed class Window
         nws.Title = name;
         nws.IsEventDriven = false;
         nws.WindowBorder = WindowBorder.Fixed;
-        Globals.Window = new GameWindow(gws, nws);
+        _Window = new GameWindow(gws, nws);
+    }
+
+    public GameWindow GetWindow()
+    {
+        return _Window;
+    }
+
+    public EngineState State()
+    {
+        return _state;
     }
 
     public void Run()
     {
-        Globals.Window.Load += OnLoad;
-        Globals.Window.UpdateFrame += OnUpdate;
-        Globals.Window.RenderFrame += OnRender;
-        Globals.Window.MouseMove += OnMouseMove;
-        Globals.Window.Run();
+        _Window.Load += OnLoad;
+        _Window.UpdateFrame += OnUpdate;
+        _Window.RenderFrame += OnRender;
+        _Window.MouseMove += OnMouseMove;
+        _Window.Run();
     }
 
     private void OnMouseMove(MouseMoveEventArgs args)
     {
-        CameraSystem.UpdateMouse();
+        BehaviorSystem.UpdateMouse(1f);
     }
 
     private void OnClosing()
@@ -118,12 +130,12 @@ public sealed class Window
         
         
         _program = new ComputeProgram("../../../resources/shader/bloom.shader");
-        GL.ClearColor(System.Drawing.Color.White);
+        GL.ClearColor(Color.White);
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.TextureCubeMapSeamless);
 
-        Globals.Window.CursorGrabbed = true;
+        _Window.CursorGrabbed = true;
     
 
         var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/hut.obj");
@@ -179,9 +191,10 @@ public sealed class Window
 
         var camera = new Entity();
         camera.AddComponent(new Transform());
-        camera.AddComponent(new Camera(72f, 0.1f, 1000f, 0.3f));
+        camera.AddComponent(new MovementBehavior(0.3f));
+        camera.AddComponent(new Camera(72f, 0.1f, 1000f));
         camera.GetComponent<Camera>()?.Set();
-        
+
         var rand = new Random();
 
         Vector3[] data = new Vector3[64];
@@ -271,7 +284,7 @@ public sealed class Window
     
     private void OnRender(FrameEventArgs args)
     {
-        
+        _time += args.Time;
         if (_time > 12) // 360 / 30 = 12 : )
         {
             _time = 0;
@@ -279,27 +292,28 @@ public sealed class Window
 
         //Logic stuff here
         _entity.GetComponent<Transform>().Rotation = (0f, (float)_time * 30, 0f);
+        BehaviorSystem.Update((float) args.Time);
         
-        _time += args.Time;
-        CameraSystem.UpdateCamera();
+        CameraSystem.Update(0f);
         UpdateShadow();
-
+        
+        _state = EngineState.RenderShadowState;
         _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
-        ModelRendererSystem.Update(true);
-        
-        
+        ModelRendererSystem.Update(0f);
+
+        _state = EngineState.RenderDepthState;
         _renderBuffer.Bind();
         GL.ColorMask(false, false,false,false);
-        ModelRendererSystem.Update(false);
+        ModelRendererSystem.Update(0f);
         GL.ColorMask(true, true, true, true);
         GL.DepthMask(false);
         
+        _state = EngineState.RenderState;
         ModelRendererSystem.Update((float)args.Time);
         CubemapMManager.Update((float)args.Time);
-        
-     
+
+        _state = EngineState.PostProcessState;
         RenderBloom();
-        
         _ssaoMap.Bind(null);
         _ssaoEntity.GetComponent<FBRenderer>().Update(0f);
 
@@ -307,23 +321,17 @@ public sealed class Window
         _blurEntity.GetComponent<FBRenderer>().Update(0f);
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        
         _finalShadingEntity.GetComponent<FBRenderer>().Update(0f);
 
-        if (!_alreadyClosed)
-        {
-            Console.Write("FPS: " + 1.0 / args.Time + "          ");
-            Console.SetCursorPosition(0, Console.CursorTop);
-        }
-        else
+        if (_alreadyClosed)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit); 
         }
+      
         //_controller.Update((float)_time);
         //ImGui.ShowDemoWindow();
         //_controller.Render();
-        Globals.Window.SwapBuffers();
+        _Window.SwapBuffers();
     }
 
     private void RenderBloom()
@@ -338,11 +346,7 @@ public sealed class Window
         _renderTexture.Use(2);
         _program.SetUniform("u_BloomTexture", 2);
         _program.Dispatch(_bloomTexSize.X, _bloomTexSize.Y);
-
-
-        
-
-        int currentMip = 0;
+        int currentMip;
         for ( currentMip = 1; currentMip < _mips; currentMip++)
         {
             var mipSize =  _bloomRTs[0].GetMipSize(currentMip);
@@ -406,13 +410,12 @@ public sealed class Window
     }
     private void OnUpdate(FrameEventArgs args)
     {
-        CameraSystem.Update((float)args.Time);
-        if (Globals.Window.IsKeyDown(Keys.Escape))
+        if (_Window.IsKeyDown(Keys.Escape))
         {
             if (_alreadyClosed) return;
             _alreadyClosed = true;
             OnClosing();
-            Globals.Window.Close();
+            _Window.Close();
         }
     }
 }

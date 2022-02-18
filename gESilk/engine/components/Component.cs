@@ -8,11 +8,7 @@ public class Component
     {
     }
 
-    public virtual void Update(bool isShadow)
-    {
-    }
-
-    public virtual void UpdateMouse()
+    public virtual void UpdateMouse(float gameTime)
     {
     }
 }
@@ -25,19 +21,13 @@ internal class BaseSystem<T> where T : Component
     {
         Components.Add(component);
     }
-
-    public static void Update(bool isShadow)
-    {
-        foreach (var component in Components) component.Update(isShadow);
-    }
-
     public static void Update(float gameTime)
     {
         foreach (var component in Components) component.Update(gameTime);
     }
 
-    public static void UpdateMouse()
+    public static void UpdateMouse(float gameTime)
     {
-        foreach (var component in Components) component.UpdateMouse();
+        foreach (var component in Components) component.UpdateMouse(gameTime);
     }
 }

@@ -20,7 +20,7 @@ public class FBRenderer : Component
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), Matrix4.Identity);
     }
 
-    public override void UpdateMouse()
+    public override void UpdateMouse(float gameTime)
     {
     }
 }
