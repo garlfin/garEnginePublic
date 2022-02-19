@@ -17,7 +17,7 @@ public class EmptyCubemapTexture : ITexture
         GL.BindTexture(TextureTarget.TextureCubeMap, _id);
         _width = size;
         _height = size;
-        for (var i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             
             GL.TexImage2D(TextureTarget.TextureCubeMapNegativeX + i, 0, PixelInternalFormat.Rgba16f, size, size, 0, PixelFormat.Bgr,

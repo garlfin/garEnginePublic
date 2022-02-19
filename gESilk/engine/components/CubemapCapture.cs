@@ -1,4 +1,7 @@
-﻿namespace gESilk.engine.components;
+﻿using System.Windows.Forms;
+using OpenTK.Windowing.Common;
+
+namespace gESilk.engine.components;
 
 public class CubemapCapture : Component
 {
@@ -45,7 +48,7 @@ public class CubemapCapture : Component
     }
     
 
-    public override void UpdateMouse(float gameTime)
+    public override void UpdateMouse(MouseMoveEventArgs args)
     {
         
     }

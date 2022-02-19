@@ -36,7 +36,7 @@ public static class Globals
 
     public static void UpdateShadow()
     {
-        var currentCameraPos = CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location;
+        Vector3 currentCameraPos = CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location;
         ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0,20,0);
         ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0,20,0));
         ShadowProjetion = ShadowCamera.GetOrthoProjectionMatrix(20f);

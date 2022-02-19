@@ -12,9 +12,9 @@ public class NoiseTexture : ITexture
     public NoiseTexture()
     {
         _format = PixelInternalFormat.Rgb;
-        var rand = new Random();
-        var pixels = new Vector3[16];
-        for (var i = 0; i < 16; i++)
+        Random rand = new Random();
+        Vector3[] pixels = new Vector3[16];
+        for (int i = 0; i < 16; i++)
         {
             Vector3 data = new((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0), 0f);
             pixels[i] = data;

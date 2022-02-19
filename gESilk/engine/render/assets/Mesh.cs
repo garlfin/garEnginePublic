@@ -20,7 +20,7 @@ public class Mesh
     
     public void Render(List<Material> materials, Matrix4 model)
     {
-        foreach (var mesh in _meshes)
+        foreach (MeshData mesh in _meshes)
         {
             materials[mesh.MaterialId].Use(model, _isSkybox);
             mesh.Data?.Render();
@@ -29,7 +29,7 @@ public class Mesh
     }
     public void Render(List<Material> materials, Matrix4 model, DepthFunction function)
     {
-        foreach (var mesh in _meshes)
+        foreach (MeshData mesh in _meshes)
         {
             materials[mesh.MaterialId].Use(model, _isSkybox, function);
             mesh.Data?.Render();
@@ -39,9 +39,9 @@ public class Mesh
 
     public void Render(Material material, Matrix4 model, List<Material> materials)
     {
-        for (var index = 0; index < _meshes.Count; index++)
+        for (int index = 0; index < _meshes.Count; index++)
         {
-            var mesh = _meshes[index];
+            MeshData mesh = _meshes[index];
             material.Use(model, _isSkybox, materials[index].GetDepthFunction());
             mesh.Data?.Render();
             material.Cleanup();
@@ -50,7 +50,7 @@ public class Mesh
     
     public void Render(Material material, Matrix4 model, DepthFunction function)
     {
-        foreach (var mesh in _meshes)
+        foreach (MeshData mesh in _meshes)
         {
             material.Use(model, _isSkybox, function);
             mesh.Data?.Render();

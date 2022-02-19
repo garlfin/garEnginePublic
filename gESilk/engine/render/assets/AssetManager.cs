@@ -11,14 +11,14 @@ public class AssetManager
 
     public static void Delete()
     {
-        foreach (var component in Components) component.Delete();
+        foreach (Asset component in Components) component.Delete();
     }
 
     public static void Remove(Asset asset)
     {
-        for (var index = 0; index < Components.Count; index++)
+        for (int index = 0; index < Components.Count; index++)
         {
-            var item = Components[index];
+            Asset item = Components[index];
             if (asset == item)
             {
                 Components.RemoveAt(index);

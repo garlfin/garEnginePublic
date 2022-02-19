@@ -1,6 +1,10 @@
-﻿using gESilk.engine.misc;
+﻿using System.Windows.Forms;
+using gESilk.engine.misc;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Keys = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
+#pragma warning disable CS8602
 
 namespace gESilk.engine.components;
 using static Program;
@@ -22,10 +26,10 @@ public class MovementBehavior : Behavior
 
     public override void Update(float gameTime)
     {
-        var entityTransform = Entity.GetComponent<Transform>();
-        var camera = Entity.GetComponent<Camera>().GetBasicCamera();
+        Transform? entityTransform = Entity.GetComponent<Transform>();
+        BasicCamera camera = Entity.GetComponent<Camera>().GetBasicCamera();
         
-        var input = MainWindow.GetWindow().KeyboardState.GetSnapshot();
+        KeyboardState? input = MainWindow.GetWindow().KeyboardState.GetSnapshot();
         if (input.IsKeyDown(Keys.W)) entityTransform.Location += camera.Front * _cameraSpeed * gameTime; // Forward
         if (input.IsKeyDown(Keys.S)) entityTransform.Location -= camera.Front * _cameraSpeed * gameTime; // Backwards
         if (input.IsKeyDown(Keys.A)) entityTransform.Location -= camera.Right * (_cameraSpeed / 2) * gameTime; // Left
@@ -34,26 +38,10 @@ public class MovementBehavior : Behavior
         if (input.IsKeyDown(Keys.C)) entityTransform.Location -= camera.Up * _cameraSpeed * gameTime; // Down
     }
 
-    public override void UpdateMouse(float gameTime)
+    public override void UpdateMouse(MouseMoveEventArgs args)
     {
-        var entityTransform = Entity.GetComponent<Transform>();
-        var mouse = MainWindow.GetWindow().MousePosition;
-        
-        if (_firstMove) // This bool variable is initially set to true.
-        {
-            _lastPos = mouse;
-            _firstMove = false;
-        }
-        else
-        {
-            // Calculate the offset of the mouse position
-            var deltaX = mouse.X - _lastPos.X;
-            var deltaY = mouse.Y - _lastPos.Y;
-            _lastPos = mouse;
-            
-            // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
-            entityTransform.Rotation.Y += deltaX * _sensitivity;
-            entityTransform.Rotation.X -= deltaY * _sensitivity; // Reversed since y-coordinates range from bottom to top
-        }
+        Transform? entityTransform = Entity.GetComponent<Transform>();
+        entityTransform.Rotation.Y += args.DeltaX * _sensitivity;
+        entityTransform.Rotation.X = Math.Clamp(entityTransform.Rotation.X - args.DeltaY * _sensitivity, -90, 90); // Reversed since y-coordinates range from bottom to top
     }
 }

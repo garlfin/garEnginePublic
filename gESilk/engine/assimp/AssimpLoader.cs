@@ -30,13 +30,13 @@ public static class AssimpLoader
         Mesh outMesh = new();
         _scene = Globals.Assimp.ImportFile(path, steps);
 
-        foreach (var mesh in _scene.Meshes)
+        foreach (Assimp.Mesh? mesh in _scene.Meshes)
         {
             MeshData tempMesh = new();
-            foreach (var vert in mesh.Faces)
+            foreach (Face? vert in mesh.Faces)
                 if (vert.IndexCount == 3)
                     tempMesh.Faces.Add(new IntVec3(vert.Indices[0], vert.Indices[1], vert.Indices[2]));
-            foreach (var vert in mesh.TextureCoordinateChannels[0]) tempMesh.TexCoord.Add(new Vector2D(vert.X, vert.Y));
+            foreach (Vector3D vert in mesh.TextureCoordinateChannels[0]) tempMesh.TexCoord.Add(new Vector2D(vert.X, vert.Y));
 
             tempMesh.Vert = mesh.Vertices;
             tempMesh.Normal = mesh.Normals;

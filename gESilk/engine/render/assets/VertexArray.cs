@@ -19,7 +19,7 @@ public class VertexArray : Asset
     private static int CreateBufferAttribute(List<Vector3D> data, BufferUsageHint usageArb,
         VertexAttribPointerType type, uint index, BufferTarget target = BufferTarget.ArrayBuffer)
     {
-        var buffer = GL.GenBuffer();
+        int buffer = GL.GenBuffer();
         GL.BindBuffer(target, buffer);
         GL.BufferData(target, sizeof(float) * data.Count * 3, data.ToArray(), usageArb);
         GL.VertexAttribPointer(index, 3, type, false, 0, 0);
@@ -30,7 +30,7 @@ public class VertexArray : Asset
     private static int CreateBufferAttribute(List<Vector2D> data, BufferUsageHint usageArb,
         VertexAttribPointerType type, uint index, BufferTarget target = BufferTarget.ArrayBuffer)
     {
-        var buffer = GL.GenBuffer();
+        int buffer = GL.GenBuffer();
         GL.BindBuffer(target, buffer);
         GL.BufferData(target, sizeof(float) * data.Count * 2, data.ToArray(), usageArb);
         GL.VertexAttribPointer(index, 2, type, false, 0, 0);
@@ -41,7 +41,7 @@ public class VertexArray : Asset
     private static int CreateBuffer(List<IntVec3> data, BufferUsageHint usageArb,
         BufferTarget target = BufferTarget.ArrayBuffer)
     {
-        var buffer = GL.GenBuffer();
+        int buffer = GL.GenBuffer();
         GL.BindBuffer(target, buffer);
         GL.BufferData(target, sizeof(int) * data.Count * 3, data.ToArray(), usageArb);
         return buffer;

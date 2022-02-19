@@ -1,7 +1,9 @@
-﻿using gESilk.engine.render.assets;
+﻿using System.Windows.Forms;
+using gESilk.engine.render.assets;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using static gESilk.Program;
 
 namespace gESilk.engine.components;
@@ -50,7 +52,7 @@ public class ModelRenderer : Component
     }
     
 
-    public override void UpdateMouse(float gameTime)
+    public override void UpdateMouse(MouseMoveEventArgs args)
     {
     }
 }

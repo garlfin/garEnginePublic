@@ -12,9 +12,9 @@ public class ShaderProgram : Asset
     {
         AssetManager.Register(this);
 
-        var file = File.ReadAllText(path).Split("#FRAGMENT");
-        var vertex = new Shader(file[0], ShaderType.VertexShader).Get();
-        var fragment = new Shader(file[1], ShaderType.FragmentShader).Get();
+        string[] file = File.ReadAllText(path).Split("#FRAGMENT");
+        int vertex = new Shader(file[0], ShaderType.VertexShader).Get();
+        int fragment = new Shader(file[1], ShaderType.FragmentShader).Get();
 
         _shaderId = GL.CreateProgram();
 
@@ -29,7 +29,7 @@ public class ShaderProgram : Asset
         GL.DeleteShader(vertex);
         GL.DeleteShader(fragment);
 
-        var programLog = GL.GetProgramInfoLog(_shaderId);
+        string? programLog = GL.GetProgramInfoLog(_shaderId);
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
     }
 
@@ -50,7 +50,7 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, int value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
@@ -62,7 +62,7 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, float value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
@@ -74,7 +74,7 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, Matrix4 value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.UniformMatrix4(uniform, true, ref value);
     }
@@ -87,7 +87,7 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, Vector3 value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform3(uniform, value);
     }

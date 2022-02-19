@@ -1,4 +1,7 @@
-﻿namespace gESilk.engine.components;
+﻿using System.Windows.Forms;
+using OpenTK.Windowing.Common;
+
+namespace gESilk.engine.components;
 
 public class Component
 {
@@ -8,7 +11,7 @@ public class Component
     {
     }
 
-    public virtual void UpdateMouse(float gameTime)
+    public virtual void UpdateMouse(MouseMoveEventArgs args)
     {
     }
 }
@@ -23,11 +26,11 @@ internal class BaseSystem<T> where T : Component
     }
     public static void Update(float gameTime)
     {
-        foreach (var component in Components) component.Update(gameTime);
+        foreach (T component in Components) component.Update(gameTime);
     }
 
-    public static void UpdateMouse(float gameTime)
+    public static void UpdateMouse(MouseMoveEventArgs args)
     {
-        foreach (var component in Components) component.UpdateMouse(gameTime);
+        foreach (T component in Components) component.UpdateMouse(args);
     }
 }

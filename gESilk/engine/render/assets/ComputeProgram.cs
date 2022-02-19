@@ -13,8 +13,8 @@ public class ComputeProgram : Asset
     {
         AssetManager.Register(this);
 
-        var file = File.ReadAllText(path);
-        var compute = new Shader(file, ShaderType.ComputeShader).Get();
+        string file = File.ReadAllText(path);
+        int compute = new Shader(file, ShaderType.ComputeShader).Get();
         
         _shaderId = GL.CreateProgram();
 
@@ -27,7 +27,7 @@ public class ComputeProgram : Asset
         GL.DeleteShader(compute);
   
 
-        var programLog = GL.GetProgramInfoLog(_shaderId);
+        string? programLog = GL.GetProgramInfoLog(_shaderId);
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
     }
     
@@ -54,7 +54,7 @@ public class ComputeProgram : Asset
     }
     public void SetUniform(string name, int value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
@@ -66,7 +66,7 @@ public class ComputeProgram : Asset
 
     public void SetUniform(string name, float value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
@@ -78,7 +78,7 @@ public class ComputeProgram : Asset
 
     public void SetUniform(string name, Matrix4 value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.UniformMatrix4(uniform, true, ref value);
     }
@@ -90,7 +90,7 @@ public class ComputeProgram : Asset
     }
     public void SetUniform(string name, Vector2 value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform2(uniform, value);
     }
@@ -104,7 +104,7 @@ public class ComputeProgram : Asset
 
     public void SetUniform(string name, Vector3 value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform3(uniform, value);
     }
@@ -116,7 +116,7 @@ public class ComputeProgram : Asset
     }
     public void SetUniform(string name, Vector4 value)
     {
-        var uniform = GetUniform(name);
+        int uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform4(uniform, value);
     }

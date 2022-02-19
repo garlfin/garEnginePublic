@@ -22,7 +22,7 @@ public class RenderBuffer : Asset
         GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment,
             RenderbufferTarget.Renderbuffer, _rbo);
         GL.DrawBuffers(3, new [] { DrawBuffersEnum.ColorAttachment0 , DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2});
-        var fboStatus = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+        FramebufferErrorCode fboStatus = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
         if (fboStatus != FramebufferErrorCode.FramebufferComplete)
         {
             Console.WriteLine($"Error in RenderBuffer: {fboStatus}");

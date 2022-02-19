@@ -4,6 +4,7 @@ using gESilk.engine.render.materialSystem;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Vector4 = System.Numerics.Vector4;
 
 namespace gESilk.engine.render.assets;
 
@@ -32,7 +33,7 @@ public class ImGuiController
 
         IntPtr context = ImGui.CreateContext();
         ImGui.SetCurrentContext(context);
-        var io = ImGui.GetIO();
+        ImGuiIOPtr io = ImGui.GetIO();
         io.Fonts.AddFontDefault();
 
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
@@ -183,7 +184,7 @@ public class ImGuiController
                        
 
                         // We do _windowHeight - (int)clip.W instead of (int)clip.Y because gl has flipped Y when it comes to these coordinates
-                        var clip = pcmd.ClipRect;
+                        Vector4 clip = pcmd.ClipRect;
                         GL.Scissor((int)clip.X, _windowHeight - (int)clip.W, (int)(clip.Z - clip.X), (int)(clip.W - clip.Y));
                         
 

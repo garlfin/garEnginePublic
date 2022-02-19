@@ -17,12 +17,12 @@ public class Vec3ArraySetting : ShaderSetting
         if (_location == null)
         {
             _location = new int[_data.Length];
-            for (var i = 0; i < _data.Length; i++)
+            for (int i = 0; i < _data.Length; i++)
             {
                 _location[i] = program.GetUniform($"{UniformName}[{i}]");
             }
         }
-        for (var i = 0; i < _data.Length; i++)
+        for (int i = 0; i < _data.Length; i++)
         {
             program.SetUniform(_location[i], _data[i]);
         }

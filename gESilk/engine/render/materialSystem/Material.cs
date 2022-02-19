@@ -66,7 +66,7 @@ public class Material
         _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location);
         _program.SetUniform(_lightProj, ShadowProjetion);
         _program.SetUniform(_lightView, ShadowView);
-        foreach (var setting in _settings)
+        foreach (ShaderSetting setting in _settings)
         {
             setting.Use(_program);
         }
@@ -74,7 +74,7 @@ public class Material
 
     public void Cleanup()
     {
-        foreach (var setting in _settings)
+        foreach (ShaderSetting setting in _settings)
         {
             setting.Cleanup(_program);
         }

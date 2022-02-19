@@ -42,13 +42,13 @@ public sealed class Window
         _width = width;
         _height = height;
         _mBloomComputeWorkGroupSize = 16;
-        var gws = GameWindowSettings.Default;
+        GameWindowSettings? gws = GameWindowSettings.Default;
         // Setup
         gws.RenderFrequency = 144;
         gws.UpdateFrequency = 144;
         gws.IsMultiThreaded = true;
 
-        var nws = NativeWindowSettings.Default;
+        NativeWindowSettings? nws = NativeWindowSettings.Default;
         // Setup
         nws.APIVersion = new Version(4, 6);
         nws.Size = new Vector2i(width, height);
@@ -76,11 +76,7 @@ public sealed class Window
         _Window.MouseMove += OnMouseMove;
         _Window.Run();
     }
-
-    private void OnMouseMove(MouseMoveEventArgs args)
-    {
-        BehaviorSystem.UpdateMouse(1f);
-    }
+    
 
     private void OnClosing()
     {
@@ -138,13 +134,13 @@ public sealed class Window
         _Window.CursorGrabbed = true;
     
 
-        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/hut.obj");
-        var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
+        Mesh loader = AssimpLoader.GetMeshFromFile("../../../resources/models/hut.obj");
+        Mesh skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         skyboxLoader.IsSkybox(true);
 
-        var program = new ShaderProgram("../../../resources/shader/default.shader");
-        var texture = new Texture("../../../resources/texture/brick_albedo.tif");
-        var normal = new Texture("../../../resources/texture/brick_normal.png");
+        ShaderProgram program = new ShaderProgram("../../../resources/shader/default.shader");
+        Texture texture = new Texture("../../../resources/texture/brick_albedo.tif");
+        Texture normal = new Texture("../../../resources/texture/brick_normal.png");
 
         Material material = new(program);
         material.AddSetting(new TextureSetting("albedo", texture,1));
@@ -159,18 +155,18 @@ public sealed class Window
             new Texture("../../../resources/texture/rough_wood_nor_dx_1k.jpg"),2));
         woodMaterial.AddSetting(new GlobalSunPosSetting("lightPos"));
 
-        var basePath = "../../../resources/cubemap/";
+        string basePath = "../../../resources/cubemap/";
 
         
-        var paths = new List<string>
+        List<string> paths = new List<string>
         {
             basePath + "negx.jpg", basePath + "negy.jpg", basePath + "negz.jpg", basePath + "posx.jpg",
             basePath + "posy.jpg", basePath + "posz.jpg"
         };
 
 
-        var skyboxTexture = new CubemapTexture(paths);
-        var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
+        CubemapTexture skyboxTexture = new CubemapTexture(paths);
+        ShaderProgram skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
         material.AddSetting(new TextureSetting("skyBox", skyboxTexture,0 ));
         woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture,0));
         Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
@@ -178,7 +174,7 @@ public sealed class Window
 
         skyboxMaterial.AddSetting(new TextureSetting("skybox", skyboxTexture, 0));
 
-        var skybox = new Entity();
+        Entity skybox = new Entity();
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
         skybox.AddComponent(new CubemapRenderer(skyboxLoader));
 
@@ -189,33 +185,33 @@ public sealed class Window
         _entity.AddComponent(new Transform());
 
 
-        var camera = new Entity();
+        Entity camera = new Entity();
         camera.AddComponent(new Transform());
         camera.AddComponent(new MovementBehavior(0.3f));
         camera.AddComponent(new Camera(72f, 0.1f, 1000f));
         camera.GetComponent<Camera>()?.Set();
 
-        var rand = new Random();
+        Random rand = new Random();
 
         Vector3[] data = new Vector3[64];
 
         for (int i = 0; i < 64; i++)
         {   
-            var sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
+            Vector3 sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
                 (float)rand.NextDouble());
             sample.Normalize();
             sample *= (float)rand.NextDouble();
-            var scale = i / 64f;
+            float scale = i / 64f;
             scale = Lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
             data[i] = sample;
         }
 
 
-        var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.shader");
+        ShaderProgram framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.shader");
 
         _finalShadingEntity = new Entity();
-        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
+        Mesh renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
         _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(framebufferShader, DepthFunction.Always)));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
@@ -226,7 +222,7 @@ public sealed class Window
             .AddSetting(new TextureSetting("bloom", _bloomRTs[2], 2)); ;
         _finalShadingEntity.AddComponent(new FBRenderer(renderPlaneMesh));
 
-        var physicalPlane = new Entity();
+        Entity physicalPlane = new Entity();
 
         physicalPlane.AddComponent(new MaterialComponent(renderPlaneMesh, material));
         physicalPlane.AddComponent(new ModelRenderer(renderPlaneMesh));
@@ -234,14 +230,14 @@ public sealed class Window
         physicalPlane.GetComponent<Transform>().Rotation = new Vector3(-90f, 0, 0);
         physicalPlane.GetComponent<Transform>().Scale = new Vector3(10);
 
-        int shadowSize = 1024 * 4;
+        const int shadowSize = 1024 * 4;
         _shadowMap = new FrameBuffer(shadowSize, shadowSize);
         _shadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
             PixelFormat.DepthComponent, PixelType.Float, true);
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment, true);
         material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
 
-        var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.shader");
+        ShaderProgram framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.shader");
 
 
         _ssaoEntity = new Entity();
@@ -263,7 +259,7 @@ public sealed class Window
         _ssaoTex.BindToBuffer(_ssaoMap, FramebufferAttachment.ColorAttachment0);
 
 
-        var blurShader = new ShaderProgram("../../../resources/shader/blur.shader");
+        ShaderProgram blurShader = new ShaderProgram("../../../resources/shader/blur.shader");
 
         _blurEntity = new Entity();
         _blurEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
@@ -284,16 +280,7 @@ public sealed class Window
     
     private void OnRender(FrameEventArgs args)
     {
-        _time += args.Time;
-        if (_time > 12) // 360 / 30 = 12 : )
-        {
-            _time = 0;
-        }
 
-        //Logic stuff here
-        _entity.GetComponent<Transform>().Rotation = (0f, (float)_time * 30, 0f);
-        BehaviorSystem.Update((float) args.Time);
-        
         CameraSystem.Update(0f);
         UpdateShadow();
         
@@ -309,8 +296,8 @@ public sealed class Window
         GL.DepthMask(false);
         
         _state = EngineState.RenderState;
-        ModelRendererSystem.Update((float)args.Time);
-        CubemapMManager.Update((float)args.Time);
+        ModelRendererSystem.Update(0f);
+        CubemapMManager.Update(0f);
 
         _state = EngineState.PostProcessState;
         RenderBloom();
@@ -327,10 +314,7 @@ public sealed class Window
         {
             GL.Clear(ClearBufferMask.ColorBufferBit); 
         }
-      
-        //_controller.Update((float)_time);
-        //ImGui.ShowDemoWindow();
-        //_controller.Render();
+        
         _Window.SwapBuffers();
     }
 
@@ -349,7 +333,7 @@ public sealed class Window
         int currentMip;
         for ( currentMip = 1; currentMip < _mips; currentMip++)
         {
-            var mipSize =  _bloomRTs[0].GetMipSize(currentMip);
+            Vector2 mipSize =  _bloomRTs[0].GetMipSize(currentMip);
 
             _program.SetUniform("LodAndMode", new Vector2(currentMip-1f,(int) BloomMode.BloomModeDownsample));
             
@@ -389,7 +373,7 @@ public sealed class Window
         _bloomRTs[0].Use(1);
         _program.SetUniform("u_Texture", 1);
         
-        var currentMipSize =  _bloomRTs[2].GetMipSize(_mips-1);
+        Vector2 currentMipSize =  _bloomRTs[2].GetMipSize(_mips-1);
         
         _program.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
 
@@ -410,6 +394,16 @@ public sealed class Window
     }
     private void OnUpdate(FrameEventArgs args)
     {
+        _time += args.Time;
+        if (_time > 12) // 360 / 30 = 12 : )
+        {
+            _time = 0;
+        }
+
+        //Logic stuff here
+        _entity.GetComponent<Transform>().Rotation = (0f, (float)_time * 30, 0f);
+        BehaviorSystem.Update((float) args.Time);
+        
         if (_Window.IsKeyDown(Keys.Escape))
         {
             if (_alreadyClosed) return;
@@ -417,5 +411,10 @@ public sealed class Window
             OnClosing();
             _Window.Close();
         }
+    }
+    
+    private void OnMouseMove(MouseMoveEventArgs args)
+    {
+        BehaviorSystem.UpdateMouse(args);
     }
 }
