@@ -1,5 +1,4 @@
 ﻿using gESilk.engine.render.assets;
-using OpenTK.Graphics.OpenGL4;
 
 namespace gESilk.engine.render.materialSystem.settings;
 

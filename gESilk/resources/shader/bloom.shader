@@ -8,7 +8,7 @@ const float Epsilon = 1.0e-4;
 layout(binding = 1) uniform sampler2D u_Texture;
 layout(binding = 2) uniform sampler2D u_BloomTexture;
 
-uniform vec4 Params; // (x) threshold, (y) threshold - knee, (z) knee * 2, (w) 0.25 / knee
+uniform vec4 Params;// (x) threshold, (y) threshold - knee, (z) knee * 2, (w) 0.25 / knee
 uniform vec2 LodAndMode;
 
 #define BLOOM_MODE_PREFILTER      0
@@ -21,7 +21,7 @@ vec3 DownsampleBox13(sampler2D tex, float lod, vec2 uv, vec2 texelSize)
     // Center
     vec3 A = textureLod(tex, uv, lod).rgb;
 
-    texelSize *= 0.5f; // Sample from center of texels
+    texelSize *= 0.5f;// Sample from center of texels
 
     // Inner box
     vec3 B = textureLod(tex, uv + texelSize * vec2(-1.0f, -1.0f), lod).rgb;

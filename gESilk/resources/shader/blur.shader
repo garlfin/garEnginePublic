@@ -10,8 +10,8 @@ void main()
     gl_Position = vec4(inPos.x, inPos.y, 0.0, 1.0);
     TexCoord = inTexCoords;
 }
-#FRAGMENT
-#version 330 core
+    #FRAGMENT
+    #version 330 core
 out float FragColor;
 
 in vec2 TexCoord;

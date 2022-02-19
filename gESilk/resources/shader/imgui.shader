@@ -11,7 +11,7 @@ void main()
     color = in_color;
     texCoord = in_texCoord;
 }
-#FRAGMENT
+    #FRAGMENT
     #version 330 core
 uniform sampler2D in_fontTexture;
 in vec4 color;

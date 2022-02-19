@@ -1,17 +1,15 @@
 ﻿using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
-using OpenTK.Graphics.OpenGL;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
 public class TextureSetting : ShaderSetting
 {
-    
-    private readonly ITexture _value;
+    private readonly Texture _value;
     private readonly int _slot;
 
 
-    public TextureSetting(string name, ITexture value, int slot) : base(name)
+    public TextureSetting(string name, Texture value, int slot) : base(name)
     {
         UniformName = name;
         _value = value;

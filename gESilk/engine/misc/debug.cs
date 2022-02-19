@@ -18,8 +18,6 @@ internal static class GlDebug
         IntPtr message, IntPtr userParam)
     {
         if (severity == DebugSeverity.DebugSeverityHigh)
-        {
             Console.WriteLine("Debug: " + Marshal.PtrToStringAnsi(message, length));
-        }
     }
 }

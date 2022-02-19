@@ -1,15 +1,8 @@
 ﻿using Assimp;
-using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
-using gESilk.engine.render;
 using gESilk.engine.render.assets;
-using gESilk.engine.render.materialSystem;
-using gESilk.engine.render.materialSystem.settings;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Desktop;
-using Material = Assimp.Material;
 
 namespace gESilk.engine;
 
@@ -30,15 +23,15 @@ public static class Globals
         {
             DepthFar = 50f
         };
-        ShaderProgram depthProgram = new ShaderProgram("../../../resources/shader/depth.shader");
+        var depthProgram = new ShaderProgram("../../../resources/shader/depth.shader");
         DepthMaterial = new Material(depthProgram);
     }
 
     public static void UpdateShadow()
     {
-        Vector3 currentCameraPos = CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location;
-        ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0,20,0);
-        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0,20,0));
+        var currentCameraPos = CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location;
+        ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0, 20, 0);
+        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0, 20, 0));
         ShadowProjetion = ShadowCamera.GetOrthoProjectionMatrix(20f);
     }
 }

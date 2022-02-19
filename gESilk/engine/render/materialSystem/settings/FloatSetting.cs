@@ -7,6 +7,7 @@ public class FloatSetting : ShaderSetting
 {
     private float _value;
     private float _prevValue;
+
     public FloatSetting(string name, float value) : base(name)
     {
         _value = value;

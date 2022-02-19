@@ -12,9 +12,9 @@ public class ShaderProgram : Asset
     {
         AssetManager.Register(this);
 
-        string[] file = File.ReadAllText(path).Split("#FRAGMENT");
-        int vertex = new Shader(file[0], ShaderType.VertexShader).Get();
-        int fragment = new Shader(file[1], ShaderType.FragmentShader).Get();
+        var file = File.ReadAllText(path).Split("#FRAGMENT");
+        var vertex = new Shader(file[0], ShaderType.VertexShader).Get();
+        var fragment = new Shader(file[1], ShaderType.FragmentShader).Get();
 
         _shaderId = GL.CreateProgram();
 
@@ -29,7 +29,7 @@ public class ShaderProgram : Asset
         GL.DeleteShader(vertex);
         GL.DeleteShader(fragment);
 
-        string? programLog = GL.GetProgramInfoLog(_shaderId);
+        var programLog = GL.GetProgramInfoLog(_shaderId);
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
     }
 
@@ -50,10 +50,11 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, int value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
+
     public void SetUniform(int name, int value)
     {
         if (name == -1) return;
@@ -62,10 +63,11 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, float value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
+
     public void SetUniform(int name, float value)
     {
         if (name == -1) return;
@@ -74,11 +76,11 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, Matrix4 value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.UniformMatrix4(uniform, true, ref value);
     }
-    
+
     public void SetUniform(int name, Matrix4 value)
     {
         if (name == -1) return;
@@ -87,11 +89,11 @@ public class ShaderProgram : Asset
 
     public void SetUniform(string name, Vector3 value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform3(uniform, value);
     }
-    
+
     public void SetUniform(int name, Vector3 value)
     {
         if (name == -1) return;

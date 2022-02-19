@@ -6,16 +6,15 @@ namespace gESilk.engine.render.assets;
 
 public class ComputeProgram : Asset
 {
-
     private readonly int _shaderId;
-    
+
     public ComputeProgram(string path)
     {
         AssetManager.Register(this);
 
-        string file = File.ReadAllText(path);
-        int compute = new Shader(file, ShaderType.ComputeShader).Get();
-        
+        var file = File.ReadAllText(path);
+        var compute = new Shader(file, ShaderType.ComputeShader).Get();
+
         _shaderId = GL.CreateProgram();
 
         GL.AttachShader(_shaderId, compute);
@@ -25,12 +24,12 @@ public class ComputeProgram : Asset
         GL.DetachShader(_shaderId, compute);
 
         GL.DeleteShader(compute);
-  
 
-        string? programLog = GL.GetProgramInfoLog(_shaderId);
+
+        var programLog = GL.GetProgramInfoLog(_shaderId);
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
     }
-    
+
     public void Use()
     {
         GL.UseProgram(_shaderId);
@@ -40,24 +39,26 @@ public class ComputeProgram : Asset
     {
         return _shaderId;
     }
-    
+
     public int GetUniform(string name)
     {
         return GL.GetUniformLocation(_shaderId, name);
     }
-   
+
     public void Dispatch(int width, int height, int groupx = 16, int groupy = 16)
     {
         Use();
-        GL.DispatchCompute(  (int) Math.Ceiling((float) width/groupx), (int) Math.Ceiling((float)height/groupy), 1);
+        GL.DispatchCompute((int)Math.Ceiling((float)width / groupx), (int)Math.Ceiling((float)height / groupy), 1);
         GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
     }
+
     public void SetUniform(string name, int value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
+
     public void SetUniform(int name, int value)
     {
         if (name == -1) return;
@@ -66,10 +67,11 @@ public class ComputeProgram : Asset
 
     public void SetUniform(string name, float value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform1(uniform, value);
     }
+
     public void SetUniform(int name, float value)
     {
         if (name == -1) return;
@@ -78,49 +80,51 @@ public class ComputeProgram : Asset
 
     public void SetUniform(string name, Matrix4 value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.UniformMatrix4(uniform, true, ref value);
     }
-    
+
     public void SetUniform(int name, Matrix4 value)
     {
         if (name == -1) return;
         GL.UniformMatrix4(name, true, ref value);
     }
+
     public void SetUniform(string name, Vector2 value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform2(uniform, value);
     }
+
     public void SetUniform(int name, Vector2 value)
     {
         if (name == -1) return;
         GL.Uniform2(name, value);
     }
 
- 
 
     public void SetUniform(string name, Vector3 value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform3(uniform, value);
     }
-    
+
     public void SetUniform(int name, Vector3 value)
     {
         if (name == -1) return;
         GL.Uniform3(name, value);
     }
+
     public void SetUniform(string name, Vector4 value)
     {
-        int uniform = GetUniform(name);
+        var uniform = GetUniform(name);
         if (uniform == -1) return;
         GL.Uniform4(uniform, value);
     }
-    
+
     public void SetUniform(int name, Vector4 value)
     {
         if (name == -1) return;
@@ -129,6 +133,6 @@ public class ComputeProgram : Asset
 
     public override void Delete()
     {
-       GL.DeleteProgram(_shaderId);
+        GL.DeleteProgram(_shaderId);
     }
 }

@@ -6,7 +6,8 @@ namespace gESilk.engine.render.materialSystem.settings;
 public class Vec3ArraySetting : ShaderSetting
 {
     private readonly Vector3[] _data;
-    private int[]? _location = null;
+    private int[]? _location;
+
     public Vec3ArraySetting(string name, Vector3[] data) : base(name)
     {
         _data = data;
@@ -17,14 +18,9 @@ public class Vec3ArraySetting : ShaderSetting
         if (_location == null)
         {
             _location = new int[_data.Length];
-            for (int i = 0; i < _data.Length; i++)
-            {
-                _location[i] = program.GetUniform($"{UniformName}[{i}]");
-            }
+            for (var i = 0; i < _data.Length; i++) _location[i] = program.GetUniform($"{UniformName}[{i}]");
         }
-        for (int i = 0; i < _data.Length; i++)
-        {
-            program.SetUniform(_location[i], _data[i]);
-        }
+
+        for (var i = 0; i < _data.Length; i++) program.SetUniform(_location[i], _data[i]);
     }
 }

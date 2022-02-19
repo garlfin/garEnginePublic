@@ -17,9 +17,9 @@ void main()
     vec4 pos = vec4(aPos, 1.0) * model * view * projection;
     gl_Position = pos.xyww;
 }
-    
+
     #FRAGMENT
-    
+
     #version 330 core
 
 layout (location = 0) out vec4 FragColor;
@@ -33,8 +33,8 @@ uniform samplerCube skybox;
 
 void main()
 {
-    FragColor = vec4(vec3(texture(skybox, TexCoords))*1.1,0);
+    FragColor = vec4(vec3(texture(skybox, TexCoords))*1.1, 0);
     FragNormal = vec3(1.0);
     FragLoc = vec4(1.0);
-    
+
 }

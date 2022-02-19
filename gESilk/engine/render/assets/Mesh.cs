@@ -12,24 +12,24 @@ public class Mesh
     private bool _isSkybox;
 
 
-
     public void IsSkybox(bool value)
     {
         _isSkybox = value;
     }
-    
+
     public void Render(List<Material> materials, Matrix4 model)
     {
-        foreach (MeshData mesh in _meshes)
+        foreach (var mesh in _meshes)
         {
             materials[mesh.MaterialId].Use(model, _isSkybox);
             mesh.Data?.Render();
             materials[mesh.MaterialId].Cleanup();
         }
     }
+
     public void Render(List<Material> materials, Matrix4 model, DepthFunction function)
     {
-        foreach (MeshData mesh in _meshes)
+        foreach (var mesh in _meshes)
         {
             materials[mesh.MaterialId].Use(model, _isSkybox, function);
             mesh.Data?.Render();
@@ -39,18 +39,18 @@ public class Mesh
 
     public void Render(Material material, Matrix4 model, List<Material> materials)
     {
-        for (int index = 0; index < _meshes.Count; index++)
+        for (var index = 0; index < _meshes.Count; index++)
         {
-            MeshData mesh = _meshes[index];
+            var mesh = _meshes[index];
             material.Use(model, _isSkybox, materials[index].GetDepthFunction());
             mesh.Data?.Render();
             material.Cleanup();
         }
     }
-    
+
     public void Render(Material material, Matrix4 model, DepthFunction function)
     {
-        foreach (MeshData mesh in _meshes)
+        foreach (var mesh in _meshes)
         {
             material.Use(model, _isSkybox, function);
             mesh.Data?.Render();
@@ -70,7 +70,6 @@ public class Mesh
 
     public void Render(int index, List<Material> materials, Matrix4 model, DepthFunction? function = null)
     {
-      
         materials[_meshes[index].MaterialId].Use(model, _isSkybox);
         _meshes[index].Data?.Render();
         materials[_meshes[index].MaterialId].Cleanup();
@@ -78,7 +77,6 @@ public class Mesh
 
     public void Render(int index, Material material, Matrix4 model, DepthFunction? function = null)
     {
-        
         material.Use(model, _isSkybox);
         _meshes[index].Data?.Render();
         material.Cleanup();

@@ -26,7 +26,6 @@ uniform sampler2D bloom;
 
 void main()
 {
-    
 
 
     vec4 ScreenTex = texture(screenTexture, TexCoord);
@@ -36,6 +35,6 @@ void main()
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
     // gamma correction 
     mapped = pow(mapped, vec3(1.0 / gamma));
-    float aoData = texture(ao,TexCoord).r;
+    float aoData = texture(ao, TexCoord).r;
     FragColor = vec4(mapped * aoData, 1.0);
 }

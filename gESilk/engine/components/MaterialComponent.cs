@@ -9,7 +9,7 @@ public class MaterialComponent : Component
 
     public MaterialComponent(Mesh mesh, Material defaultMaterial)
     {
-        for (int i = 0; i < mesh.GetMatCount(); i++) _materials.Add(defaultMaterial);
+        for (var i = 0; i < mesh.GetMatCount(); i++) _materials.Add(defaultMaterial);
     }
 
     public MaterialComponent(List<Material> materials)

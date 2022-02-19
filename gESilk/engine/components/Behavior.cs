@@ -8,7 +8,6 @@ public class Behavior : Component
     }
 }
 
-class BehaviorSystem : BaseSystem<Behavior>
+internal class BehaviorSystem : BaseSystem<Behavior>
 {
-    
 }

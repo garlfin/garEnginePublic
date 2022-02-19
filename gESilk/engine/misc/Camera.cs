@@ -58,7 +58,7 @@ public class BasicCamera
             // We clamp the pitch value between -89 and 89 to prevent the camera from going upside down, and a bunch
             // of weird "bugs" when you are using euler angles for rotation.
             // If you want to read more about this you can try researching a topic called gimbal lock
-            float angle = MathHelper.Clamp(value, -89f, 89f);
+            var angle = MathHelper.Clamp(value, -89f, 89f);
             _pitch = MathHelper.DegreesToRadians(angle);
             UpdateVectors();
         }
@@ -84,7 +84,7 @@ public class BasicCamera
         get => MathHelper.RadiansToDegrees(_fov);
         set
         {
-            float angle = MathHelper.Clamp(value, 1f, 45f);
+            var angle = MathHelper.Clamp(value, 1f, 45f);
             _fov = MathHelper.DegreesToRadians(angle);
         }
     }
@@ -92,7 +92,7 @@ public class BasicCamera
     // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
     public Matrix4 GetViewMatrix(Vector3? lookPos = null)
     {
-        return Matrix4.LookAt(Position,lookPos ?? Position + _front, _up);
+        return Matrix4.LookAt(Position, lookPos ?? Position + _front, _up);
     }
 
     // Get the projection matrix using the same method we have used up until this point

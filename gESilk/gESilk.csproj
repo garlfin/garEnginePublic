@@ -9,58 +9,58 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AssimpNet" Version="4.1.0" />
-      <PackageReference Include="ImGui.NET" Version="1.86.0" />
-      <PackageReference Include="OpenTK" Version="4.6.7" />
-      <PackageReference Include="OpenTK.Mathematics" Version="4.6.7" />
-      <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.6.7" />
-      <PackageReference Include="SharpFont" Version="4.0.1" />
-      <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+        <PackageReference Include="AssimpNet" Version="4.1.0" />
+        <PackageReference Include="ImGui.NET" Version="1.86.0" />
+        <PackageReference Include="OpenTK" Version="4.6.7" />
+        <PackageReference Include="OpenTK.Mathematics" Version="4.6.7" />
+        <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.6.7" />
+        <PackageReference Include="SharpFont" Version="4.0.1" />
+        <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="shader\default.shader">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="shader\skybox.shader">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\texture\brick_albedo.tif">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\texture\brick_normal.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\models\cube.obj">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\models\plane.dae">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\models\sphere.obj">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\models\teapot.obj">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="resources\texture\sponza_column_a_diff.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Update="shader\default.shader">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="shader\skybox.shader">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\texture\brick_albedo.tif">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\texture\brick_normal.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\models\cube.obj">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\models\plane.dae">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\models\sphere.obj">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\models\teapot.obj">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\texture\sponza_column_a_diff.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.0\System.Windows.Forms.dll</HintPath>
-      </Reference>
+        <Reference Include="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.0\System.Windows.Forms.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="engine\misc\Debug.cs" />
-      <Compile Include="engine\misc\debug.cs" />
+        <Compile Remove="engine\misc\Debug.cs" />
+        <Compile Include="engine\misc\debug.cs" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="cubemap" />
+        <Folder Include="cubemap" />
     </ItemGroup>
 
 </Project>

@@ -7,13 +7,13 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 namespace gESilk.engine.render.assets.textures;
 
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
-public class CubemapTexture : ITexture
+public class CubemapTexture : Texture
 {
     public CubemapTexture(IReadOnlyList<string> path)
     {
-        _format = PixelInternalFormat.Rgba16f;
+        Format = PixelInternalFormat.Rgba16f;
         AssetManager.Register(this);
-        List<TextureTarget> targets = new List<TextureTarget>()
+        var targets = new List<TextureTarget>()
         {
             TextureTarget.TextureCubeMapNegativeX,
             TextureTarget.TextureCubeMapNegativeY,
@@ -22,12 +22,12 @@ public class CubemapTexture : ITexture
             TextureTarget.TextureCubeMapPositiveY,
             TextureTarget.TextureCubeMapPositiveZ
         };
-        _id = GL.GenTexture();
-        GL.BindTexture(TextureTarget.TextureCubeMap, _id);
-        for (int i = 0; i < 6; i++)
+        Id = GL.GenTexture();
+        GL.BindTexture(TextureTarget.TextureCubeMap, Id);
+        for (var i = 0; i < 6; i++)
         {
-            Bitmap bmp = new Bitmap(path[i]);
-            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
+            var bmp = new Bitmap(path[i]);
+            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             GL.TexImage2D(targets[i], 0, PixelInternalFormat.Rgba16f, bmp.Width, bmp.Height, 0, PixelFormat.Bgr,
                 PixelType.UnsignedByte, bmpData.Scan0);
@@ -51,10 +51,8 @@ public class CubemapTexture : ITexture
 
     public override int Use(int slot)
     {
-        GL.ActiveTexture(TextureUnit.Texture0+slot);
-        GL.BindTexture(TextureTarget.TextureCubeMap, _id);
+        GL.ActiveTexture(TextureUnit.Texture0 + slot);
+        GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         return slot;
     }
-    
 }
-

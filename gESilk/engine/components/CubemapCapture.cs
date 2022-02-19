@@ -1,15 +1,10 @@
-﻿using System.Windows.Forms;
-using OpenTK.Windowing.Common;
+﻿using OpenTK.Windowing.Common;
 
 namespace gESilk.engine.components;
 
 public class CubemapCapture : Component
 {
     private float _yaw, _pitch;
-    
-    public CubemapCapture()
-    {
-    }
 
     public void GetAngle(int index)
     {
@@ -44,12 +39,10 @@ public class CubemapCapture : Component
 
     public override void Update(float gameTime)
     {
-       
     }
-    
+
 
     public override void UpdateMouse(MouseMoveEventArgs args)
     {
-        
     }
 }

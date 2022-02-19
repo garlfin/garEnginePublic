@@ -14,7 +14,7 @@ public class Entity
 
     public T? GetComponent<T>() where T : Component
     {
-        foreach (Component component in _components)
+        foreach (var component in _components)
             if (component.GetType() == typeof(T))
                 return (T)component;
         return null;

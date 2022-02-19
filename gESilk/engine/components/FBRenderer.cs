@@ -1,22 +1,19 @@
-﻿using System.Windows.Forms;
-using gESilk.engine.render;
-using gESilk.engine.render.assets;
-using OpenTK.Graphics.OpenGL4;
+﻿using gESilk.engine.render.assets;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace gESilk.engine.components;
 
-public class FBRenderer : Component
+public class FbRenderer : Component
 {
     private readonly Mesh _mesh;
 
-    public FBRenderer(Mesh mesh)
+    public FbRenderer(Mesh mesh)
     {
-        FBRendererSystem.Register(this);
+        FbRendererSystem.Register(this);
         _mesh = mesh;
     }
-    
+
     public override void Update(float gameTime)
     {
         _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), Matrix4.Identity);
@@ -27,6 +24,6 @@ public class FBRenderer : Component
     }
 }
 
-internal class FBRendererSystem : BaseSystem<FBRenderer>
+internal class FbRendererSystem : BaseSystem<FbRenderer>
 {
 }
