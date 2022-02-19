@@ -4,11 +4,11 @@ namespace gESilk;
 
 public static class Program
 {
-    public static Window? MainWindow;
+    public static Application? MainWindow;
 
     private static void Main()
     {
-        MainWindow = new Window(1280, 720, "garEngine2");
+        MainWindow = new Application(1280, 720, "garEngine2");
         MainWindow.Run();
     }
 }

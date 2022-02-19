@@ -58,7 +58,6 @@ in vec3 viewFragPos;
 in vec3 viewNormal;
 in vec3 noNormalNormal;
 
-
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 FragNormal;
 layout (location = 2) out vec4 FragLoc;

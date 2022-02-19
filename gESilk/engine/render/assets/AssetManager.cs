@@ -1,25 +1,25 @@
 ﻿namespace gESilk.engine.render.assets;
 
-public class AssetManager
+public static class AssetManager
 {
-    private static List<Asset> Components = new();
+    private static readonly List<Asset> Assets = new();
 
     public static void Register(Asset asset)
     {
-        Components.Add(asset);
+        Assets.Add(asset);
     }
 
     public static void Delete()
     {
-        foreach (var component in Components) component.Delete();
+        foreach (var component in Assets) component.Delete();
     }
 
     public static void Remove(Asset asset)
     {
-        for (var index = 0; index < Components.Count; index++)
+        for (var index = 0; index < Assets.Count; index++)
         {
-            var item = Components[index];
-            if (asset == item) Components.RemoveAt(index);
+            var item = Assets[index];
+            if (asset == item) Assets.RemoveAt(index);
         }
     }
 }
