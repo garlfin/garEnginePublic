@@ -51,8 +51,8 @@ public partial class Application
 
         var paths = new List<string>
         {
-            basePath + "negx.jpg", basePath + "negy.jpg", basePath + "negz.jpg", basePath + "posx.jpg",
-            basePath + "posy.jpg", basePath + "posz.jpg"
+            basePath + "posx.jpg", basePath + "negx.jpg", basePath + "posy.jpg", basePath + "negy.jpg",
+            basePath + "posz.jpg", basePath + "negz.jpg"
         };
 
 

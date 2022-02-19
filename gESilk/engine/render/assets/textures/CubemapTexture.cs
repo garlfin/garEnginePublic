@@ -13,15 +13,6 @@ public class CubemapTexture : Texture
     {
         Format = PixelInternalFormat.Rgba16f;
         AssetManager.Register(this);
-        var targets = new List<TextureTarget>()
-        {
-            TextureTarget.TextureCubeMapNegativeX,
-            TextureTarget.TextureCubeMapNegativeY,
-            TextureTarget.TextureCubeMapNegativeZ,
-            TextureTarget.TextureCubeMapPositiveX,
-            TextureTarget.TextureCubeMapPositiveY,
-            TextureTarget.TextureCubeMapPositiveZ
-        };
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         for (var i = 0; i < 6; i++)
@@ -29,7 +20,7 @@ public class CubemapTexture : Texture
             var bmp = new Bitmap(path[i]);
             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
                 System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            GL.TexImage2D(targets[i], 0, PixelInternalFormat.Rgba16f, bmp.Width, bmp.Height, 0, PixelFormat.Bgr,
+            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, bmp.Width, bmp.Height, 0, PixelFormat.Bgr,
                 PixelType.UnsignedByte, bmpData.Scan0);
 
             bmp.UnlockBits(bmpData);
