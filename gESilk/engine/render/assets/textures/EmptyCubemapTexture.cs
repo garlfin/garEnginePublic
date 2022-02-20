@@ -10,20 +10,14 @@ public class EmptyCubemapTexture : Texture
     public EmptyCubemapTexture(int size)
     {
         Format = PixelInternalFormat.Rgba16f;
-        AssetManager.Register(this);
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         Width = size;
         Height = size;
-        
-    
-        
         for (var i = 0; i < 6; i++)
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, size, size, 0,
-                PixelFormat.Bgr,
-                PixelType.UnsignedByte, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, size, size, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.Linear);
+            (int)TextureMinFilter.LinearMipmapLinear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter,
             (int)TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS,
@@ -32,6 +26,7 @@ public class EmptyCubemapTexture : Texture
             (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR,
             (int)TextureWrapMode.ClampToEdge);
+        GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
     }
 
     public override int Use(int slot)

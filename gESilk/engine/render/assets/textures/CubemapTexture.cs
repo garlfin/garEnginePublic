@@ -12,7 +12,6 @@ public class CubemapTexture : Texture
     public CubemapTexture(IReadOnlyList<string> path)
     {
         Format = PixelInternalFormat.Rgba16f;
-        AssetManager.Register(this);
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         for (var i = 0; i < 6; i++)

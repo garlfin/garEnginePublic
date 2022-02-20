@@ -5,5 +5,6 @@ public enum EngineState
     RenderState = 0,
     RenderShadowState = 1,
     RenderDepthState = 2,
-    PostProcessState = 3
+    PostProcessState = 3,
+    GenerateCubemapState = 4
 }

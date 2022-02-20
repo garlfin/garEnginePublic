@@ -43,31 +43,28 @@ void main()
 
     float occlusion = 0.0;
 
-    if (fragPosWA.w == 1) {
 
 
-        for (int i = 0; i < 64; i++)
-        {
-            vec3 Sample= Samples[i];
-            Sample= TBN * Sample;
-            Sample= fragPos + Sample* SSAORadius;
+    for (int i = 0; i < 64; i++)
+    {
+        vec3 Sample= Samples[i];
+        Sample= TBN * Sample;
+        Sample= fragPos + Sample* SSAORadius;
 
-            vec4 offset = vec4(Sample, 1.0);
-            offset = offset * projection;
-            offset.xyz /= offset.w;
-            offset.xyz  = offset.xyz * 0.5 + 0.5;
+        vec4 offset = vec4(Sample, 1.0);
+        offset = offset * projection;
+        offset.xyz /= offset.w;
+        offset.xyz  = offset.xyz * 0.5 + 0.5;
 
-            float sampleDepth = texture(screenTexturePos, offset.xy).z;
+        float sampleDepth = texture(screenTexturePos, offset.xy).z;
 
-            float rangeCheck = smoothstep(0.0, 1.0, SSAORadius / abs(fragPos.z - sampleDepth));
+        float rangeCheck = smoothstep(0.0, 1.0, SSAORadius / abs(fragPos.z - sampleDepth));
 
-            occlusion += (sampleDepth >= Sample.z + SSAOBias ? 1.0 : 0.0) * rangeCheck;
-        }
-        occlusion = 1.0 - (occlusion / kernelSize);
-
-        FragColor = occlusion;
-
-    } else {
-        FragColor = 1.0;
+        occlusion += (sampleDepth >= Sample.z + SSAOBias ? 1.0 : 0.0) * rangeCheck;
     }
+    occlusion = 1.0 - (occlusion / kernelSize);
+
+    occlusion = mix(occlusion, 1, fragPosWA.w);
+    
+    FragColor = occlusion;
 }

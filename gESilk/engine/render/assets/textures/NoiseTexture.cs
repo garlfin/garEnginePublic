@@ -21,9 +21,6 @@ public class NoiseTexture : Texture
         GL.BindTexture(TextureTarget.Texture2D, Id);
 
 
-        AssetManager.Register(this);
-
-
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, 4, 4, 0, PixelFormat.Rgb,
             PixelType.Float, pixels);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);

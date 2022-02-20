@@ -15,7 +15,7 @@ public class Material
     private readonly List<ShaderSetting> _settings = new();
     private readonly DepthFunction _function;
     private CullFaceMode _cullFaceMode;
-    private int _model, _view, _projection, _viewPos, _lightProj, _lightView;
+    private int _model, _view, _projection, _viewPos, _lightProj, _lightView, _skybox;
 
 
     public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less,
@@ -31,6 +31,7 @@ public class Material
         _viewPos = _program.GetUniform("viewPos");
         _lightProj = _program.GetUniform("lightProjection");
         _lightView = _program.GetUniform("lightView");
+        _skybox = _program.GetUniform("skyBox");
     }
 
     public void SetCullMode(CullFaceMode mode)
@@ -67,6 +68,10 @@ public class Material
         _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location);
         _program.SetUniform(_lightProj, ShadowProjetion);
         _program.SetUniform(_lightView, ShadowView);
+        _program.SetUniform(_skybox,
+            state == EngineState.GenerateCubemapState
+                ? MainWindow.Skybox.Use(0)
+                : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(0));
         foreach (var setting in _settings) setting.Use(_program);
     }
 

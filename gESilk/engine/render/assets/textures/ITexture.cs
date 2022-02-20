@@ -7,8 +7,12 @@ public abstract class Texture : Asset
 {
     protected int Id;
     protected PixelInternalFormat Format;
-    protected int Width, Height;
+    public int Width, Height;
 
+    protected Texture ()
+    {
+        AssetManager.Register(this);
+    }
     public virtual int Use(int slot)
     {
         GL.ActiveTexture(TextureUnit.Texture0 + slot);

@@ -24,6 +24,16 @@ public partial class Application
         
         InitRenderer();
         
+        var cubemapTest = new Entity();
+        cubemapTest.AddComponent(new Transform());
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(10, 0, 0);
+        cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
+        
+        cubemapTest = new Entity();
+        cubemapTest.AddComponent(new Transform());
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(-10, 0, 0);
+        cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
+        
         var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/hut.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         skyboxLoader.IsSkybox(true);
@@ -36,10 +46,11 @@ public partial class Application
         material.AddSetting(new TextureSetting("albedo", texture, 1));
         material.AddSetting(new TextureSetting("normalMap", normal, 2));
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
-        material.AddSetting(new FloatSetting("roughness", 0));
+        material.AddSetting(new FloatSetting("roughness", 0.8f));
         material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
         
         var woodMaterial = new Material(program);
+        woodMaterial.AddSetting(new FloatSetting("roughness", 0.2f));
         woodMaterial.AddSetting(new TextureSetting("albedo",
             new Texture("../../../resources/texture/rough_wood_diff_1k.jpg"), 1));
         woodMaterial.AddSetting(new TextureSetting("normalMap",
@@ -56,13 +67,14 @@ public partial class Application
         };
 
 
-        var skyboxTexture = new CubemapTexture(paths);
+        Skybox = new CubemapTexture(paths);
         var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
-        material.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
-        woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
-        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
-        skyboxMaterial.AddSetting(new TextureSetting("skybox", skyboxTexture, 0));
+        //material.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
+        //woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
         
+        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
+        skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox, 0));
+
         var skybox = new Entity();
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
         skybox.AddComponent(new CubemapRenderer(skyboxLoader));
@@ -86,25 +98,27 @@ public partial class Application
         var camera = new Entity();
         camera.AddComponent(new Transform());
         camera.AddComponent(new MovementBehavior(0.3f));
-        camera.AddComponent(new Camera(72f, 0.1f, 1000f));
+        camera.AddComponent(new Camera(43f, 0.1f, 1000f));
         camera.GetComponent<Camera>()?.Set();
         
         SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
+
+        
+        
+        _state = EngineState.GenerateCubemapState;
+        CubemapCaptureManager.Update(0f);
     }
 
     private void OnUpdate(FrameEventArgs args)
     {
         _time += args.Time;
-        if (_time > 12) // 360 / 30 = 12 : )
-            _time = 0;
-
-        //Logic stuff here
-        _entity.GetComponent<Transform>()!.Rotation = (0f, (float)_time * 30, 0f);
+        // Logic stuff here
+        // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just spins the hut
+        _entity.GetComponent<Transform>()!.Location = ((float) Math.Sin(_time*3.141/5)*5, 0f, 0f);
         BehaviorSystem.Update((float)args.Time);
 
-        if (!_window.IsKeyDown(Keys.Escape)) return;
-        if (_alreadyClosed) return;
         
+        if (!_window.IsKeyDown(Keys.Escape) || _alreadyClosed) return;
         _alreadyClosed = true;
         OnClosing();
         _window.Close();

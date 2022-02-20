@@ -1,4 +1,4 @@
-﻿#version 330
+﻿#version 430
 
 layout(location = 0) in vec3 vPosition;
 layout(location = 1) in vec3 vNormal;
@@ -37,7 +37,7 @@ void main() {
 }
 
     #FRAGMENT
-    #version 330
+    #version 430
 
 uniform samplerCube skyBox;
 uniform sampler2D albedo;
@@ -115,19 +115,19 @@ void main() {
     vec3 viewDir = normalize(FragPos-viewPos);
 
     vec3 lightDir = normalize(lightPos);
-    vec4 ambient = textureLod(skyBox, normal, 10)*0.2;
+    float mipmapLevel = float(textureQueryLevels(skyBox));
+    vec4 ambient = textureLod(skyBox, normal, mipmapLevel/2)*0.2;
     float ambientLambert = max(dot(lightDir, normal), 0.0)*0.5+0.5;
     float specFac = 1-roughness;
     float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)), 0, 1)*specFac;
     ambient = ambient + ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5, 0, 1);
-
-
+    
     vec4 color = texture(albedo, fTexCoord);
     float fresnelFac = (specFac*max(fresnelSchlick(dot(normal, viewDir), ior), 0));
-    vec4 specWithSkybox = textureLod(skyBox, reflect(viewDir, normal), int((1-specFac)*10));
+    vec4 specWithSkybox = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel);
     color = mix(color + (specWithSkybox*fresnelFac)+spec, color * (specWithSkybox+spec), metallic);
 
-    FragColor = vec4(vec3(color*mix(ambient, vec4(1), metallic)*emission), 1.0);//vec4(vec3(max(fresnelSchlick(dot(normal, viewDir),ior),0)),1.0);
-    FragLoc = vec4(viewFragPos, 1.0);
+    FragColor = vec4(vec3(color*mix(ambient, vec4(1), metallic)*emission), 1.0); // vec4(vec3(max(fresnelSchlick(dot(normal, viewDir),ior),0)),1.0);
+    FragLoc = vec4(viewFragPos, metallic);
     FragNormal = vec4(viewNormal, dot(noNormalNormal, viewDir));
 }

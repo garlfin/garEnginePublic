@@ -22,10 +22,10 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _modelTransform = Entity?.GetComponent<Transform>();
+        _modelTransform = Entity.GetComponent<Transform>();
         var state = MainWindow.State();
 
-        if (state == EngineState.RenderState)
+        if (state is EngineState.RenderState)
         {
             _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), _model, DepthFunction.Equal);
         }
@@ -33,6 +33,10 @@ public class ModelRenderer : Component
         {
             if (state == EngineState.RenderShadowState) _model = CreateModelMatrix();
             _mesh.Render(Globals.DepthMaterial, _model, Entity.GetComponent<MaterialComponent>()?.GetMaterials());
+        } else if (state is EngineState.GenerateCubemapState)
+        {
+            _model = CreateModelMatrix();
+            _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), _model);
         }
     }
 

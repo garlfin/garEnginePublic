@@ -74,6 +74,7 @@ public class BasicCamera
             UpdateVectors();
         }
     }
+    
 
     // The field of view (FOV) is the vertical angle of the camera view.
     // This has been discussed more in depth in a previous tutorial,
@@ -84,15 +85,14 @@ public class BasicCamera
         get => MathHelper.RadiansToDegrees(_fov);
         set
         {
-            var angle = MathHelper.Clamp(value, 1f, 45f);
-            _fov = MathHelper.DegreesToRadians(angle);
+            _fov = MathHelper.DegreesToRadians(value);
         }
     }
 
     // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
-    public Matrix4 GetViewMatrix(Vector3? lookPos = null)
+    public Matrix4 GetViewMatrix(Vector3? lookPos = null, Vector3? upDir = null)
     {
-        return Matrix4.LookAt(Position, lookPos ?? Position + _front, _up);
+        return Matrix4.LookAt(Position, lookPos ?? Position + _front, upDir ?? _up);
     }
 
     // Get the projection matrix using the same method we have used up until this point

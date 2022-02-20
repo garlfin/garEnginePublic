@@ -10,7 +10,6 @@ public class RenderTexture : Texture
         TextureMagFilter magFilter = TextureMagFilter.Linear)
     {
         Format = type;
-        AssetManager.Register(this);
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, Id);
         GL.TexImage2D(TextureTarget.Texture2D, 0, type, width, height, 0, format, byteType, IntPtr.Zero);

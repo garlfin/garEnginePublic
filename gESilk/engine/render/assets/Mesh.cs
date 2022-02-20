@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.assimp;
+using gESilk.engine.components;
 using gESilk.engine.render.materialSystem;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -70,14 +71,14 @@ public class Mesh
 
     public void Render(int index, List<Material> materials, Matrix4 model, DepthFunction? function = null)
     {
-        materials[_meshes[index].MaterialId].Use(model, _isSkybox);
+        materials[_meshes[index].MaterialId].Use(model, _isSkybox, function);
         _meshes[index].Data?.Render();
         materials[_meshes[index].MaterialId].Cleanup();
     }
 
     public void Render(int index, Material material, Matrix4 model, DepthFunction? function = null)
     {
-        material.Use(model, _isSkybox);
+        material.Use(model, _isSkybox, function );
         _meshes[index].Data?.Render();
         material.Cleanup();
     }

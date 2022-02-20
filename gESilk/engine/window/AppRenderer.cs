@@ -19,7 +19,7 @@ namespace gESilk.engine.window;
 public partial class Application
 {
     
-    private bool _alreadyClosed;
+    private bool _alreadyClosed, _firstRender;
     private RenderBuffer _renderBuffer;
     private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
     private RenderTexture _renderTexture, _shadowTex, _renderNormal, _renderPos, _ssaoTex, _blurTex;
@@ -29,6 +29,7 @@ public partial class Application
     private ComputeProgram _bloomProgram;
     private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
     private EmptyTexture[] _bloomRTs = new EmptyTexture[3];
+    public CubemapTexture Skybox;
     private BloomSettings _bloomSettings = new();
     private Vector2i _bloomTexSize;
     private GameWindow _window;
@@ -37,6 +38,7 @@ public partial class Application
 
     public Application(int width, int height, string name)
     {
+        _firstRender = true;
         _width = width;
         _height = height;
         _mBloomComputeWorkGroupSize = 16;
@@ -58,12 +60,13 @@ public partial class Application
 
     private void OnClosing()
     {
+        GL.Clear(ClearBufferMask.ColorBufferBit);
         Console.WriteLine("Closing... Deleting assets");
         AssetManager.Delete();
         Console.WriteLine("Done :)");
     }
     
-    private void OnRender(FrameEventArgs args)
+    public void OnRender(FrameEventArgs args)
     {
         CameraSystem.Update(0f);
         UpdateShadow();

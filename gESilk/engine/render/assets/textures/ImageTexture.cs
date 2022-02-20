@@ -16,9 +16,6 @@ public class ImageTexture : Texture
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, Id);
 
-
-        AssetManager.Register(this);
-
         var bmp = new Bitmap(path);
         bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
         var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, format);
