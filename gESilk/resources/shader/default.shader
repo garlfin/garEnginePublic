@@ -49,6 +49,7 @@ uniform float emission = 1.0;
 uniform float roughness = 0.8;
 uniform float metallic = 0.0;
 uniform float ior = 1.450;
+uniform float normalStrength = 1.0;
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -106,12 +107,18 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
     return visibility;
 }
 
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
 
 
 void main() {
 
     vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1, -1, 1) + vec3(0, 1, 0);
     normal = normalize((normal * 2.0 - 1.0)*TBN);
+    normal = mix(noNormalNormal, normal, normalStrength);
     vec3 viewDir = normalize(FragPos-viewPos);
 
     vec3 lightDir = normalize(lightPos);
@@ -121,9 +128,9 @@ void main() {
     float specFac = 1-roughness;
     float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)), 0, 1)*specFac;
     ambient = ambient + ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5, 0, 1);
-    
+
     vec4 color = texture(albedo, fTexCoord);
-    float fresnelFac = (specFac*max(fresnelSchlick(dot(normal, viewDir), ior), 0));
+    float fresnelFac = specFac*max(fresnelSchlick(dot(normal, viewDir), ior), 0);
     vec4 specWithSkybox = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel);
     color = mix(color + (specWithSkybox*fresnelFac)+spec, color * (specWithSkybox+spec), metallic);
 

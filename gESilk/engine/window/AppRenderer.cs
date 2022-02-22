@@ -5,20 +5,18 @@ using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
+using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using TextureWrapMode = OpenTK.Graphics.OpenGL4.TextureWrapMode;
-using Material = gESilk.engine.render.materialSystem.Material;
 using static gESilk.engine.Globals;
 
 namespace gESilk.engine.window;
 
 public partial class Application
 {
-    
     private bool _alreadyClosed, _firstRender;
     private RenderBuffer _renderBuffer;
     private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
@@ -65,10 +63,11 @@ public partial class Application
         AssetManager.Delete();
         Console.WriteLine("Done :)");
     }
-    
+
     public void OnRender(FrameEventArgs args)
     {
         CameraSystem.Update(0f);
+        TransformSystem.Update(0f);
         UpdateShadow();
 
         _state = EngineState.RenderShadowState;

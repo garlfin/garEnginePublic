@@ -1,40 +1,36 @@
-﻿using static gESilk.engine.Globals;
-using gESilk.engine.assimp;
+﻿using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
+using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Camera = gESilk.engine.components.Camera;
-using Material = gESilk.engine.render.materialSystem.Material;
+using static gESilk.engine.Globals;
 using Texture = gESilk.engine.render.assets.textures.ImageTexture;
-
 
 
 namespace gESilk.engine.window;
 
 public partial class Application
 {
-
     private void OnLoad()
     {
-        
         InitRenderer();
-        
+
         var cubemapTest = new Entity();
         cubemapTest.AddComponent(new Transform());
         cubemapTest.GetComponent<Transform>().Location = new Vector3(10, 0, 0);
         cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
-        
+
         cubemapTest = new Entity();
         cubemapTest.AddComponent(new Transform());
         cubemapTest.GetComponent<Transform>().Location = new Vector3(-10, 0, 0);
         cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
-        
-        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/hut.obj");
+
+        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/sphere.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         skyboxLoader.IsSkybox(true);
 
@@ -46,11 +42,11 @@ public partial class Application
         material.AddSetting(new TextureSetting("albedo", texture, 1));
         material.AddSetting(new TextureSetting("normalMap", normal, 2));
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
-        material.AddSetting(new FloatSetting("roughness", 0.8f));
+        material.AddSetting(new FloatSetting("roughness", 0.4f));
         material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
-        
+
         var woodMaterial = new Material(program);
-        woodMaterial.AddSetting(new FloatSetting("roughness", 0.2f));
+        woodMaterial.AddSetting(new FloatSetting("roughness", 0.8f));
         woodMaterial.AddSetting(new TextureSetting("albedo",
             new Texture("../../../resources/texture/rough_wood_diff_1k.jpg"), 1));
         woodMaterial.AddSetting(new TextureSetting("normalMap",
@@ -71,7 +67,7 @@ public partial class Application
         var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
         //material.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
         //woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
-        
+
         Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
         skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox, 0));
 
@@ -84,9 +80,9 @@ public partial class Application
         _entity.AddComponent(new MaterialComponent(loader, woodMaterial));
         _entity.AddComponent(new ModelRenderer(loader));
         _entity.AddComponent(new Transform());
-        
+
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
-        
+
         var physicalPlane = new Entity();
         physicalPlane.AddComponent(new MaterialComponent(renderPlaneMesh, material));
         physicalPlane.AddComponent(new ModelRenderer(renderPlaneMesh));
@@ -100,12 +96,12 @@ public partial class Application
         camera.AddComponent(new MovementBehavior(0.3f));
         camera.AddComponent(new Camera(43f, 0.1f, 1000f));
         camera.GetComponent<Camera>()?.Set();
-        
+
         SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
 
-        
-        
+
         _state = EngineState.GenerateCubemapState;
+        TransformSystem.Update(0f);
         CubemapCaptureManager.Update(0f);
     }
 
@@ -114,10 +110,10 @@ public partial class Application
         _time += args.Time;
         // Logic stuff here
         // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just spins the hut
-        _entity.GetComponent<Transform>()!.Location = ((float) Math.Sin(_time*3.141/5)*5, 0f, 0f);
+        _entity.GetComponent<Transform>()!.Location = ((float)Math.Sin(_time * 3.141 / 5) * 5, 1f, 0f);
         BehaviorSystem.Update((float)args.Time);
 
-        
+
         if (!_window.IsKeyDown(Keys.Escape) || _alreadyClosed) return;
         _alreadyClosed = true;
         OnClosing();
