@@ -8,7 +8,7 @@ public static class Program
 
     private static void Main()
     {
-        MainWindow = new Application(1280, 720, "garEngine2");
+        MainWindow = new Application(1280, 720, "gE2");
         MainWindow.Run();
     }
 }

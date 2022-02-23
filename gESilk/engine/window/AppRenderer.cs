@@ -53,6 +53,7 @@ public partial class Application
         nws.Title = name;
         nws.IsEventDriven = false;
         nws.WindowBorder = WindowBorder.Fixed;
+        nws.Icon = new();
         _window = new GameWindow(gws, nws);
     }
 
@@ -100,6 +101,7 @@ public partial class Application
 
         _window.SwapBuffers();
     }
+    
 
     private void RenderBloom()
     {
@@ -235,7 +237,7 @@ public partial class Application
 
         _finalShadingEntity = new Entity();
         _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(framebufferShader, DepthFunction.Always)));
+            new Material(framebufferShader, this, DepthFunction.Always)));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("screenTexture", _renderTexture, 0));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
@@ -256,7 +258,7 @@ public partial class Application
 
         _ssaoEntity = new Entity();
         _ssaoEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(framebufferShaderSsao, DepthFunction.Always)));
+            new Material(framebufferShaderSsao, this, DepthFunction.Always)));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("screenTextureNormal", _renderNormal, 0));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
@@ -277,7 +279,7 @@ public partial class Application
 
         _blurEntity = new Entity();
         _blurEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(blurShader, DepthFunction.Always)));
+            new Material(blurShader, this, DepthFunction.Always)));
         _blurEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("ssaoInput", _ssaoTex, 0));
         _blurEntity.AddComponent(new FbRenderer(renderPlaneMesh));

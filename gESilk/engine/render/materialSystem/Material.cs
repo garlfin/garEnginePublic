@@ -5,7 +5,6 @@ using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using static gESilk.engine.Globals;
-using static gESilk.Program;
 
 namespace gESilk.engine.render.materialSystem;
 
@@ -16,12 +15,14 @@ public class Material
     private readonly DepthFunction _function;
     private CullFaceMode _cullFaceMode;
     private int _model, _view, _projection, _viewPos, _lightProj, _lightView, _skybox;
+    private readonly Application _application;
 
 
-    public Material(ShaderProgram program, DepthFunction function = DepthFunction.Less,
+    public Material(ShaderProgram program, Application application, DepthFunction function = DepthFunction.Less,
         CullFaceMode cullFaceMode = CullFaceMode.Back)
     {
         _program = program;
+        _application = application;
         _function = function;
         _cullFaceMode = cullFaceMode;
 
@@ -51,7 +52,7 @@ public class Material
         _program.Use();
         GL.CullFace(_cullFaceMode);
         _program.SetUniform(_model, model);
-        var state = MainWindow.State();
+        var state = _application.State();
         if (state == EngineState.RenderShadowState)
         {
             _program.SetUniform(_view, ShadowView);
@@ -70,7 +71,7 @@ public class Material
         _program.SetUniform(_lightView, ShadowView);
         _program.SetUniform(_skybox,
             state == EngineState.GenerateCubemapState
-                ? MainWindow.Skybox.Use(0)
+                ? _application.Skybox.Use(0)
                 : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(0));
         foreach (var setting in _settings) setting.Use(_program);
     }

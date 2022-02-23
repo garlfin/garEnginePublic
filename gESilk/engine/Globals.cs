@@ -24,7 +24,7 @@ public static class Globals
             DepthFar = 50f
         };
         var depthProgram = new ShaderProgram("../../../resources/shader/depth.shader");
-        DepthMaterial = new Material(depthProgram);
+        DepthMaterial = new Material(depthProgram, Program.MainWindow);
     }
 
     public static void UpdateShadow()

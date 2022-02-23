@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
+using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
@@ -10,6 +11,7 @@ namespace gESilk.engine.render.assets.textures;
 public class ImageTexture : Texture
 {
     public ImageTexture(string path,
+        Application application,
         System.Drawing.Imaging.PixelFormat format = System.Drawing.Imaging.PixelFormat.Format32bppArgb)
     {
         Format = PixelInternalFormat.Rgba;
@@ -27,7 +29,7 @@ public class ImageTexture : Texture
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
             (int)TextureMinFilter.LinearMipmapLinear);
-        if (Program.MainWindow.HasExtension("GL_EXT_texture_filter_anisotropic"))
+        if (application.HasExtension("GL_EXT_texture_filter_anisotropic"))
         {
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName) ArbTextureFilterAnisotropic.TextureMaxAnisotropy, 4f);

@@ -1,5 +1,4 @@
 ﻿using gESilk.engine.assimp;
-using gESilk.engine.components;
 using gESilk.engine.render.materialSystem;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;

@@ -22,12 +22,12 @@ public partial class Application
 
         var cubemapTest = new Entity();
         cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(10, 0, 0);
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(5, 1, 0);
         cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
 
         cubemapTest = new Entity();
         cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(-10, 0, 0);
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(-5, 1, 0);
         cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
 
         var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/sphere.obj");
@@ -35,22 +35,24 @@ public partial class Application
         skyboxLoader.IsSkybox(true);
 
         var program = new ShaderProgram("../../../resources/shader/default.shader");
-        var texture = new Texture("../../../resources/texture/brick_albedo.tif");
-        var normal = new Texture("../../../resources/texture/brick_normal.png");
+        var texture = new Texture("../../../resources/texture/brick_albedo.tif", this);
+        var normal = new Texture("../../../resources/texture/brick_normal.png", this);
 
-        Material material = new(program);
+        Material material = new(program, this);
         material.AddSetting(new TextureSetting("albedo", texture, 1));
         material.AddSetting(new TextureSetting("normalMap", normal, 2));
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
-        material.AddSetting(new FloatSetting("roughness", 0.4f));
+        material.AddSetting(new FloatSetting("roughness", 0.7f));
         material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
 
-        var woodMaterial = new Material(program);
-        woodMaterial.AddSetting(new FloatSetting("roughness", 0.8f));
+        var woodMaterial = new Material(program, this);
+        woodMaterial.AddSetting(new FloatSetting("roughness", 1f));
+        //woodMaterial.AddSetting(new FloatSetting("metallic", 1f));
+        woodMaterial.AddSetting(new FloatSetting("normalStrength", 0f));
         woodMaterial.AddSetting(new TextureSetting("albedo",
-            new Texture("../../../resources/texture/rough_wood_diff_1k.jpg"), 1));
+            new Texture("../../../resources/texture/rough_wood_diff_1k.jpg", this), 1));
         woodMaterial.AddSetting(new TextureSetting("normalMap",
-            new Texture("../../../resources/texture/rough_wood_nor_dx_1k.jpg"), 2));
+            new Texture("../../../resources/texture/rough_wood_nor_dx_1k.jpg", this), 2));
         woodMaterial.AddSetting(new GlobalSunPosSetting("lightPos"));
 
         var basePath = "../../../resources/cubemap/";
@@ -68,7 +70,7 @@ public partial class Application
         //material.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
         //woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
 
-        Material skyboxMaterial = new(skyboxProgram, DepthFunction.Lequal, CullFaceMode.Front);
+        Material skyboxMaterial = new(skyboxProgram, this, DepthFunction.Lequal, CullFaceMode.Front);
         skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox, 0));
 
         var skybox = new Entity();
@@ -78,14 +80,14 @@ public partial class Application
         _entity = new Entity();
         _entity.AddComponent(new Transform());
         _entity.AddComponent(new MaterialComponent(loader, woodMaterial));
-        _entity.AddComponent(new ModelRenderer(loader));
+        _entity.AddComponent(new ModelRenderer(loader, this, false));
         _entity.AddComponent(new Transform());
 
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
 
         var physicalPlane = new Entity();
         physicalPlane.AddComponent(new MaterialComponent(renderPlaneMesh, material));
-        physicalPlane.AddComponent(new ModelRenderer(renderPlaneMesh));
+        physicalPlane.AddComponent(new ModelRenderer(renderPlaneMesh, this));
         physicalPlane.AddComponent(new Transform());
         physicalPlane.GetComponent<Transform>().Rotation = new Vector3(-90f, 0, 0);
         physicalPlane.GetComponent<Transform>().Scale = new Vector3(10);
@@ -93,7 +95,7 @@ public partial class Application
 
         var camera = new Entity();
         camera.AddComponent(new Transform());
-        camera.AddComponent(new MovementBehavior(0.3f));
+        camera.AddComponent(new MovementBehavior(this, sensitivity: 0.3f));
         camera.AddComponent(new Camera(43f, 0.1f, 1000f));
         camera.GetComponent<Camera>()?.Set();
 

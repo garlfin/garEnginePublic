@@ -3,26 +3,28 @@ using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using static gESilk.Program;
 
 namespace gESilk.engine.components;
 
 public class ModelRenderer : Component
 {
     private readonly Mesh _mesh;
+    private readonly Application _application;
+    private bool _isStatic;
 
-
-    public ModelRenderer(Mesh mesh)
+    public ModelRenderer(Mesh mesh, Application application, bool isStatic = true)
     {
         ModelRendererSystem.Register(this);
+        _application = application;
         _mesh = mesh;
+        _isStatic = isStatic;
     }
 
     public override void Update(float gameTime)
     {
         Transform? _modelTransform = Entity.GetComponent<Transform>();
 
-        var state = MainWindow.State();
+        var state = _application.State();
 
         if (state is EngineState.RenderState)
         {
@@ -36,6 +38,7 @@ public class ModelRenderer : Component
         }
         else if (state is EngineState.GenerateCubemapState)
         {
+            if (!_isStatic) return;
             _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(),
                 _modelTransform?.Model ?? Matrix4.Identity);
         }
