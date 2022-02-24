@@ -46,7 +46,7 @@ uniform sampler2DShadow shadowMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform float emission = 1.0;
-uniform float roughness = 0.8;
+uniform sampler2D roughnessTex;
 uniform float metallic = 0.0;
 uniform float ior = 1.450;
 uniform float normalStrength = 1.0;
@@ -67,6 +67,8 @@ layout (location = 2) out vec4 FragLoc;
 const int pcfCount = 4;
 const float totalTexels = (pcfCount * 2.0+1.0)*(pcfCount*2.0+1.0);
 
+
+// Code from blender's fresnel shader
 float fresnelSchlick(float cosi)
 {
     float eta = ior;
@@ -81,10 +83,15 @@ float fresnelSchlick(float cosi)
         result = 0.5 * A * A * (1.0 + B * B);
     }
     else {
-        result = 1.0; 
+        result = 1.0;
     }
 
     return result;
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
@@ -107,11 +114,6 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
     return visibility;
 }
 
-/*float fresnelSchlick(float cosTheta)
-{
-    return pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-}*/
-
 
 
 void main() {
@@ -120,6 +122,8 @@ void main() {
     normal = normalize((normal * 2.0 - 1.0)*TBN);
     normal = mix(noNormalNormal, normal, normalStrength);
     vec3 viewDir = normalize(FragPos-viewPos);
+
+    float roughness = texture(roughnessTex, fTexCoord).r;
 
     vec3 lightDir = normalize(lightPos);
     float mipmapLevel = float(textureQueryLevels(skyBox));
@@ -131,10 +135,12 @@ void main() {
 
     vec4 color = texture(albedo, fTexCoord);
     color *= mix(ambient, vec4(1), metallic);
-    float fresnelFac = fresnelSchlick(dot(normal, viewDir))*specFac;
-    vec4 skyboxSampled = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel)*worldStrength;
-    color = mix(clamp(color + (skyboxSampled * mix(1, fresnelFac, roughness)),0,worldStrength)+spec, color * (skyboxSampled + spec), metallic);
 
+    vec3 fresnelFac = fresnelSchlickRoughness(dot(-viewDir, normal), vec3(0.04), roughness);
+
+    vec4 skyboxSampled = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel)*worldStrength;
+    color = mix(clamp(color + (skyboxSampled * vec4(fresnelFac, 1)), 0, worldStrength)+vec4(spec*fresnelFac, 1.0), color * (skyboxSampled + spec), metallic);
+    //mix(specFac, fresnelFac, roughness)
     FragColor = vec4(vec3(color*emission), 1.0);
     FragLoc = vec4(viewFragPos, metallic);
     FragNormal = vec4(viewNormal, dot(noNormalNormal, viewDir));

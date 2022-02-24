@@ -72,6 +72,7 @@ public class CubemapCapture : BaseCamera
             View = Matrix4.LookAt(entityTransform.Location, entityTransform.Location + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY);
             Projection = _camera.GetProjectionMatrix();
+
             ModelRendererSystem.Update(0f);
             CubemapMManager.Update(0f);
         }

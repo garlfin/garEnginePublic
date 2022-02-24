@@ -9,7 +9,6 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using static gESilk.engine.Globals;
-using Texture = gESilk.engine.render.assets.textures.ImageTexture;
 
 
 namespace gESilk.engine.window;
@@ -22,37 +21,43 @@ public partial class Application
 
         var cubemapTest = new Entity();
         cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(5, 1, 0);
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(0, 4, 0);
         cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
 
-        cubemapTest = new Entity();
-        cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(-5, 1, 0);
-        cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
 
-        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/sphere.obj");
+        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/table.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         skyboxLoader.IsSkybox(true);
 
+        var normalTex = new ImageTexture("../../../resources/texture/Diffuse_Normal.png", this);
+
         var program = new ShaderProgram("../../../resources/shader/default.shader");
-        var texture = new Texture("../../../resources/texture/brick_albedo.tif", this);
-        var normal = new Texture("../../../resources/texture/brick_normal.png", this);
+
+        Material shinyMaterial = new Material(program, this);
+        shinyMaterial.AddSetting(new TextureSetting("albedo",
+            new ImageTexture("../../../resources/texture/white.png", this), 1));
+        shinyMaterial.AddSetting(new TextureSetting("roughnessTex",
+            new ImageTexture("../../../resources/texture/black.png", this), 2));
+        shinyMaterial.AddSetting(new FloatSetting("normalStrength", 0));
+        shinyMaterial.AddSetting(new FloatSetting("metallic", 1f));
+        shinyMaterial.AddSetting(new TextureSetting("normalMap", normalTex, 3));
 
         Material material = new(program, this);
-        material.AddSetting(new TextureSetting("albedo", texture, 1));
-        material.AddSetting(new TextureSetting("normalMap", normal, 2));
+        material.AddSetting(new TextureSetting("albedo",
+            new ImageTexture("../../../resources/texture/Diffuse.png", this), 1));
+        material.AddSetting(new TextureSetting("normalMap", normalTex, 2));
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
-        material.AddSetting(new FloatSetting("roughness", 0.7f));
+        material.AddSetting(new TextureSetting("roughnessTex",
+            new ImageTexture("../../../resources/texture/Diffuse_Roughness.png", this), 3));
         material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
 
         var woodMaterial = new Material(program, this);
-        woodMaterial.AddSetting(new FloatSetting("roughness", 1f));
-        //woodMaterial.AddSetting(new FloatSetting("metallic", 1f));
-        woodMaterial.AddSetting(new FloatSetting("normalStrength", 0f));
+        woodMaterial.AddSetting(new TextureSetting("roughnessTex",
+            new ImageTexture("../../../resources/texture/rough_wood_rough_1k.jpg", this), 3));
         woodMaterial.AddSetting(new TextureSetting("albedo",
-            new Texture("../../../resources/texture/rough_wood_diff_1k.jpg", this), 1));
+            new ImageTexture("../../../resources/texture/rough_wood_diff_1k.jpg", this), 1));
         woodMaterial.AddSetting(new TextureSetting("normalMap",
-            new Texture("../../../resources/texture/rough_wood_nor_dx_1k.jpg", this), 2));
+            new ImageTexture("../../../resources/texture/rough_wood_nor_dx_1k.jpg", this), 2));
         woodMaterial.AddSetting(new GlobalSunPosSetting("lightPos"));
 
         var basePath = "../../../resources/cubemap/";
@@ -67,8 +72,6 @@ public partial class Application
 
         Skybox = new CubemapTexture(paths);
         var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
-        //material.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
-        //woodMaterial.AddSetting(new TextureSetting("skyBox", skyboxTexture, 0));
 
         Material skyboxMaterial = new(skyboxProgram, this, DepthFunction.Lequal, CullFaceMode.Front);
         skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox, 0));
@@ -79,18 +82,27 @@ public partial class Application
 
         _entity = new Entity();
         _entity.AddComponent(new Transform());
-        _entity.AddComponent(new MaterialComponent(loader, woodMaterial));
-        _entity.AddComponent(new ModelRenderer(loader, this, false));
+        _entity.AddComponent(new MaterialComponent(loader, material));
+        _entity.AddComponent(new ModelRenderer(loader, this));
         _entity.AddComponent(new Transform());
+        _entity.GetComponent<Transform>().Location = new Vector3(0, 3.25f, 0);
+        _entity.GetComponent<Transform>().Scale = new Vector3(0.5f);
 
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
 
         var physicalPlane = new Entity();
-        physicalPlane.AddComponent(new MaterialComponent(renderPlaneMesh, material));
+        physicalPlane.AddComponent(new MaterialComponent(renderPlaneMesh, woodMaterial));
         physicalPlane.AddComponent(new ModelRenderer(renderPlaneMesh, this));
         physicalPlane.AddComponent(new Transform());
         physicalPlane.GetComponent<Transform>().Rotation = new Vector3(-90f, 0, 0);
-        physicalPlane.GetComponent<Transform>().Scale = new Vector3(10);
+        physicalPlane.GetComponent<Transform>().Scale = new Vector3(5);
+
+        var sphereMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/sphere.obj");
+        physicalPlane = new Entity();
+        physicalPlane.AddComponent(new MaterialComponent(sphereMesh, shinyMaterial));
+        physicalPlane.AddComponent(new ModelRenderer(sphereMesh, this, false));
+        physicalPlane.AddComponent(new Transform());
+        physicalPlane.GetComponent<Transform>().Location = new Vector3(0, 5, 0);
 
 
         var camera = new Entity();
@@ -101,7 +113,8 @@ public partial class Application
 
         SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
 
-
+        _state = EngineState.RenderShadowState;
+        ModelRendererSystem.Update(0f);
         _state = EngineState.GenerateCubemapState;
         TransformSystem.Update(0f);
         CubemapCaptureManager.Update(0f);
@@ -112,7 +125,7 @@ public partial class Application
         _time += args.Time;
         // Logic stuff here
         // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just spins the hut
-        _entity.GetComponent<Transform>()!.Location = ((float)Math.Sin(_time * 3.141 / 5) * 5, 1f, 0f);
+        //_entity.GetComponent<Transform>()!.Location = ((float)Math.Sin(_time * 3.141 / 5) * 5, 1f, 0f);
         BehaviorSystem.Update((float)args.Time);
 
 
