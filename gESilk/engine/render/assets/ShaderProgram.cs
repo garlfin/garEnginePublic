@@ -12,7 +12,7 @@ public class ShaderProgram : Asset
     {
         AssetManager.Register(this);
 
-        var file = File.ReadAllText(path).Split("#FRAGMENT");
+        var file = File.ReadAllText(path).Split("-FRAGMENT-");
         var vertex = new Shader(file[0], ShaderType.VertexShader).Get();
         var fragment = new Shader(file[1], ShaderType.FragmentShader).Get();
 
@@ -30,6 +30,7 @@ public class ShaderProgram : Asset
         GL.DeleteShader(fragment);
 
         var programLog = GL.GetProgramInfoLog(_shaderId);
+        
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
     }
 

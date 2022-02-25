@@ -1,6 +1,6 @@
 ﻿using gESilk.engine.window;
 using OpenTK.Windowing.Common;
-using Keys = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 #pragma warning disable CS8602
 
@@ -8,9 +8,9 @@ namespace gESilk.engine.components;
 
 public class MovementBehavior : Behavior
 {
-    private readonly float _sensitivity;
-    private float _cameraSpeed;
     private readonly Application _application;
+    private readonly float _sensitivity;
+    private readonly float _cameraSpeed;
 
     public MovementBehavior(Application application, float sensitivity = 1f, float cameraSpeed = 4f)
     {

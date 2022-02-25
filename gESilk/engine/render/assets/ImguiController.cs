@@ -3,26 +3,26 @@ using gESilk.engine.render.assets.textures;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Vector2 = System.Numerics.Vector2;
 
 namespace gESilk.engine.render.assets;
 
 public class ImGuiController
 {
+    private Texture _fontTexture;
     private bool _frameBegun;
+    private int _indexBuffer;
+    private int _indexBufferSize;
+
+    private readonly Vector2 _scaleFactor = Vector2.One;
+    private ShaderProgram _shader;
 
     private int _vertexArray;
     private int _vertexBuffer;
     private int _vertexBufferSize;
-    private int _indexBuffer;
-    private int _indexBufferSize;
+    private readonly int _windowHeight;
 
-    private Texture _fontTexture;
-    private ShaderProgram _shader;
-
-    private int _windowWidth;
-    private int _windowHeight;
-
-    private System.Numerics.Vector2 _scaleFactor = System.Numerics.Vector2.One;
+    private readonly int _windowWidth;
 
     public ImGuiController(int width, int height)
     {
@@ -57,7 +57,7 @@ public class ImGuiController
 
         RecreateFontDeviceTexture();
 
-        _shader = new ShaderProgram("../../../resources/shader/imgui.shader");
+        _shader = new ShaderProgram("../../../resources/shader/imgui.glsl");
 
         GL.VertexArrayVertexBuffer(_vertexArray, 0, _vertexBuffer, IntPtr.Zero, Unsafe.SizeOf<ImDrawVert>());
         GL.VertexArrayElementBuffer(_vertexArray, _indexBuffer);
@@ -93,7 +93,7 @@ public class ImGuiController
         _fontTexture = new TextureFromIntPtr(width, height, pixels);
 
 
-        io.Fonts.SetTexID((IntPtr)_fontTexture.Get());
+        io.Fonts.SetTexID((IntPtr) _fontTexture.Get());
 
         io.Fonts.ClearTexData();
     }
@@ -109,7 +109,7 @@ public class ImGuiController
             var vertexSize = cmd_list.VtxBuffer.Size * Unsafe.SizeOf<ImDrawVert>();
             if (vertexSize > _vertexBufferSize)
             {
-                var newSize = (int)Math.Max(_vertexBufferSize * 1.5f, vertexSize);
+                var newSize = (int) Math.Max(_vertexBufferSize * 1.5f, vertexSize);
                 GL.NamedBufferData(_vertexBuffer, newSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
                 _vertexBufferSize = newSize;
 
@@ -119,7 +119,7 @@ public class ImGuiController
             var indexSize = cmd_list.IdxBuffer.Size * sizeof(ushort);
             if (indexSize > _indexBufferSize)
             {
-                var newSize = (int)Math.Max(_indexBufferSize * 1.5f, indexSize);
+                var newSize = (int) Math.Max(_indexBufferSize * 1.5f, indexSize);
                 GL.NamedBufferData(_indexBuffer, newSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
                 _indexBufferSize = newSize;
 
@@ -174,21 +174,19 @@ public class ImGuiController
                 {
                     throw new NotImplementedException();
                 }
-                else
-                {
-                    GL.ActiveTexture(TextureUnit.Texture0);
-                    GL.BindTexture(TextureTarget.Texture2D, (int)pcmd.TextureId);
+
+                GL.ActiveTexture(TextureUnit.Texture0);
+                GL.BindTexture(TextureTarget.Texture2D, (int) pcmd.TextureId);
 
 
-                    // We do _windowHeight - (int)clip.W instead of (int)clip.Y because gl has flipped Y when it comes to these coordinates
-                    var clip = pcmd.ClipRect;
-                    GL.Scissor((int)clip.X, _windowHeight - (int)clip.W, (int)(clip.Z - clip.X),
-                        (int)(clip.W - clip.Y));
+                // We do _windowHeight - (int)clip.W instead of (int)clip.Y because gl has flipped Y when it comes to these coordinates
+                var clip = pcmd.ClipRect;
+                GL.Scissor((int) clip.X, _windowHeight - (int) clip.W, (int) (clip.Z - clip.X),
+                    (int) (clip.W - clip.Y));
 
 
-                    GL.DrawElements(BeginMode.Triangles, (int)pcmd.ElemCount, DrawElementsType.UnsignedShort,
-                        (int)pcmd.IdxOffset * sizeof(ushort));
-                }
+                GL.DrawElements(BeginMode.Triangles, (int) pcmd.ElemCount, DrawElementsType.UnsignedShort,
+                    (int) pcmd.IdxOffset * sizeof(ushort));
             }
         }
 
@@ -210,7 +208,7 @@ public class ImGuiController
     private void SetPerFrameImGuiData(float deltaSeconds)
     {
         var io = ImGui.GetIO();
-        io.DisplaySize = new System.Numerics.Vector2(
+        io.DisplaySize = new Vector2(
             _windowWidth / _scaleFactor.X,
             _windowHeight / _scaleFactor.Y);
         io.DisplayFramebufferScale = _scaleFactor;

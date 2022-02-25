@@ -15,15 +15,19 @@ namespace gESilk.engine.window;
 
 public partial class Application
 {
-    private void OnLoad()
+    protected virtual void OnLoad()
     {
         InitRenderer();
 
         var cubemapTest = new Entity();
         cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(0, 4, 0);
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(-5, 4, 0);
         cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
 
+        cubemapTest = new Entity();
+        cubemapTest.AddComponent(new Transform());
+        cubemapTest.GetComponent<Transform>().Location = new Vector3(5, 4, 0);
+        cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
 
         var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/table.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
@@ -31,9 +35,9 @@ public partial class Application
 
         var normalTex = new ImageTexture("../../../resources/texture/Diffuse_Normal.png", this);
 
-        var program = new ShaderProgram("../../../resources/shader/default.shader");
+        var program = new ShaderProgram("../../../resources/shader/default.glsl");
 
-        Material shinyMaterial = new Material(program, this);
+        var shinyMaterial = new Material(program, this);
         shinyMaterial.AddSetting(new TextureSetting("albedo",
             new ImageTexture("../../../resources/texture/white.png", this), 1));
         shinyMaterial.AddSetting(new TextureSetting("roughnessTex",
@@ -69,10 +73,8 @@ public partial class Application
             basePath + "posz.jpg", basePath + "negz.jpg"
         };
 
-
         Skybox = new CubemapTexture(paths);
-        var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.shader");
-
+        var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.glsl");
         Material skyboxMaterial = new(skyboxProgram, this, DepthFunction.Lequal, CullFaceMode.Front);
         skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox, 0));
 
@@ -98,36 +100,31 @@ public partial class Application
         physicalPlane.GetComponent<Transform>().Scale = new Vector3(5);
 
         var sphereMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/sphere.obj");
-        physicalPlane = new Entity();
-        physicalPlane.AddComponent(new MaterialComponent(sphereMesh, shinyMaterial));
-        physicalPlane.AddComponent(new ModelRenderer(sphereMesh, this, false));
-        physicalPlane.AddComponent(new Transform());
-        physicalPlane.GetComponent<Transform>().Location = new Vector3(0, 5, 0);
+        _entity = new Entity();
+        _entity.AddComponent(new MaterialComponent(sphereMesh, shinyMaterial));
+        _entity.AddComponent(new ModelRenderer(sphereMesh, this, false));
+        _entity.AddComponent(new Transform());
+        _entity.GetComponent<Transform>().Location = new Vector3(0, 5, 0);
 
 
         var camera = new Entity();
         camera.AddComponent(new Transform());
-        camera.AddComponent(new MovementBehavior(this, sensitivity: 0.3f));
+        camera.AddComponent(new MovementBehavior(this, 0.3f));
         camera.AddComponent(new Camera(43f, 0.1f, 1000f));
         camera.GetComponent<Camera>()?.Set();
 
         SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
 
-        _state = EngineState.RenderShadowState;
-        ModelRendererSystem.Update(0f);
-        _state = EngineState.GenerateCubemapState;
-        TransformSystem.Update(0f);
-        CubemapCaptureManager.Update(0f);
+        BakeCubemaps();
     }
 
-    private void OnUpdate(FrameEventArgs args)
+    protected virtual void OnUpdate(FrameEventArgs args)
     {
         _time += args.Time;
         // Logic stuff here
-        // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just spins the hut
-        //_entity.GetComponent<Transform>()!.Location = ((float)Math.Sin(_time * 3.141 / 5) * 5, 1f, 0f);
-        BehaviorSystem.Update((float)args.Time);
-
+        // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just moves the sphere
+        _entity.GetComponent<Transform>()!.Location = ((float) Math.Sin(_time * 3.141 / 5) * 5, 5f, 0f);
+        BehaviorSystem.Update((float) args.Time);
 
         if (!_window.IsKeyDown(Keys.Escape) || _alreadyClosed) return;
         _alreadyClosed = true;
@@ -135,7 +132,7 @@ public partial class Application
         _window.Close();
     }
 
-    private void OnMouseMove(MouseMoveEventArgs args)
+    protected virtual void OnMouseMove(MouseMoveEventArgs args)
     {
         BehaviorSystem.UpdateMouse(args);
     }

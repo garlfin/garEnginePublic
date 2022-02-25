@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using OpenTK.Graphics.OpenGL4;
-using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace gESilk.engine.render.assets.textures;
 
@@ -15,17 +14,18 @@ public class EmptyCubemapTexture : Texture
         Width = size;
         Height = size;
         for (var i = 0; i < 6; i++)
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, size, size, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, size, size, 0,
+                PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.LinearMipmapLinear);
+            (int) TextureMinFilter.LinearMipmapLinear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Linear);
+            (int) TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
     }
 

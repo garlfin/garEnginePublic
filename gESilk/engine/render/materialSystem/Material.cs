@@ -10,12 +10,18 @@ namespace gESilk.engine.render.materialSystem;
 
 public class Material
 {
+    private readonly Application _application;
+    private readonly DepthFunction _function;
     private readonly ShaderProgram _program;
     private readonly List<ShaderSetting> _settings = new();
-    private readonly DepthFunction _function;
     private CullFaceMode _cullFaceMode;
-    private int _model, _view, _projection, _viewPos, _lightProj, _lightView, _skybox;
-    private readonly Application _application;
+    private readonly int _model;
+    private readonly int _view;
+    private readonly int _projection;
+    private readonly int _viewPos;
+    private readonly int _lightProj;
+    private readonly int _lightView;
+    private readonly int _skybox;
 
 
     public Material(ShaderProgram program, Application application, DepthFunction function = DepthFunction.Less,
@@ -56,7 +62,7 @@ public class Material
         if (state == EngineState.RenderShadowState)
         {
             _program.SetUniform(_view, ShadowView);
-            _program.SetUniform(_projection, ShadowProjetion);
+            _program.SetUniform(_projection, ShadowProjection);
         }
         else
         {
@@ -67,7 +73,7 @@ public class Material
         }
 
         _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location);
-        _program.SetUniform(_lightProj, ShadowProjetion);
+        _program.SetUniform(_lightProj, ShadowProjection);
         _program.SetUniform(_lightView, ShadowView);
         _program.SetUniform(_skybox,
             state == EngineState.GenerateCubemapState

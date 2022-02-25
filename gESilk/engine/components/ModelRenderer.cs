@@ -8,9 +8,9 @@ namespace gESilk.engine.components;
 
 public class ModelRenderer : Component
 {
-    private readonly Mesh _mesh;
     private readonly Application _application;
-    private bool _isStatic;
+    private readonly Mesh _mesh;
+    private readonly bool _isStatic;
 
     public ModelRenderer(Mesh mesh, Application application, bool isStatic = true)
     {
@@ -22,7 +22,7 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        Transform? _modelTransform = Entity.GetComponent<Transform>();
+        var _modelTransform = Entity.GetComponent<Transform>();
 
         var state = _application.State();
 

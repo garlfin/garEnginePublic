@@ -3,35 +3,36 @@ using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using OpenTK.Mathematics;
+using Material = gESilk.engine.render.materialSystem.Material;
 
 namespace gESilk.engine;
 
-using render.materialSystem;
-
 public static class Globals
 {
-    public static AssimpContext Assimp;
-    public static BasicCamera ShadowCamera;
-    public static Matrix4 ShadowView, ShadowProjetion;
+    public static readonly AssimpContext Assimp;
+    private static readonly BasicCamera _shadowCamera;
+    public static Matrix4 ShadowView, ShadowProjection;
     public static readonly Material DepthMaterial;
     public static Vector3 SunPos;
 
     static Globals()
     {
         Assimp = new AssimpContext();
-        ShadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f)
+        _shadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f)
         {
             DepthFar = 50f
         };
-        var depthProgram = new ShaderProgram("../../../resources/shader/depth.shader");
+        var depthProgram = new ShaderProgram("../../../resources/shader/depth.glsl");
         DepthMaterial = new Material(depthProgram, Program.MainWindow);
     }
 
     public static void UpdateShadow()
     {
+        SunPos.Normalize();
         var currentCameraPos = CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location;
-        ShadowCamera.Position = SunPos.Normalized() + currentCameraPos + new Vector3(0, 20, 0);
-        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos + new Vector3(0, 20, 0));
-        ShadowProjetion = ShadowCamera.GetOrthoProjectionMatrix(20f);
+        _shadowCamera.Position = currentCameraPos + new Vector3(10);
+        ShadowView = _shadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(10));
+        ShadowProjection = _shadowCamera.GetOrthoProjectionMatrix(20f);
+        
     }
 }

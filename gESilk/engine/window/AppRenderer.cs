@@ -10,6 +10,7 @@ using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using static gESilk.engine.Globals;
 
@@ -17,22 +18,22 @@ namespace gESilk.engine.window;
 
 public partial class Application
 {
-    private bool _alreadyClosed, _firstRender;
-    private RenderBuffer _renderBuffer;
-    private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
-    private RenderTexture _renderTexture, _shadowTex, _renderNormal, _renderPos, _ssaoTex, _blurTex;
     private readonly int _width, _height, _mBloomComputeWorkGroupSize;
-    private double _time;
-    private int _mips;
-    private ComputeProgram _bloomProgram;
-    private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
-    private EmptyTexture[] _bloomRTs = new EmptyTexture[3];
-    public CubemapTexture Skybox;
-    private BloomSettings _bloomSettings = new();
-    private Vector2i _bloomTexSize;
-    private GameWindow _window;
-    private EngineState _state;
     private readonly HashSet<string> OpenGLExtensions = new();
+    private bool _alreadyClosed, _firstRender;
+    private ComputeProgram _bloomProgram;
+    private readonly EmptyTexture[] _bloomRTs = new EmptyTexture[3];
+    private readonly BloomSettings _bloomSettings = new();
+    private Vector2i _bloomTexSize;
+    private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
+    private int _mips;
+    private RenderBuffer _renderBuffer;
+    private RenderTexture _renderTexture, _shadowTex, _renderNormal, _renderPos, _ssaoTex, _blurTex;
+    private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
+    private EngineState _state;
+    private double _time;
+    private readonly GameWindow _window;
+    public CubemapTexture Skybox;
 
     public Application(int width, int height, string name)
     {
@@ -53,11 +54,10 @@ public partial class Application
         nws.Title = name;
         nws.IsEventDriven = false;
         nws.WindowBorder = WindowBorder.Fixed;
-        nws.Icon = new();
         _window = new GameWindow(gws, nws);
     }
 
-    private void OnClosing()
+    protected virtual void OnClosing()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit);
         Console.WriteLine("Closing... Deleting assets");
@@ -65,7 +65,18 @@ public partial class Application
         Console.WriteLine("Done :)");
     }
 
-    public void OnRender(FrameEventArgs args)
+    protected virtual void BakeCubemaps()
+    {
+        UpdateShadow();
+        TransformSystem.Update(0f);
+        _state = EngineState.RenderShadowState;
+        _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
+        ModelRendererSystem.Update(0f);
+        _state = EngineState.GenerateCubemapState;
+        CubemapCaptureManager.Update(0f);
+    }
+
+    protected void OnRender(FrameEventArgs args)
     {
         CameraSystem.Update(0f);
         TransformSystem.Update(0f);
@@ -101,16 +112,16 @@ public partial class Application
 
         _window.SwapBuffers();
     }
-    
 
-    private void RenderBloom()
+
+    protected virtual void RenderBloom()
     {
         // Bloom
         _bloomProgram.Use();
         _bloomProgram.SetUniform("Params",
             new Vector4(_bloomSettings.Threshold, _bloomSettings.Threshold - _bloomSettings.Knee,
                 _bloomSettings.Knee * 2f, 0.25f / _bloomSettings.Knee));
-        _bloomProgram.SetUniform("LodAndMode", new Vector2(0, (int)BloomMode.BloomModePrefilter));
+        _bloomProgram.SetUniform("LodAndMode", new Vector2(0, (int) BloomMode.BloomModePrefilter));
         _bloomRTs[0].Use(0, TextureAccess.WriteOnly);
         _renderTexture.Use(1);
         _bloomProgram.SetUniform("u_Texture", 1);
@@ -122,7 +133,7 @@ public partial class Application
         {
             var mipSize = _bloomRTs[0].GetMipSize(currentMip);
 
-            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip - 1f, (int)BloomMode.BloomModeDownsample));
+            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip - 1f, (int) BloomMode.BloomModeDownsample));
 
 
             // Ping 
@@ -132,19 +143,19 @@ public partial class Application
             _bloomRTs[0].Use(1);
             _bloomProgram.SetUniform("u_Texture", 1);
 
-            _bloomProgram.Dispatch((int)mipSize.X, (int)mipSize.Y);
+            _bloomProgram.Dispatch((int) mipSize.X, (int) mipSize.Y);
 
 
             // Pong 
 
-            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int)BloomMode.BloomModeDownsample));
+            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int) BloomMode.BloomModeDownsample));
 
             _bloomRTs[0].Use(0, TextureAccess.WriteOnly, currentMip);
 
             _bloomRTs[1].Use(1);
             _bloomProgram.SetUniform("u_Texture", 1);
 
-            _bloomProgram.Dispatch((int)mipSize.X, (int)mipSize.Y);
+            _bloomProgram.Dispatch((int) mipSize.X, (int) mipSize.Y);
         }
 
         // First Upsample
@@ -153,20 +164,20 @@ public partial class Application
 
         //currentMip--;
 
-        _bloomProgram.SetUniform("LodAndMode", new Vector2(_mips - 2, (int)BloomMode.BloomModeUpsampleFirst));
+        _bloomProgram.SetUniform("LodAndMode", new Vector2(_mips - 2, (int) BloomMode.BloomModeUpsampleFirst));
 
         _bloomRTs[0].Use(1);
         _bloomProgram.SetUniform("u_Texture", 1);
 
         var currentMipSize = _bloomRTs[2].GetMipSize(_mips - 1);
 
-        _bloomProgram.Dispatch((int)currentMipSize.X, (int)currentMipSize.Y);
+        _bloomProgram.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
 
         for (currentMip = _mips - 2; currentMip >= 0; currentMip--)
         {
             currentMipSize = _bloomRTs[2].GetMipSize(currentMip);
             _bloomRTs[2].Use(0, TextureAccess.WriteOnly, currentMip);
-            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int)BloomMode.BloomModeUpsample));
+            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int) BloomMode.BloomModeUpsample));
 
             _bloomRTs[0].Use(1);
             _bloomProgram.SetUniform("u_Texture", 1);
@@ -174,11 +185,11 @@ public partial class Application
             _bloomRTs[2].Use(2);
             _bloomProgram.SetUniform("u_BloomTexture", 2);
 
-            _bloomProgram.Dispatch((int)currentMipSize.X, (int)currentMipSize.Y);
+            _bloomProgram.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
         }
     }
 
-    public void InitRenderer()
+    protected virtual void InitRenderer()
     {
         if (Debugger.IsAttached) GlDebug.Init();
 
@@ -205,7 +216,7 @@ public partial class Application
             _bloomRTs[i] = new EmptyTexture(_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f, _mips);
 
 
-        _bloomProgram = new ComputeProgram("../../../resources/shader/bloom.shader");
+        _bloomProgram = new ComputeProgram("../../../resources/shader/bloom.glsl");
 
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
 
@@ -222,10 +233,10 @@ public partial class Application
 
         for (var i = 0; i < 64; i++)
         {
-            var sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
-                (float)rand.NextDouble());
+            var sample = new Vector3((float) (rand.NextDouble() * 2.0 - 1.0), (float) (rand.NextDouble() * 2.0 - 1.0),
+                (float) rand.NextDouble());
             sample.Normalize();
-            sample *= (float)rand.NextDouble();
+            sample *= (float) rand.NextDouble();
             var scale = i / 64f;
             scale = MathHelper.Lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
@@ -233,7 +244,7 @@ public partial class Application
         }
 
 
-        var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.shader");
+        var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.glsl");
 
         _finalShadingEntity = new Entity();
         _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
@@ -253,7 +264,7 @@ public partial class Application
             PixelFormat.DepthComponent, PixelType.Float, true);
         _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment, true);
 
-        var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.shader");
+        var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.glsl");
 
 
         _ssaoEntity = new Entity();
@@ -275,7 +286,7 @@ public partial class Application
         _ssaoTex.BindToBuffer(_ssaoMap, FramebufferAttachment.ColorAttachment0);
 
 
-        var blurShader = new ShaderProgram("../../../resources/shader/blur.shader");
+        var blurShader = new ShaderProgram("../../../resources/shader/blur.glsl");
 
         _blurEntity = new Entity();
         _blurEntity.AddComponent(new MaterialComponent(renderPlaneMesh,

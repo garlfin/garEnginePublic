@@ -7,13 +7,32 @@ namespace gESilk.engine.render.assets;
 
 public class VertexArray : Asset
 {
-    private readonly int _vao;
-    private readonly int _vbo;
     private readonly int _ebo;
-    private readonly int _vtvbo;
+    private readonly int _elementCount;
     private readonly int _nmvbo;
     private readonly int _tanvbo;
-    private readonly int _elementCount;
+    private readonly int _vao;
+    private readonly int _vbo;
+    private readonly int _vtvbo;
+
+    public VertexArray(MeshData mesh)
+    {
+        AssetManager.Register(this);
+
+        _vao = GL.GenVertexArray();
+        GL.BindVertexArray(_vao);
+
+        _vbo = CreateBufferAttribute(mesh.Vert, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
+            0);
+        _nmvbo = CreateBufferAttribute(mesh.Normal, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
+            1);
+        _vtvbo = CreateBufferAttribute(mesh.TexCoord, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
+            2);
+        _tanvbo = CreateBufferAttribute(mesh.Tangent, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
+            3);
+        _ebo = CreateBuffer(mesh.Faces, BufferUsageHint.StaticCopy, BufferTarget.ElementArrayBuffer);
+        _elementCount = mesh.Faces.Count;
+    }
 
     private static int CreateBufferAttribute(List<Vector3D> data, BufferUsageHint usageArb,
         VertexAttribPointerType type, uint index, BufferTarget target = BufferTarget.ArrayBuffer)
@@ -44,25 +63,6 @@ public class VertexArray : Asset
         GL.BindBuffer(target, buffer);
         GL.BufferData(target, sizeof(int) * data.Count * 3, data.ToArray(), usageArb);
         return buffer;
-    }
-
-    public VertexArray(MeshData mesh)
-    {
-        AssetManager.Register(this);
-
-        _vao = GL.GenVertexArray();
-        GL.BindVertexArray(_vao);
-
-        _vbo = CreateBufferAttribute(mesh.Vert, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
-            0);
-        _nmvbo = CreateBufferAttribute(mesh.Normal, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
-            1);
-        _vtvbo = CreateBufferAttribute(mesh.TexCoord, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
-            2);
-        _tanvbo = CreateBufferAttribute(mesh.Tangent, BufferUsageHint.StaticCopy, VertexAttribPointerType.Float,
-            3);
-        _ebo = CreateBuffer(mesh.Faces, BufferUsageHint.StaticCopy, BufferTarget.ElementArrayBuffer);
-        _elementCount = mesh.Faces.Count;
     }
 
     public void Render()

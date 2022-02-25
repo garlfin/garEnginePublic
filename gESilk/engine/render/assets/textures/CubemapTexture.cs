@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL4;
-using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace gESilk.engine.render.assets.textures;
 
@@ -18,8 +18,9 @@ public class CubemapTexture : Texture
         {
             var bmp = new Bitmap(path[i]);
             var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-                System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, bmp.Width, bmp.Height, 0, PixelFormat.Bgr,
+                PixelFormat.Format24bppRgb);
+            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, bmp.Width,
+                bmp.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgr,
                 PixelType.UnsignedByte, bmpData.Scan0);
 
             bmp.UnlockBits(bmpData);
@@ -27,15 +28,15 @@ public class CubemapTexture : Texture
         }
 
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.LinearMipmapLinear);
+            (int) TextureMinFilter.LinearMipmapLinear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Linear);
+            (int) TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
     }
 

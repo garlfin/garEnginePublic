@@ -4,8 +4,8 @@ namespace gESilk.engine.render.materialSystem.settings;
 
 public abstract class ShaderSetting
 {
-    protected string UniformName;
     protected int RealLocation = -1;
+    protected string UniformName;
 
     protected ShaderSetting(string name)
     {

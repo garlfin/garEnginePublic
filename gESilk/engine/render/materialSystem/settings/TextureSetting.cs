@@ -5,8 +5,8 @@ namespace gESilk.engine.render.materialSystem.settings;
 
 public class TextureSetting : ShaderSetting
 {
-    private readonly Texture _value;
     private readonly int _slot;
+    private readonly Texture _value;
 
 
     public TextureSetting(string name, Texture value, int slot) : base(name)

@@ -4,7 +4,7 @@ namespace gESilk.engine.render.materialSystem.settings;
 
 public class GlobalSunPosSetting : ShaderSetting
 {
-    private new string UniformName;
+    private new readonly string UniformName;
 
 
     public GlobalSunPosSetting(string name) : base(name)

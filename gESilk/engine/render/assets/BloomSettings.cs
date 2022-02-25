@@ -2,6 +2,10 @@
 
 public struct BloomSettings
 {
+    public BloomSettings()
+    {
+    }
+
     public float Threshold = 1.1f;
     public float Knee = 0.1f;
     public float Intensity = 1.0f;

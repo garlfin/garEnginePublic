@@ -8,8 +8,8 @@ namespace gESilk.engine.render.assets;
 public class Mesh
 {
     private readonly List<MeshData> _meshes = new();
-    private int _materialCount;
     private bool _isSkybox;
+    private int _materialCount;
 
 
     public void IsSkybox(bool value)
@@ -77,7 +77,7 @@ public class Mesh
 
     public void Render(int index, Material material, Matrix4 model, DepthFunction? function = null)
     {
-        material.Use(model, _isSkybox, function );
+        material.Use(model, _isSkybox, function);
         _meshes[index].Data?.Render();
         material.Cleanup();
     }

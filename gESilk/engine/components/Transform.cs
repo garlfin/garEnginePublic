@@ -5,10 +5,10 @@ namespace gESilk.engine.components;
 public class Transform : Component
 {
     public Vector3 Location = Vector3.Zero;
-    public Vector3 Rotation = Vector3.Zero;
-    public Vector3 Scale = Vector3.One;
 
     public Matrix4 Model;
+    public Vector3 Rotation = Vector3.Zero;
+    public Vector3 Scale = Vector3.One;
 
     public Transform()
     {
@@ -23,6 +23,6 @@ public class Transform : Component
     }
 }
 
-class TransformSystem : BaseSystem<Transform>
+internal class TransformSystem : BaseSystem<Transform>
 {
 }

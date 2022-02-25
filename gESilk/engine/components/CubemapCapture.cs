@@ -7,7 +7,7 @@ namespace gESilk.engine.components;
 
 public class CubemapCapture : BaseCamera
 {
-    private EmptyCubemapTexture _texture;
+    private readonly EmptyCubemapTexture _texture;
 
 
     public CubemapCapture(EmptyCubemapTexture texture)
@@ -55,12 +55,12 @@ public class CubemapCapture : BaseCamera
         _camera.Position = Entity.GetComponent<Transform>().Location;
         _camera.Fov = 90;
 
-        BaseCamera camera = CameraSystem.CurrentCamera;
+        var camera = CameraSystem.CurrentCamera;
         Set();
 
-        Transform entityTransform = Entity.GetComponent<Transform>();
+        var entityTransform = Entity.GetComponent<Transform>();
 
-        for (int i = 0; i < 6; i++)
+        for (var i = 0; i < 6; i++)
         {
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
                 TextureTarget.TextureCubeMapPositiveX + i, _texture.Get(), 0);
@@ -95,15 +95,15 @@ public class CubemapCapture : BaseCamera
     }
 }
 
-class CubemapCaptureManager : BaseSystem<CubemapCapture>
+internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
 {
     public static CubemapCapture GetNearest(Vector3 currentLocation)
     {
-        CubemapCapture nearest = Components[0];
-        float minDistance = Vector3.Distance(Components[0].Entity.GetComponent<Transform>().Location, currentLocation);
+        var nearest = Components[0];
+        var minDistance = Vector3.Distance(Components[0].Entity.GetComponent<Transform>().Location, currentLocation);
         foreach (var item in Components)
         {
-            float distance = Vector3.Distance(item.Entity.GetComponent<Transform>().Location, currentLocation);
+            var distance = Vector3.Distance(item.Entity.GetComponent<Transform>().Location, currentLocation);
             if (distance < minDistance)
             {
                 nearest = item;

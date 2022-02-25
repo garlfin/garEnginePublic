@@ -11,21 +11,20 @@ namespace gESilk.engine.misc;
 // Check out the web version if you don't know why we are doing a specific thing or want to know more about the code.
 public class BasicCamera
 {
+    // The field of view of the camera (radians)
+    private float _fov = MathHelper.PiOver2;
+
     // Those vectors are directions pointing outwards from the camera to define how it rotated.
     private Vector3 _front = -Vector3.UnitZ;
-
-    private Vector3 _up = Vector3.UnitY;
-
-    private Vector3 _right = Vector3.UnitX;
 
     // Rotation around the X axis (radians)
     private float _pitch;
 
     // Rotation around the Y axis (radians)
     private float _yaw = -MathHelper.PiOver2; // Without this, you would be started rotated 90 degrees right.
+    public float DepthFar = 1000f;
 
-    // The field of view of the camera (radians)
-    private float _fov = MathHelper.PiOver2;
+    public float DepthNear = 0.1f;
 
     public BasicCamera(Vector3 position, float aspectRatio)
     {
@@ -41,12 +40,9 @@ public class BasicCamera
 
     public Vector3 Front => _front;
 
-    public Vector3 Up => _up;
+    public Vector3 Up { get; private set; } = Vector3.UnitY;
 
-    public Vector3 Right => _right;
-
-    public float DepthNear = 0.1f;
-    public float DepthFar = 1000f;
+    public Vector3 Right { get; private set; } = Vector3.UnitX;
 
 
     // We convert from degrees to radians as soon as the property is set to improve performance.
@@ -74,7 +70,7 @@ public class BasicCamera
             UpdateVectors();
         }
     }
-    
+
 
     // The field of view (FOV) is the vertical angle of the camera view.
     // This has been discussed more in depth in a previous tutorial,
@@ -83,18 +79,23 @@ public class BasicCamera
     public float Fov
     {
         get => MathHelper.RadiansToDegrees(_fov);
-        set
-        {
-            _fov = MathHelper.DegreesToRadians(value);
-        }
+        set => _fov = MathHelper.DegreesToRadians(value);
     }
 
     // Get the view matrix using the amazing LookAt function described more in depth on the web tutorials
     public Matrix4 GetViewMatrix(Vector3? lookPos = null, Vector3? upDir = null)
     {
-        return Matrix4.LookAt(Position, lookPos ?? Position + _front, upDir ?? _up);
+        return Matrix4.LookAt(Position, lookPos ?? Position + _front, upDir ?? Up);
     }
 
+    public void SetViewTo(Vector3? lookPos = null, Vector3? upDir = null)
+    {
+        Vector3 rotation = Matrix4.LookAt(Position, lookPos ?? Position + _front, upDir ?? Up).ExtractRotation()
+            .ToEulerAngles();
+        Yaw = rotation.Y;
+        Pitch = rotation.X;
+        UpdateVectors();
+    }
     // Get the projection matrix using the same method we have used up until this point
     public Matrix4 GetProjectionMatrix()
     {
@@ -120,7 +121,7 @@ public class BasicCamera
         // Calculate both the right and the up vector using cross product.
         // Note that we are calculating the right from the global up; this behaviour might
         // not be what you need for all cameras so keep this in mind if you do not want a FPS camera.
-        _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
-        _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+        Right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
+        Up = Vector3.Normalize(Vector3.Cross(Right, _front));
     }
 }

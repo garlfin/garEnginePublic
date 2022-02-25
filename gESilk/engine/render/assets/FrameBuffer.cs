@@ -4,9 +4,9 @@ namespace gESilk.engine.render.assets;
 
 public class FrameBuffer : Asset
 {
-    public readonly int Fbo;
-    private readonly int _width;
     private readonly int _height;
+    private readonly int _width;
+    public readonly int Fbo;
 
     public FrameBuffer(int width, int height)
     {
@@ -27,7 +27,7 @@ public class FrameBuffer : Asset
         GL.DepthMask(true);
         GL.Viewport(0, 0, _width, _height);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, Fbo);
-        if (mask != null) GL.Clear((ClearBufferMask)mask);
+        if (mask != null) GL.Clear((ClearBufferMask) mask);
     }
 
     public override void Delete()

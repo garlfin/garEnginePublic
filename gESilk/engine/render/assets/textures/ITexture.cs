@@ -5,14 +5,15 @@ namespace gESilk.engine.render.assets.textures;
 
 public abstract class Texture : Asset
 {
-    protected int Id;
     protected PixelInternalFormat Format;
+    protected int Id;
     public int Width, Height;
 
-    protected Texture ()
+    protected Texture()
     {
         AssetManager.Register(this);
     }
+
     public virtual int Use(int slot)
     {
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
@@ -47,12 +48,12 @@ public abstract class Texture : Asset
 
     public static int GetMipLevelCount(int width, int height)
     {
-        return (int)Math.Floor(Math.Log2(Math.Min(width, height)));
+        return (int) Math.Floor(Math.Log2(Math.Min(width, height)));
     }
 
     public virtual void Use(int slot, TextureAccess access, int level = 0)
     {
-        GL.BindImageTexture(slot, Id, 0, false, 0, access, (SizedInternalFormat)Format);
+        GL.BindImageTexture(slot, Id, 0, false, 0, access, (SizedInternalFormat) Format);
     }
 
     public virtual void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
