@@ -22,6 +22,7 @@ public class Material
     private readonly int _lightProj;
     private readonly int _lightView;
     private readonly int _skybox;
+    private readonly int _shadowMap;
 
 
     public Material(ShaderProgram program, Application application, DepthFunction function = DepthFunction.Less,
@@ -39,6 +40,7 @@ public class Material
         _lightProj = _program.GetUniform("lightProjection");
         _lightView = _program.GetUniform("lightView");
         _skybox = _program.GetUniform("skyBox");
+        _shadowMap = _program.GetUniform("shadowMap");
     }
 
     public void SetCullMode(CullFaceMode mode)
@@ -75,6 +77,7 @@ public class Material
         _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location);
         _program.SetUniform(_lightProj, ShadowProjection);
         _program.SetUniform(_lightView, ShadowView);
+        _program.SetUniform(_shadowMap, _application._shadowTex.Use(5));
         _program.SetUniform(_skybox,
             state == EngineState.GenerateCubemapState
                 ? _application.Skybox.Use(0)

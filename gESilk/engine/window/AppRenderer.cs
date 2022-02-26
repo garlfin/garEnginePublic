@@ -10,7 +10,6 @@ using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using static gESilk.engine.Globals;
 
@@ -28,7 +27,9 @@ public partial class Application
     private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
     private int _mips;
     private RenderBuffer _renderBuffer;
-    private RenderTexture _renderTexture, _shadowTex, _renderNormal, _renderPos, _ssaoTex, _blurTex;
+    private RenderTexture _renderTexture;
+    public RenderTexture _shadowTex;
+    private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex;
     private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
     private EngineState _state;
     private double _time;
@@ -121,7 +122,7 @@ public partial class Application
         _bloomProgram.SetUniform("Params",
             new Vector4(_bloomSettings.Threshold, _bloomSettings.Threshold - _bloomSettings.Knee,
                 _bloomSettings.Knee * 2f, 0.25f / _bloomSettings.Knee));
-        _bloomProgram.SetUniform("LodAndMode", new Vector2(0, (int) BloomMode.BloomModePrefilter));
+        _bloomProgram.SetUniform("LodAndMode", new Vector2(0, (int)BloomMode.BloomModePrefilter));
         _bloomRTs[0].Use(0, TextureAccess.WriteOnly);
         _renderTexture.Use(1);
         _bloomProgram.SetUniform("u_Texture", 1);
@@ -133,7 +134,7 @@ public partial class Application
         {
             var mipSize = _bloomRTs[0].GetMipSize(currentMip);
 
-            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip - 1f, (int) BloomMode.BloomModeDownsample));
+            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip - 1f, (int)BloomMode.BloomModeDownsample));
 
 
             // Ping 
@@ -143,19 +144,19 @@ public partial class Application
             _bloomRTs[0].Use(1);
             _bloomProgram.SetUniform("u_Texture", 1);
 
-            _bloomProgram.Dispatch((int) mipSize.X, (int) mipSize.Y);
+            _bloomProgram.Dispatch((int)mipSize.X, (int)mipSize.Y);
 
 
             // Pong 
 
-            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int) BloomMode.BloomModeDownsample));
+            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int)BloomMode.BloomModeDownsample));
 
             _bloomRTs[0].Use(0, TextureAccess.WriteOnly, currentMip);
 
             _bloomRTs[1].Use(1);
             _bloomProgram.SetUniform("u_Texture", 1);
 
-            _bloomProgram.Dispatch((int) mipSize.X, (int) mipSize.Y);
+            _bloomProgram.Dispatch((int)mipSize.X, (int)mipSize.Y);
         }
 
         // First Upsample
@@ -164,20 +165,20 @@ public partial class Application
 
         //currentMip--;
 
-        _bloomProgram.SetUniform("LodAndMode", new Vector2(_mips - 2, (int) BloomMode.BloomModeUpsampleFirst));
+        _bloomProgram.SetUniform("LodAndMode", new Vector2(_mips - 2, (int)BloomMode.BloomModeUpsampleFirst));
 
         _bloomRTs[0].Use(1);
         _bloomProgram.SetUniform("u_Texture", 1);
 
         var currentMipSize = _bloomRTs[2].GetMipSize(_mips - 1);
 
-        _bloomProgram.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
+        _bloomProgram.Dispatch((int)currentMipSize.X, (int)currentMipSize.Y);
 
         for (currentMip = _mips - 2; currentMip >= 0; currentMip--)
         {
             currentMipSize = _bloomRTs[2].GetMipSize(currentMip);
             _bloomRTs[2].Use(0, TextureAccess.WriteOnly, currentMip);
-            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int) BloomMode.BloomModeUpsample));
+            _bloomProgram.SetUniform("LodAndMode", new Vector2(currentMip, (int)BloomMode.BloomModeUpsample));
 
             _bloomRTs[0].Use(1);
             _bloomProgram.SetUniform("u_Texture", 1);
@@ -185,7 +186,7 @@ public partial class Application
             _bloomRTs[2].Use(2);
             _bloomProgram.SetUniform("u_BloomTexture", 2);
 
-            _bloomProgram.Dispatch((int) currentMipSize.X, (int) currentMipSize.Y);
+            _bloomProgram.Dispatch((int)currentMipSize.X, (int)currentMipSize.Y);
         }
     }
 
@@ -233,10 +234,10 @@ public partial class Application
 
         for (var i = 0; i < 64; i++)
         {
-            var sample = new Vector3((float) (rand.NextDouble() * 2.0 - 1.0), (float) (rand.NextDouble() * 2.0 - 1.0),
-                (float) rand.NextDouble());
+            var sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
+                (float)rand.NextDouble());
             sample.Normalize();
-            sample *= (float) rand.NextDouble();
+            sample *= (float)rand.NextDouble();
             var scale = i / 64f;
             scale = MathHelper.Lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;

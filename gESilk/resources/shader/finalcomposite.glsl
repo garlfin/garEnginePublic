@@ -12,6 +12,7 @@ void main()
 }
 
 -FRAGMENT-
+
 #version  330 core
 
 out vec4 FragColor;
@@ -102,5 +103,5 @@ void main()
     // gamma correction 
     mapped = pow(mapped, vec3(1.0 / gamma));
     float aoData = texture(ao, TexCoord).r;
-    FragColor = vec4(outScreenTex); //vec4(mapped * aoData, 1.0);
+    FragColor = vec4(mapped * aoData, 1.0);
 }

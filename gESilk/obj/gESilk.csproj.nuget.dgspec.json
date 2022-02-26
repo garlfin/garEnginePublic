@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj": {}
+    "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj": {}
   },
   "projects": {
-    "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj": {
+    "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+        "projectUniqueName": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
         "projectName": "gESilk",
-        "projectPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+        "projectPath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
         "packagesPath": "C:\\Users\\scion\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\obj\\",
+        "outputPath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\scion\\Downloads\\Build_x64": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -82,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\scion\\.dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,15 +1,13 @@
 ﻿using gESilk.engine.assimp;
 using gESilk.engine.components;
+using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using static gESilk.engine.Globals;
-
 
 namespace gESilk.engine.window;
 
@@ -18,20 +16,10 @@ public partial class Application
     protected virtual void OnLoad()
     {
         InitRenderer();
-
-        var cubemapTest = new Entity();
-        cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(-5, 4, 0);
-        cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
-
-        cubemapTest = new Entity();
-        cubemapTest.AddComponent(new Transform());
-        cubemapTest.GetComponent<Transform>().Location = new Vector3(5, 4, 0);
-        cubemapTest.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
-
-        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/table.obj");
         var skyboxLoader = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         skyboxLoader.IsSkybox(true);
+        /*
+        var loader = AssimpLoader.GetMeshFromFile("../../../resources/models/table.obj");
 
         var normalTex = new ImageTexture("../../../resources/texture/Diffuse_Normal.png", this);
 
@@ -53,7 +41,6 @@ public partial class Application
         material.AddSetting(new GlobalSunPosSetting("lightPos"));
         material.AddSetting(new TextureSetting("roughnessTex",
             new ImageTexture("../../../resources/texture/Diffuse_Roughness.png", this), 3));
-        material.AddSetting(new TextureSetting("shadowMap", _shadowTex, 5));
 
         var woodMaterial = new Material(program, this);
         woodMaterial.AddSetting(new TextureSetting("roughnessTex",
@@ -62,7 +49,7 @@ public partial class Application
             new ImageTexture("../../../resources/texture/rough_wood_diff_1k.jpg", this), 1));
         woodMaterial.AddSetting(new TextureSetting("normalMap",
             new ImageTexture("../../../resources/texture/rough_wood_nor_dx_1k.jpg", this), 2));
-        woodMaterial.AddSetting(new GlobalSunPosSetting("lightPos"));
+        woodMaterial.AddSetting(new GlobalSunPosSetting("lightPos"));*/
 
         var basePath = "../../../resources/cubemap/";
 
@@ -82,7 +69,7 @@ public partial class Application
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
         skybox.AddComponent(new CubemapRenderer(skyboxLoader));
 
-        _entity = new Entity();
+        /*_entity = new Entity();
         _entity.AddComponent(new Transform());
         _entity.AddComponent(new MaterialComponent(loader, material));
         _entity.AddComponent(new ModelRenderer(loader, this));
@@ -104,16 +91,9 @@ public partial class Application
         _entity.AddComponent(new MaterialComponent(sphereMesh, shinyMaterial));
         _entity.AddComponent(new ModelRenderer(sphereMesh, this, false));
         _entity.AddComponent(new Transform());
-        _entity.GetComponent<Transform>().Location = new Vector3(0, 5, 0);
+        _entity.GetComponent<Transform>().Location = new Vector3(0, 5, 0);*/
 
-
-        var camera = new Entity();
-        camera.AddComponent(new Transform());
-        camera.AddComponent(new MovementBehavior(this, 0.3f));
-        camera.AddComponent(new Camera(43f, 0.1f, 1000f));
-        camera.GetComponent<Camera>()?.Set();
-
-        SunPos = new Vector3(11.8569f, 26.5239f, 5.77871f);
+        MapLoader.LoadMap("../../../resources/maps/test.map", this);
 
         BakeCubemaps();
     }
@@ -123,8 +103,8 @@ public partial class Application
         _time += args.Time;
         // Logic stuff here
         // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just moves the sphere
-        _entity.GetComponent<Transform>()!.Location = ((float) Math.Sin(_time * 3.141 / 5) * 5, 5f, 0f);
-        BehaviorSystem.Update((float) args.Time);
+        //_entity.GetComponent<Transform>()!.Location = ((float) Math.Sin(_time * 3.141 / 5) * 5, 5f, 0f);
+        BehaviorSystem.Update((float)args.Time);
 
         if (!_window.IsKeyDown(Keys.Escape) || _alreadyClosed) return;
         _alreadyClosed = true;
