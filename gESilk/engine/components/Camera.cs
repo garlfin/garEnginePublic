@@ -20,7 +20,7 @@ public class Camera : BaseCamera
 
     public override void Update(float gameTime)
     {
-        var entityTransform = Entity.GetComponent<Transform>();
+        var entityTransform = Owner.GetComponent<Transform>();
         _camera.Fov = _fov;
         _camera.Position = entityTransform.Location;
         _camera.Yaw = entityTransform.Rotation.Y;

@@ -52,13 +52,13 @@ public class CubemapCapture : BaseCamera
 
         GL.Viewport(0, 0, _texture.Width, _texture.Height);
 
-        _camera.Position = Entity.GetComponent<Transform>().Location;
+        _camera.Position = Owner.GetComponent<Transform>().Location;
         _camera.Fov = 90;
 
         var camera = CameraSystem.CurrentCamera;
         Set();
 
-        var entityTransform = Entity.GetComponent<Transform>();
+        var entityTransform = Owner.GetComponent<Transform>();
 
         for (var i = 0; i < 6; i++)
         {
@@ -91,7 +91,7 @@ public class CubemapCapture : BaseCamera
 
     public Entity GetOwner()
     {
-        return Entity;
+        return Owner;
     }
 }
 
@@ -100,10 +100,10 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
     public static CubemapCapture GetNearest(Vector3 currentLocation)
     {
         var nearest = Components[0];
-        var minDistance = Vector3.Distance(Components[0].Entity.GetComponent<Transform>().Location, currentLocation);
+        var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);
         foreach (var item in Components)
         {
-            var distance = Vector3.Distance(item.Entity.GetComponent<Transform>().Location, currentLocation);
+            var distance = Vector3.Distance(item.Owner.GetComponent<Transform>().Location, currentLocation);
             if (distance < minDistance)
             {
                 nearest = item;

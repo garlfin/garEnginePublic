@@ -74,19 +74,20 @@ public class Material
             _program.SetUniform(_projection, CameraSystem.CurrentCamera.Projection);
         }
 
-        _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Entity.GetComponent<Transform>().Location);
+        _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location);
         _program.SetUniform(_lightProj, ShadowProjection);
         _program.SetUniform(_lightView, ShadowView);
-        _program.SetUniform(_shadowMap, _application._shadowTex.Use(5));
+        _program.SetUniform(_shadowMap, _application._shadowTex.Use(TextureSlotManager.GetUnit()));
         _program.SetUniform(_skybox,
             state == EngineState.GenerateCubemapState
-                ? _application.Skybox.Use(0)
-                : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(0));
+                ? _application.Skybox.Use(TextureSlotManager.GetUnit())
+                : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
     }
 
     public void Cleanup()
     {
+        TextureSlotManager.ResetUnit();
         foreach (var setting in _settings) setting.Cleanup(_program);
     }
 

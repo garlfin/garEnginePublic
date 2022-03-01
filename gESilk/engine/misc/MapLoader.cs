@@ -65,11 +65,11 @@ public static class MapLoader
 
             Material temp = new Material(program, application);
             ReadString(reader);
-            temp.AddSetting(new TextureSetting("albedo", new ImageTexture(ReadString(reader), application), 1));
+            temp.AddSetting(new TextureSetting("albedo", new ImageTexture(ReadString(reader), application)));
             ReadString(reader);
-            temp.AddSetting(new TextureSetting("roughnessTex", new ImageTexture(ReadString(reader), application), 2));
+            temp.AddSetting(new TextureSetting("roughnessTex", new ImageTexture(ReadString(reader), application)));
             ReadString(reader);
-            temp.AddSetting(new TextureSetting("normalMap", new ImageTexture(ReadString(reader), application), 3));
+            temp.AddSetting(new TextureSetting("normalMap", new ImageTexture(ReadString(reader), application)));
             temp.AddSetting(new FloatSetting("normalStrength", reader.ReadSingle()));
             temp.AddSetting(new FloatSetting("metallic", reader.ReadSingle()));
 
@@ -106,23 +106,22 @@ public static class MapLoader
 
                 Mesh loadedMesh = AssimpLoader.GetMeshFromFile(meshPath);
 
-                Entity mesh = new Entity();
+                Entity mesh = new Entity(application);
                 mesh.AddComponent(transform);
                 mesh.AddComponent(new MaterialComponent(loadedMesh, FindMat(matName)));
-                Console.WriteLine(itemName);
-                mesh.AddComponent(new ModelRenderer(loadedMesh, application, !itemName.StartsWith("D_")));
+                mesh.AddComponent(new ModelRenderer(loadedMesh, !itemName.StartsWith("D_")));
             }
             else if (itemType == "CAMERA")
             {
-                Entity cam = new Entity();
+                Entity cam = new Entity(application);
                 cam.AddComponent(transform);
                 cam.AddComponent(new Camera(43f, 0.1f, 1000f));
-                cam.AddComponent(new MovementBehavior(application, 0.3f));
+                cam.AddComponent(new MovementBehavior(sensitivity: 0.3f));
                 cam.GetComponent<Camera>().Set();
             }
             else if (itemType == "LIGHT_PROBE")
             {
-                Entity probe = new Entity();
+                Entity probe = new Entity(application);
                 probe.AddComponent(transform);
                 probe.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
             }

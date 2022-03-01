@@ -63,9 +63,9 @@ public partial class Application
         Skybox = new CubemapTexture(paths);
         var skyboxProgram = new ShaderProgram("../../../resources/shader/skybox.glsl");
         Material skyboxMaterial = new(skyboxProgram, this, DepthFunction.Lequal, CullFaceMode.Front);
-        skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox, 0));
+        skyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
-        var skybox = new Entity();
+        var skybox = new Entity(this);
         skybox.AddComponent(new MaterialComponent(skyboxLoader, skyboxMaterial));
         skybox.AddComponent(new CubemapRenderer(skyboxLoader));
 

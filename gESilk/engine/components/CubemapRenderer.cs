@@ -16,7 +16,7 @@ public class CubemapRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _mesh.Render(Entity.GetComponent<MaterialComponent>().GetMaterial(0), Matrix4.Identity, DepthFunction.Lequal);
+        _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterial(0), Matrix4.Identity, DepthFunction.Lequal);
     }
 }
 

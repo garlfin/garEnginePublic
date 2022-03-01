@@ -247,15 +247,15 @@ public partial class Application
 
         var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.glsl");
 
-        _finalShadingEntity = new Entity();
+        _finalShadingEntity = new Entity(this);
         _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(framebufferShader, this, DepthFunction.Always)));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTexture", _renderTexture, 0));
+            .AddSetting(new TextureSetting("screenTexture", _renderTexture));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("ao", _blurTex, 1));
+            .AddSetting(new TextureSetting("ao", _blurTex));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("bloom", _bloomRTs[2], 2));
+            .AddSetting(new TextureSetting("bloom", _bloomRTs[2]));
         _finalShadingEntity.AddComponent(new FbRenderer(renderPlaneMesh));
 
 
@@ -268,17 +268,17 @@ public partial class Application
         var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.glsl");
 
 
-        _ssaoEntity = new Entity();
+        _ssaoEntity = new Entity(this);
         _ssaoEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(framebufferShaderSsao, this, DepthFunction.Always)));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTextureNormal", _renderNormal, 0));
+            .AddSetting(new TextureSetting("screenTextureNormal", _renderNormal));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTexturePos", _renderPos, 1));
+            .AddSetting(new TextureSetting("screenTexturePos", _renderPos));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new Vec3ArraySetting("Samples", data.ToArray()));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("NoiseTex", new NoiseTexture(), 2));
+            .AddSetting(new TextureSetting("NoiseTex", new NoiseTexture()));
         _ssaoEntity.AddComponent(new FbRenderer(renderPlaneMesh));
 
         _ssaoMap = new FrameBuffer(_width, _height);
@@ -289,11 +289,11 @@ public partial class Application
 
         var blurShader = new ShaderProgram("../../../resources/shader/blur.glsl");
 
-        _blurEntity = new Entity();
+        _blurEntity = new Entity(this);
         _blurEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
             new Material(blurShader, this, DepthFunction.Always)));
         _blurEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("ssaoInput", _ssaoTex, 0));
+            .AddSetting(new TextureSetting("ssaoInput", _ssaoTex));
         _blurEntity.AddComponent(new FbRenderer(renderPlaneMesh));
 
         _blurMap = new FrameBuffer(_width, _height);

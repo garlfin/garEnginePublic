@@ -16,7 +16,7 @@ public class FbRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _mesh.Render(Entity.GetComponent<MaterialComponent>()?.GetMaterials(), Matrix4.Identity);
+        _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(), Matrix4.Identity);
     }
 
     public override void UpdateMouse(MouseMoveEventArgs args)

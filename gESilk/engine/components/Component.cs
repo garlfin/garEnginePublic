@@ -4,7 +4,7 @@ namespace gESilk.engine.components;
 
 public class Component
 {
-    public Entity? Entity { get; set; } = null!;
+    public Entity? Owner { get; set; } = null!;
 
     public virtual void Update(float gameTime)
     {
