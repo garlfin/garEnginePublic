@@ -46,8 +46,7 @@ uniform sampler2DShadow shadowMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform float emission = 1.0;
-uniform sampler2D roughnessTex;
-uniform float metallic = 0.0;
+uniform sampler2D specularTex;
 uniform float ior = 1.450;
 uniform float normalStrength = 1.0;
 uniform float worldStrength = 1.0;
@@ -121,9 +120,12 @@ void main() {
     vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1, -1, 1) + vec3(0, 1, 0);
     normal = normalize((normal * 2.0 - 1.0)*TBN);
     normal = mix(noNormalNormal, normal, normalStrength);
+    
     vec3 viewDir = normalize(FragPos-viewPos);
-
-    float roughness = texture(roughnessTex, fTexCoord).r;
+    
+    vec3 specular = texture(specularTex, fTexCoord).rgb;
+    float roughness = specular.g;
+    float metallic = specular.b;
 
     vec3 lightDir = normalize(lightPos);
     float mipmapLevel = float(textureQueryLevels(skyBox));
@@ -133,7 +135,7 @@ void main() {
     float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)), 0, 1)*specFac;
     ambient = ambient + ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5, 0, 1);
 
-    vec4 color = texture(albedo, fTexCoord);
+    vec4 color = texture(albedo, fTexCoord) * specular.r;
     color *= mix(ambient, vec4(1), metallic);
 
     vec3 fresnelFac = fresnelSchlickRoughness(dot(-viewDir, normal), vec3(0.04), roughness);

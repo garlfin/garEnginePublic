@@ -4,7 +4,7 @@ from mathutils import Vector
 import shutil
 import os
 
-exportFolder = "C:/Users/scion/RiderProjects/garEngine/gESilk/resources/maps/"
+exportFolder = "C:/Users/scion/Documents/GitHub/garEnginePublic/gESilk/resources/maps/"
 myFile = open(exportFolder + "test.map", "wb")
 
 def radToDeg(input):
@@ -36,7 +36,7 @@ def packTransform(object):
     return data
 
 def copyPathReturn(originalPath):
-    finalpath = "C:/Users/scion/RiderProjects/garEngine/gESilk/resources/texture/" + os.path.basename(originalPath)
+    finalpath = exportFolder + "../texture/" + os.path.basename(originalPath)
     try:
         shutil.copyfile(bpy.path.abspath(originalPath), finalpath)
     except:
@@ -51,22 +51,22 @@ for material in bpy.data.materials:
     if material.name == "Dots Stroke":
         continue
     tot_mat += 1
+    
     final_data += packString("MATERIAL")
     final_data += packString(material.name)
+    
     principled = material.node_tree.nodes["Principled BSDF"]
 
     final_data += packString("ALBEDO")
     final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Base Color'].links[0].from_node.image.filepath))
 
-    final_data += packString("ROUGHNESS")
-    final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Roughness'].links[0].from_node.image.filepath))
+    final_data += packString("SPECULAR")
+    final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Roughness'].links[0].from_node.image.inputs['Color'].links[0].from_node.image.filepath))
 
-    principled.inputs['Normal'].links[0].from_node.inputs['Color'].links[0].from_node.image.filepath
-    final_data += packString("ROUGHNESS")
+    final_data += packString("NORMAL")
     final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Normal'].links[0].from_node.inputs['Color'].links[0].from_node.image.filepath))
     final_data += struct.pack('f', principled.inputs['Normal'].links[0].from_node.inputs['Strength'].default_value)
-   
-    final_data += struct.pack('f', principled.inputs['Metallic'].default_value)
+    
 myFile.write(struct.pack('i', tot_mat) + final_data)
 
 final_data = b''

@@ -67,11 +67,10 @@ public static class MapLoader
             ReadString(reader);
             temp.AddSetting(new TextureSetting("albedo", new ImageTexture(ReadString(reader), application)));
             ReadString(reader);
-            temp.AddSetting(new TextureSetting("roughnessTex", new ImageTexture(ReadString(reader), application)));
+            temp.AddSetting(new TextureSetting("specularTex", new ImageTexture(ReadString(reader), application)));
             ReadString(reader);
             temp.AddSetting(new TextureSetting("normalMap", new ImageTexture(ReadString(reader), application)));
             temp.AddSetting(new FloatSetting("normalStrength", reader.ReadSingle()));
-            temp.AddSetting(new FloatSetting("metallic", reader.ReadSingle()));
 
             _materials.Add(new MatHolder(matName, temp));
         }

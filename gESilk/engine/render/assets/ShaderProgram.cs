@@ -30,8 +30,9 @@ public class ShaderProgram : Asset
         GL.DeleteShader(fragment);
 
         var programLog = GL.GetProgramInfoLog(_shaderId);
-        
+
         Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
+        if (!string.IsNullOrEmpty(programLog)) throw new Exception("SHADER ERROR");
     }
 
     public void Use()

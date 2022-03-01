@@ -22,7 +22,7 @@ public class ImageTexture : Texture
         bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
         var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, format);
 
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0,
+        GL.TexImage2D(TextureTarget.Texture2D, 0, Format, bmp.Width, bmp.Height, 0,
             OpenTK.Graphics.OpenGL4.PixelFormat.Bgra,
             PixelType.UnsignedByte, bmpData.Scan0);
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
