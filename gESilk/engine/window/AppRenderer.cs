@@ -34,7 +34,7 @@ public partial class Application
     private EngineState _state;
     private double _time;
     private readonly GameWindow _window;
-    public CubemapTexture Skybox;
+    public Texture Skybox;
 
     public Application(int width, int height, string name)
     {

@@ -17,6 +17,14 @@ public class Mesh
         _isSkybox = value;
     }
 
+    public void Render()
+    {
+        foreach (var mesh in _meshes)
+        {
+            mesh.Data.Render();
+        }
+    }
+
     public void Render(List<Material> materials, Matrix4 model)
     {
         foreach (var mesh in _meshes)

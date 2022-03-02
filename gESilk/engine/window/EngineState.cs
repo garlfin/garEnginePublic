@@ -6,5 +6,6 @@ public enum EngineState
     RenderShadowState = 1,
     RenderDepthState = 2,
     PostProcessState = 3,
-    GenerateCubemapState = 4
+    GenerateCubemapState = 4,
+    GenerateSkyboxState = 5
 }

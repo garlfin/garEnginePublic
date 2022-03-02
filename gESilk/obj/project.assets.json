@@ -475,6 +475,15 @@
           }
         }
       },
+      "SharpEXR/1.0.0.19": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/SharpEXR.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SharpEXR.dll": {}
+        }
+      },
       "SharpFont/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -2003,6 +2012,18 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
+      ]
+    },
+    "SharpEXR/1.0.0.19": {
+      "sha512": "gvHmExl8tqGLL+X71qam2+NYtC5bzvZAebFN8nKMAMNt1hkwW9ry26a0MpAZgEnj4ck5koxo6wYWh6MJ4XI8zA==",
+      "type": "package",
+      "path": "sharpexr/1.0.0.19",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/SharpEXR.dll",
+        "sharpexr.1.0.0.19.nupkg.sha512",
+        "sharpexr.nuspec"
       ]
     },
     "SharpFont/4.0.1": {
@@ -5136,29 +5157,38 @@
       "OpenTK >= 4.6.7",
       "OpenTK.Mathematics >= 4.6.7",
       "OpenTK.Windowing.Desktop >= 4.6.7",
+      "SharpEXR >= 1.0.0.19",
       "SharpFont >= 4.0.1",
       "System.Drawing.Common >= 6.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\scion\\.nuget\\packages\\": {}
+    "C:\\Users\\scion\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+      "projectUniqueName": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
       "projectName": "gESilk",
-      "projectPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+      "projectPath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
       "packagesPath": "C:\\Users\\scion\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\obj\\",
+      "outputPath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Users\\scion\\Downloads\\Build_x64": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -5197,6 +5227,10 @@
             "target": "Package",
             "version": "[4.6.7, )"
           },
+          "SharpEXR": {
+            "target": "Package",
+            "version": "[1.0.0.19, )"
+          },
           "SharpFont": {
             "target": "Package",
             "version": "[4.0.1, )"
@@ -5221,7 +5255,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\scion\\.dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   },

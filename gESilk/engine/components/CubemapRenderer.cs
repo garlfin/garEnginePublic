@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.render.assets;
+using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -7,16 +8,18 @@ namespace gESilk.engine.components;
 public class CubemapRenderer : Component
 {
     private readonly Mesh _mesh;
+    private readonly Application _application;
 
-    public CubemapRenderer(Mesh mesh)
+    public CubemapRenderer(Application application)
     {
+        _application = application;
         CubemapMManager.Register(this);
-        _mesh = mesh;
+        _mesh = Globals.cubeMesh;
     }
 
     public override void Update(float gameTime)
     {
-        _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterial(0), Matrix4.Identity, DepthFunction.Lequal);
+        _mesh.Render(_application.SkyboxMaterial, Matrix4.Identity, DepthFunction.Lequal);
     }
 }
 

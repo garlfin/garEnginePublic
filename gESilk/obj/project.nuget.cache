@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eJtAKE4kQ7HxZHy1vDzjCRSIDdFWzmHLbAJE/ufYOhYg8PXpzzT8pmxHwoVCUcvLUG+CEdyfkTz+etCW9HtGfA==",
+  "dgSpecHash": "LNpGe7VN4v6uph4APzRZu/1zjnuSqoO7XC2h0KZtBQJ8c4pOOfjsTKGqrEZAr1CZIP9QNVgRwU0V8NUvWbexDg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
+  "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\imgui.net\\1.86.0\\imgui.net.1.86.0.nupkg.sha512",
@@ -38,6 +38,7 @@
     "C:\\Users\\scion\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
+    "C:\\Users\\scion\\.nuget\\packages\\sharpexr\\1.0.0.19\\sharpexr.1.0.0.19.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\sharpfont\\4.0.1\\sharpfont.4.0.1.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\sharpfont.dependencies\\2.5.5\\sharpfont.dependencies.2.5.5.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",

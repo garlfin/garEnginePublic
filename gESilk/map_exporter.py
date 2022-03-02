@@ -10,7 +10,7 @@ myFile = open(exportFolder + "test.map", "wb")
 def radToDeg(input):
     return input * (180 / 3.14159265359)
 
-def packVector3(data: Vector):
+def packVector3(data: Vector, scale = 1):
     return struct.pack('fff', data.x, data.y, data.z)
 
 def packVector3Rad(data: Vector):
@@ -32,7 +32,7 @@ def packTransform(object):
         data += packVector3Rad(Vector((0.0,0.0,0.0)))
     else:
         data += packVector3Rad(item.rotation_euler)
-    data += packVector3(item.scale)
+    data += packVector3(item.scale, item.data.influence_distance if object.type == "LIGHT_PROBE" else 1)
     return data
 
 def copyPathReturn(originalPath):

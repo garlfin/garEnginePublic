@@ -1,9 +1,11 @@
 ﻿using Assimp;
+using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using OpenTK.Mathematics;
 using Material = gESilk.engine.render.materialSystem.Material;
+using Mesh = gESilk.engine.render.assets.Mesh;
 
 namespace gESilk.engine;
 
@@ -13,6 +15,7 @@ public static class Globals
     private static readonly BasicCamera _shadowCamera;
     public static Matrix4 ShadowView, ShadowProjection;
     public static readonly Material DepthMaterial;
+    public static Mesh cubeMesh;
     public static Vector3 SunPos;
 
     static Globals()
@@ -22,8 +25,11 @@ public static class Globals
         {
             DepthFar = 50f
         };
-        var depthProgram = new ShaderProgram("../../../resources/shader/depth.glsl");
-        DepthMaterial = new Material(depthProgram, Program.MainWindow);
+        var shader = new ShaderProgram("../../../resources/shader/depth.glsl");
+        DepthMaterial = new Material(shader, Program.MainWindow);
+
+        cubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
+        cubeMesh.IsSkybox(true);
     }
 
     public static void UpdateShadow()
@@ -33,6 +39,5 @@ public static class Globals
         _shadowCamera.Position = currentCameraPos + new Vector3(10);
         ShadowView = _shadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(10));
         ShadowProjection = _shadowCamera.GetOrthoProjectionMatrix(20f);
-        
     }
 }
