@@ -135,3 +135,4 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Release\net6.0\gESilk
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Release\net6.0\gESilk.genruntimeconfig.cache
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Release\net6.0\ref\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\SharpEXR.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\SharpEXR.dll

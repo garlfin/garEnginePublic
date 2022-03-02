@@ -56,11 +56,11 @@ public class Mesh
         }
     }
 
-    public void Render(Material material, Matrix4 model, DepthFunction function)
+    public void Render(Material material, Matrix4 model, DepthFunction function, bool doCull = true)
     {
         foreach (var mesh in _meshes)
         {
-            material.Use(model, _isSkybox, function);
+            material.Use(model, _isSkybox, function, doCull);
             mesh.Data?.Render();
             material.Cleanup();
         }

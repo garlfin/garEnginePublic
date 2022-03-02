@@ -33,12 +33,12 @@ public class CubemapTexture : Texture
 
         pinnedArray.Free();
         part.Close();
-
-        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+        
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
+        
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         Width = 512;
@@ -75,14 +75,14 @@ public class CubemapTexture : Texture
             RenderbufferTarget.Renderbuffer, _rbo);
 
         GL.Viewport(0, 0, Width, Height);
-
+        GL.Disable(EnableCap.CullFace);
+        GL.DepthFunc(DepthFunction.Always);
         for (var i = 0; i < 6; i++)
         {
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
                 TextureTarget.TextureCubeMapPositiveX + i, Id, 0);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
             program.Use();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, originalID);
@@ -90,9 +90,11 @@ public class CubemapTexture : Texture
             program.SetUniform("model", Matrix4.Identity);
             program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
-            program.SetUniform("projection", Matrix4.CreatePerspectiveFieldOfView(1.5708f, 1, 0.1f, 100f));
+            program.SetUniform("projection", Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
             Globals.cubeMesh.Render();
         }
+        GL.Enable(EnableCap.CullFace);
+        GL.DepthFunc(DepthFunction.Less);
 
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
@@ -113,13 +115,6 @@ public class CubemapTexture : Texture
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         return slot;
-    }
-
-    public override void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
-    {
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
-        GL.BindTexture(TextureTarget.Texture2D, Id);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, TextureTarget.Texture2D, Id, 0);
     }
 
     private Vector3 GetAngle(int index)

@@ -140,7 +140,7 @@ void main() {
 
     vec3 fresnelFac = fresnelSchlickRoughness(dot(-viewDir, normal), vec3(0.04), roughness);
 
-    vec4 skyboxSampled = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel)*worldStrength;
+    vec4 skyboxSampled = textureLod(skyBox, normalize(reflect(viewDir, normal)), roughness * mipmapLevel)*worldStrength;
     color = mix(clamp(color + (skyboxSampled * vec4(fresnelFac, 1)), 0, worldStrength)+vec4(spec*fresnelFac, 1.0), color * (skyboxSampled + spec), metallic);
     //mix(specFac, fresnelFac, roughness)
     FragColor = vec4(vec3(color*emission), 1.0);

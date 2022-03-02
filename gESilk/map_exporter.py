@@ -4,7 +4,7 @@ from mathutils import Vector
 import shutil
 import os
 
-exportFolder = "C:/Users/scion/Documents/GitHub/garEnginePublic/gESilk/resources/maps/"
+exportFolder = "C:/Users/scion/Documents/GitHub/garEnginePublic/gESilk/resources/maps/" 
 myFile = open(exportFolder + "test.map", "wb")
 
 def radToDeg(input):

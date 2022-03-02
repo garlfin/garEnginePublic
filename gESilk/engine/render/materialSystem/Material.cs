@@ -54,10 +54,11 @@ public class Material
     }
 
 
-    public void Use(Matrix4 model, bool clearTranslation, DepthFunction? function = null)
+    public void Use(Matrix4 model, bool clearTranslation, DepthFunction? function = null, bool doCull = true)
     {
         GL.DepthFunc(function ?? _function);
         _program.Use();
+        if (!doCull) GL.Disable(EnableCap.CullFace);
         GL.CullFace(_cullFaceMode);
         _program.SetUniform(_model, model);
         var state = _application.State();
@@ -88,6 +89,7 @@ public class Material
     public void Cleanup()
     {
         TextureSlotManager.ResetUnit();
+        GL.Enable(EnableCap.CullFace);
         foreach (var setting in _settings) setting.Cleanup(_program);
     }
 

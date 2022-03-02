@@ -3,6 +3,7 @@ using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
+using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -26,6 +27,7 @@ public partial class Application
         skybox.AddComponent(new CubemapRenderer(this));
 
         SkyboxMaterial = new Material(new ShaderProgram("../../../resources/shader/skybox.glsl"), this);
+        SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
         MapLoader.LoadMap("../../../resources/maps/test.map", this);
 

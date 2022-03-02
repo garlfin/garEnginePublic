@@ -19,7 +19,7 @@ public class CubemapRenderer : Component
 
     public override void Update(float gameTime)
     {
-        _mesh.Render(_application.SkyboxMaterial, Matrix4.Identity, DepthFunction.Lequal);
+        _mesh.Render(_application.SkyboxMaterial, Matrix4.Identity * Matrix4.CreateScale(1,-1,1), DepthFunction.Lequal, false);
     }
 }
 

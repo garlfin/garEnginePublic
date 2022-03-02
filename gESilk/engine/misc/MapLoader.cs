@@ -122,7 +122,7 @@ public static class MapLoader
             {
                 Entity probe = new Entity(application);
                 probe.AddComponent(transform);
-                probe.AddComponent(new CubemapCapture(new EmptyCubemapTexture(512)));
+                probe.AddComponent(new CubemapCapture(new EmptyCubemapTexture(2048)));
             }
             else if (itemType == "LIGHT")
             {

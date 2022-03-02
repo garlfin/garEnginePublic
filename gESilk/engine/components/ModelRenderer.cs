@@ -34,7 +34,7 @@ public class ModelRenderer : Component
             _mesh.Render(Globals.DepthMaterial, _modelTransform?.Model ?? Matrix4.Identity,
                 Owner.GetComponent<MaterialComponent>()?.GetMaterials());
         }
-        else if (state is EngineState.GenerateCubemapState)
+        else if (state is EngineState.GenerateCubemapState or EngineState.GenerateSkyboxState)
         {
             if (!_isStatic) return;
             _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(),
