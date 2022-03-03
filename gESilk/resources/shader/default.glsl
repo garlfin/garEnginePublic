@@ -138,10 +138,10 @@ void main() {
     vec4 color = texture(albedo, fTexCoord) * specular.r;
     color *= mix(ambient, vec4(1), metallic);
 
-    vec3 fresnelFac = fresnelSchlickRoughness(dot(-viewDir, normal), vec3(0.04), roughness);
+    float fresnelFac = min(fresnelSchlick(dot(-viewDir, normal))+0.05,1)*specFac;
 
     vec4 skyboxSampled = textureLod(skyBox, normalize(reflect(viewDir, normal)), roughness * mipmapLevel)*worldStrength;
-    color = mix(clamp(color + (skyboxSampled * vec4(fresnelFac, 1)), 0, worldStrength)+vec4(spec*fresnelFac, 1.0), color * (skyboxSampled + spec), metallic);
+    color = mix(min(color + (skyboxSampled * fresnelFac),1)+vec4(spec), color * (skyboxSampled + spec), metallic);
     //mix(specFac, fresnelFac, roughness)
     FragColor = vec4(vec3(color*emission), 1.0);
     FragLoc = vec4(viewFragPos, metallic);

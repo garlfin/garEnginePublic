@@ -36,5 +36,4 @@ void main()
     FragColor = texture(skybox, TexCoords);
     FragNormal = vec3(1.0);
     FragLoc = vec4(1.0);
-
 }
