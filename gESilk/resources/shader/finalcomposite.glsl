@@ -20,11 +20,12 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 const float gamma = 2.2;
-const float exposure = 1;
+const float exposure = 0.8;
 
 uniform sampler2D screenTexture;
 uniform sampler2D ao;
 uniform sampler2D bloom;
+uniform float bloomIntensity = 0.8;
 
 const vec2 u_texelStep = vec2(1.0/1280, 1.0/720);
 
@@ -95,13 +96,12 @@ void main()
 		outScreenTex = rgbFourTab;
 	}
     
-    
-    vec3 hdrColor = outScreenTex + texture(bloom, TexCoord).rgb;
+    float aoData = texture(ao, TexCoord).r;
+    vec3 hdrColor = outScreenTex * aoData + (texture(bloom, TexCoord).rgb * bloomIntensity);
 
     // exposure tone mapping
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
     // gamma correction 
     mapped = pow(mapped, vec3(1.0 / gamma));
-    float aoData = texture(ao, TexCoord).r;
-    FragColor = vec4(mapped * aoData, 1.0);
+    FragColor = vec4(mapped, 1.0);
 }

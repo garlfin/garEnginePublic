@@ -28,9 +28,10 @@ public partial class Application
     private int _mips;
     private RenderBuffer _renderBuffer;
     private RenderTexture _renderTexture;
-    public RenderTexture _shadowTex;
+    public RenderTexture ShadowTex;
     private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex;
-    private FrameBuffer _shadowMap, _ssaoMap, _blurMap;
+    private FrameBuffer _ssaoMap, _blurMap;
+    public FrameBuffer ShadowMap;
     private EngineState _state;
     private double _time;
     private readonly GameWindow _window;
@@ -68,11 +69,6 @@ public partial class Application
 
     protected virtual void BakeCubemaps()
     {
-        UpdateShadow();
-        TransformSystem.Update(0f);
-        _state = EngineState.RenderShadowState;
-        _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
-        ModelRendererSystem.Update(0f);
         _state = EngineState.GenerateCubemapState;
         CubemapCaptureManager.Update(0f);
     }
@@ -84,7 +80,7 @@ public partial class Application
         UpdateShadow();
 
         _state = EngineState.RenderShadowState;
-        _shadowMap.Bind(ClearBufferMask.DepthBufferBit);
+        ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(0f);
 
         _state = EngineState.RenderDepthState;
@@ -260,10 +256,10 @@ public partial class Application
 
 
         const int shadowSize = 1024 * 4;
-        _shadowMap = new FrameBuffer(shadowSize, shadowSize);
-        _shadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
+        ShadowMap = new FrameBuffer(shadowSize, shadowSize);
+        ShadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
             PixelFormat.DepthComponent, PixelType.Float, true);
-        _shadowTex.BindToBuffer(_shadowMap, FramebufferAttachment.DepthAttachment, true);
+        ShadowTex.BindToBuffer(ShadowMap, FramebufferAttachment.DepthAttachment, true);
 
         var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.glsl");
 
@@ -324,6 +320,11 @@ public partial class Application
     public EngineState State()
     {
         return _state;
+    }
+
+    public void State(EngineState state)
+    {
+        _state = state;
     }
 
     public void Run()

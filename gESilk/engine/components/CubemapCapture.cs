@@ -1,6 +1,7 @@
 ﻿using gESilk.engine.misc;
 using gESilk.engine.render.assets.textures;
-using OpenTK.Graphics.OpenGL;
+using gESilk.engine.window;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
@@ -38,6 +39,13 @@ public class CubemapCapture : BaseCamera
 
     public override void Update(float gameTime)
     {
+        Globals.UpdateShadow();
+        TransformSystem.Update(0f);
+        Owner.Application.State(EngineState.RenderShadowState);
+        Owner.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
+        ModelRendererSystem.Update(0f);
+        Owner.Application.State(EngineState.GenerateCubemapState);
+        
         int _fbo, _rbo;
         _fbo = GL.GenFramebuffer();
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);

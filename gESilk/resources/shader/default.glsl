@@ -36,7 +36,7 @@ void main() {
     noNormalNormal = N;
 }
 
-     -FRAGMENT-
+    // -FRAGMENT-
     #version 430
 
 uniform samplerCube skyBox;
@@ -88,9 +88,9 @@ float fresnelSchlick(float cosi)
     return result;
 }
 
-vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    return F0 + (max(1.0 - roughness, F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
@@ -122,28 +122,29 @@ void main() {
     normal = mix(noNormalNormal, normal, normalStrength);
     
     vec3 viewDir = normalize(FragPos-viewPos);
-    
+    vec3 lightDir = normalize(lightPos);
     vec3 specular = texture(specularTex, fTexCoord).rgb;
     float roughness = specular.g;
     float metallic = specular.b;
-
-    vec3 lightDir = normalize(lightPos);
+    
     float mipmapLevel = float(textureQueryLevels(skyBox));
-    vec4 ambient = textureLod(skyBox, normal, mipmapLevel/2)*0.2*worldStrength;
-    float ambientLambert = max(dot(lightDir, normal), 0.0)*0.5+0.5;
-    float specFac = 1-roughness;
-    float spec = clamp(pow(max(0.0, dot(reflect(lightDir, normal), viewDir)), pow(1+specFac, 8)), 0, 1)*specFac;
-    ambient = ambient + ambientLambert * clamp(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5, 0, 1);
-
-    vec4 color = texture(albedo, fTexCoord) * specular.r;
-    color *= mix(ambient, vec4(1), metallic);
-
-    float fresnelFac = min(fresnelSchlick(dot(-viewDir, normal))+0.05,1)*specFac;
-
-    vec4 skyboxSampled = textureLod(skyBox, normalize(reflect(viewDir, normal)), roughness * mipmapLevel)*worldStrength;
-    color = mix(min(color + (skyboxSampled * fresnelFac),1)+vec4(spec), color * (skyboxSampled + spec), metallic);
-    //mix(specFac, fresnelFac, roughness)
-    FragColor = vec4(vec3(color*emission), 1.0);
+    
+    vec3 skyboxSampler = texture(skyBox, reflect(viewDir, normal), roughness * mipmapLevel).rgb;
+    skyboxSampler = vec3(1.0) - exp(-skyboxSampler);
+    
+    float ambient = min(ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5, max(dot(lightDir, normal), 0.0)*0.5+0.5);
+    ambient = clamp(ambient, 0, 1);
+    
+    float fresnel = fresnelSchlickRoughness(max(dot(-viewDir, normal), 0.0), 0.04, roughness);
+    float lightSpec = pow(max(dot(reflect(lightDir, normal), viewDir), 0.0), pow(2-roughness, 8)) * (1 - roughness);
+    
+    vec3 color = texture(albedo, fTexCoord).rgb * specular.r;
+    color *= mix(ambient, 1, metallic);
+    
+    color = mix(color + (skyboxSampler * fresnel), color * skyboxSampler, metallic);
+    color += lightSpec;
+    
+    FragColor = vec4(color, 1.0);
     FragLoc = vec4(viewFragPos, metallic);
     FragNormal = vec4(viewNormal, dot(noNormalNormal, viewDir));
 }
