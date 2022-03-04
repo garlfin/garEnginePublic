@@ -39,6 +39,9 @@ public class CubemapCapture : BaseCamera
 
     public override void Update(float gameTime)
     {
+        var camera = CameraSystem.CurrentCamera;
+        Set();
+        
         Globals.UpdateShadow();
         TransformSystem.Update(0f);
         Owner.Application.State(EngineState.RenderShadowState);
@@ -62,9 +65,6 @@ public class CubemapCapture : BaseCamera
 
         _camera.Position = Owner.GetComponent<Transform>().Location;
         _camera.Fov = 90;
-
-        var camera = CameraSystem.CurrentCamera;
-        Set();
 
         var entityTransform = Owner.GetComponent<Transform>();
 
@@ -106,16 +106,15 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
     {
         var nearest = Components[0];
         var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);
-        foreach (var item in Components)
+        
+        for (var index = 0; index < Components.Count; index++)
         {
+            var item = Components[index];
             var distance = Vector3.Distance(item.Owner.GetComponent<Transform>().Location, currentLocation);
-            if (distance < minDistance)
-            {
-                nearest = item;
-                minDistance = distance;
-            }
+            if (!(distance <= minDistance)) continue;
+            nearest = item;
+            minDistance = distance;
         }
-
         return nearest!;
     }
 }
