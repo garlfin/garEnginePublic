@@ -9,13 +9,11 @@ namespace gESilk.engine.components;
 public class ModelRenderer : Component
 {
     private readonly Mesh _mesh;
-    private readonly bool _isStatic;
 
-    public ModelRenderer(Mesh mesh, bool isStatic = true)
+    public ModelRenderer(Mesh mesh)
     {
         ModelRendererSystem.Register(this);
         _mesh = mesh;
-        _isStatic = isStatic;
     }
 
     public override void Update(float gameTime)
@@ -27,7 +25,8 @@ public class ModelRenderer : Component
         if (state is EngineState.RenderState)
         {
             _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(),
-                _modelTransform?.Model ?? Matrix4.Identity, DepthFunction.Equal);
+                _modelTransform?.Model ?? Matrix4.Identity, DepthFunction.Equal,
+                Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
         }
         else if (state is EngineState.RenderShadowState or EngineState.RenderDepthState)
         {
@@ -36,7 +35,7 @@ public class ModelRenderer : Component
         }
         else if (state is EngineState.GenerateCubemapState or EngineState.GenerateSkyboxState)
         {
-            if (!_isStatic) return;
+            if (!Owner.IsStatic) return;
             _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(),
                 _modelTransform?.Model ?? Matrix4.Identity);
         }

@@ -56,7 +56,8 @@ public class Material
     }
 
 
-    public void Use(Matrix4 model, bool clearTranslation, DepthFunction? function = null, bool doCull = true)
+    public void Use(bool clearTranslation, Matrix4 model, CubemapCapture? cubemap, DepthFunction? function = null,
+        bool doCull = true)
     {
         GL.DepthFunc(function ?? _function);
         _program.Use();
@@ -82,10 +83,17 @@ public class Material
         _program.SetUniform(_lightView, ShadowView);
         _program.SetUniform(_shadowMap, _application.ShadowTex.Use(TextureSlotManager.GetUnit()));
         _program.SetUniform(_lightPos, Globals.SunPos);
-        _program.SetUniform(_skybox,
-            state == EngineState.GenerateCubemapState
-                ? _application.Skybox.Use(TextureSlotManager.GetUnit())
-                : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(TextureSlotManager.GetUnit()));
+        if (cubemap == null)
+        {
+            _program.SetUniform(_skybox,
+                state == EngineState.GenerateCubemapState
+                    ? _application.Skybox.Use(TextureSlotManager.GetUnit())
+                    : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(TextureSlotManager.GetUnit()));
+        }
+        else
+        {
+            _program.SetUniform(_skybox, cubemap.Get().Use(TextureSlotManager.GetUnit()));
+        }
         foreach (var setting in _settings) setting.Use(_program);
     }
 

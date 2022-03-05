@@ -21,7 +21,8 @@ internal class BaseSystem<T> where T : Component
 
     public static void Register(T component)
     {
-        Components.Add(component);
+        if (!Components.Contains(component)) Components.Add(component);
+        else Console.WriteLine("Cannot add same component");
     }
 
     public static void Update(float gameTime)

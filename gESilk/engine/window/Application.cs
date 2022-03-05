@@ -12,7 +12,7 @@ namespace gESilk.engine.window;
 public partial class Application
 {
     public Material SkyboxMaterial;
-
+    
     protected virtual void OnLoad()
     {
         InitRenderer();

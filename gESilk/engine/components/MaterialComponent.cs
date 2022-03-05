@@ -1,11 +1,14 @@
 ﻿using gESilk.engine.render.assets;
+using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
+using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
 
 public class MaterialComponent : Component
 {
     private List<Material> _materials = new();
+    public CubemapCapture SkyboxTexture;
 
     public MaterialComponent(Mesh mesh, Material defaultMaterial)
     {
@@ -35,5 +38,10 @@ public class MaterialComponent : Component
     public Material GetMaterial(int index)
     {
         return _materials[index];
+    }
+
+    public void GetNearestCubemap()
+    {
+        SkyboxTexture = CubemapCaptureManager.GetNearest(Owner.GetComponent<Transform>()?.Location ?? Vector3.Zero);
     }
 }

@@ -8,12 +8,16 @@ public class Entity
 {
     private readonly List<Component> _components = new();
     public readonly string Name;
+    public readonly bool IsStatic;
     public Application Application;
 
-    public Entity(Application application, string name = "Entity")
+    public Entity(Application application, string name = "Entity", bool isStatic = true)
     {
+        EntityManager.AddEntity(this);
         Name = name;
         Application = application;
+        IsStatic = isStatic;
+        
     }
 
     public void AddComponent(Component component)
@@ -24,9 +28,21 @@ public class Entity
 
     public T? GetComponent<T>() where T : Component
     {
-        foreach (var component in _components)
-            if (component.GetType() == typeof(T))
-                return (T) component;
-        return null;
+        return _components.Where(component => component.GetType() == typeof(T)).Cast<T>().FirstOrDefault();
+    }
+}
+
+public static class EntityManager
+{
+    public static List<Entity> Entities = new List<Entity>();
+
+    public static void AddEntity(Entity entity)
+    { 
+        if (!Entities.Contains(entity)) Entities.Add(entity);
+    }
+
+    public static void RemoveEntity(Entity entity)
+    {
+        if (Entities.Contains(entity)) Entities.Remove(entity);
     }
 }

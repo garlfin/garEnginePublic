@@ -33,12 +33,9 @@ public static class MapLoader
 
     private static string ReadString(BinaryReader reader)
     {
-        int length = reader.ReadInt32();
-        string finalString = "";
-        for (int i = 0; i < length; i++)
-        {
-            finalString += reader.ReadChar();
-        }
+        var length = reader.ReadInt32();
+        var finalString = "";
+        for (var i = 0; i < length; i++) finalString += reader.ReadChar();
 
         return finalString;
     }
@@ -52,18 +49,18 @@ public static class MapLoader
     {
         _materials = new List<MatHolder>();
         if (!File.Exists(path)) return;
-        using BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open), Encoding.UTF8, false);
+        using var reader = new BinaryReader(File.Open(path, FileMode.Open), Encoding.UTF8, false);
 
-        int itemCount = reader.ReadInt32();
+        var itemCount = reader.ReadInt32();
 
-        ShaderProgram program = new ShaderProgram("../../../resources/shader/default.glsl");
+        var program = new ShaderProgram("../../../resources/shader/default.glsl");
 
-        for (int i = 0; i < itemCount; i++)
+        for (var i = 0; i < itemCount; i++)
         {
             ReadString(reader);
-            string matName = ReadString(reader);
+            var matName = ReadString(reader);
 
-            Material temp = new Material(program, application);
+            var temp = new Material(program, application);
             ReadString(reader);
             temp.AddSetting(new TextureSetting("albedo", new ImageTexture(ReadString(reader), application)));
             ReadString(reader);
@@ -78,51 +75,48 @@ public static class MapLoader
         itemCount = reader.ReadInt32();
 
 
-        for (int i = 0; i < itemCount; i++)
+        for (var i = 0; i < itemCount; i++)
         {
-            string itemType = ReadString(reader);
+            var itemType = ReadString(reader);
 
-            string itemName = ReadString(reader);
+            var itemName = ReadString(reader);
 
-            Vector3 location = ReadVec3(reader);
-            Vector3 rotation = ReadVec3(reader);
-            Vector3 scale = ReadVec3(reader);
+            var location = ReadVec3(reader);
+            var rotation = ReadVec3(reader);
+            var scale = ReadVec3(reader);
 
-            Transform transform = new Transform();
+            var transform = new Transform();
             transform.Location = location;
             transform.Rotation = rotation;
             transform.Scale = scale;
 
             if (itemType == "MESH")
             {
-                string meshPath = ReadString(reader);
-                int matCount = reader.ReadInt32();
-                string matName = "nothing";
-                for (int x = 0; x < matCount; x++)
-                {
-                    matName = ReadString(reader);
-                }
+                var meshPath = ReadString(reader);
+                var matCount = reader.ReadInt32();
+                var matName = "nothing";
+                for (var x = 0; x < matCount; x++) matName = ReadString(reader);
 
-                Mesh loadedMesh = AssimpLoader.GetMeshFromFile(meshPath);
+                var loadedMesh = AssimpLoader.GetMeshFromFile(meshPath);
 
-                Entity mesh = new Entity(application);
+                var mesh = new Entity(application, isStatic: !itemName.StartsWith("D_"));
                 mesh.AddComponent(transform);
                 mesh.AddComponent(new MaterialComponent(loadedMesh, FindMat(matName)));
-                mesh.AddComponent(new ModelRenderer(loadedMesh, !itemName.StartsWith("D_")));
+                mesh.AddComponent(new ModelRenderer(loadedMesh));
             }
             else if (itemType == "CAMERA")
             {
-                Entity cam = new Entity(application);
+                var cam = new Entity(application);
                 cam.AddComponent(transform);
                 cam.AddComponent(new Camera(43f, 0.1f, 1000f));
-                cam.AddComponent(new MovementBehavior(sensitivity: 0.3f));
+                cam.AddComponent(new MovementBehavior(0.3f));
                 cam.GetComponent<Camera>().Set();
             }
             else if (itemType == "LIGHT_PROBE")
             {
-                Entity probe = new Entity(application);
+                var probe = new Entity(application);
                 probe.AddComponent(transform);
-                probe.AddComponent(new CubemapCapture(new EmptyCubemapTexture(2048)));
+                probe.AddComponent(new CubemapCapture(new EmptyCubemapTexture(1024)));
             }
             else if (itemType == "LIGHT")
             {
@@ -133,14 +127,16 @@ public static class MapLoader
                 Console.WriteLine($"UNKNOWN: {itemType}");
             }
         }
+
+        foreach (var entity in EntityManager.Entities.Where(entity => entity.GetComponent<MaterialComponent>() != null))
+            entity.GetComponent<MaterialComponent>()!.GetNearestCubemap();
     }
 
     private static Material FindMat(string name)
     {
         foreach (var material in _materials)
-        {
-            if (material.ToString() == name) return material.Mat;
-        }
+            if (material.ToString() == name)
+                return material.Mat;
 
         return null;
     }
