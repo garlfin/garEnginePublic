@@ -97,29 +97,29 @@ void main() {
     vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1, -1, 1) + vec3(0, 1, 0);
     normal = normalize((normal * 2.0 - 1.0) * TBN);
     normal = mix(normalize(noNormalNormal), normal, normalStrength);
-    
+
     vec3 viewDir = normalize(FragPos-viewPos);
     vec3 lightDir = normalize(lightPos);
     vec3 specular = texture(specularTex, fTexCoord).rgb;
     float roughness = specular.g;
     float metallic = specular.b;
-    
+
     float mipmapLevel = float(textureQueryLevels(skyBox));
-    
+
     vec3 skyboxSampler = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel).rgb;
     skyboxSampler = vec3(1.0) - exp(-skyboxSampler);
-    
+
     float ambient = min(ShadowCalculation(FragPosLightSpace, normalize(noNormalNormal), lightDir)+0.5, max(dot(lightDir, normal), 0.0)*0.5+0.5);
     ambient = clamp(ambient, 0.0, 1.0);
-    
+
     float fresnel = fresnelSchlickRoughness(max(dot(-viewDir, normal), 0.0), 0.04, roughness);
     float lightSpec = pow(max(dot(reflect(lightDir, normal), viewDir), 0.0), pow(2 - roughness, 8.0)) * (1.0 - roughness);
-    
+
     vec3 color = texture(albedo, fTexCoord).rgb * specular.r;
     color *= mix(ambient, 1.0, metallic);
     color = mix(color + (skyboxSampler * fresnel), color * skyboxSampler, metallic);
     color += lightSpec;
-    
+
     FragColor = vec4(color, 1.0);
     FragLoc = vec4(viewFragPos, metallic);
     FragNormal = vec4(viewNormal, dot(normalize(noNormalNormal), viewDir));

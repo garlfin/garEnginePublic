@@ -1,5 +1,4 @@
-﻿using gESilk.engine.window;
-using OpenTK.Windowing.Common;
+﻿using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 #pragma warning disable CS8602
@@ -8,14 +7,13 @@ namespace gESilk.engine.components;
 
 public class MovementBehavior : Behavior
 {
-    private readonly float _sensitivity;
     private readonly float _cameraSpeed;
+    private readonly float _sensitivity;
 
     public MovementBehavior(float sensitivity = 1f, float cameraSpeed = 4f)
     {
         _sensitivity = sensitivity * 0.1f;
         _cameraSpeed = cameraSpeed;
-    
     }
 
     public override void Update(float gameTime)

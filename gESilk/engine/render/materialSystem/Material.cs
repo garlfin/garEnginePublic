@@ -12,18 +12,18 @@ public class Material
 {
     private readonly Application _application;
     private readonly DepthFunction _function;
-    private readonly ShaderProgram _program;
-    private readonly List<ShaderSetting> _settings = new();
-    private CullFaceMode _cullFaceMode;
-    private readonly int _model;
-    private readonly int _view;
-    private readonly int _projection;
-    private readonly int _viewPos;
+    private readonly int _lightPos;
     private readonly int _lightProj;
     private readonly int _lightView;
-    private readonly int _skybox;
+    private readonly int _model;
+    private readonly ShaderProgram _program;
+    private readonly int _projection;
+    private readonly List<ShaderSetting> _settings = new();
     private readonly int _shadowMap;
-    private readonly int _lightPos;
+    private readonly int _skybox;
+    private readonly int _view;
+    private readonly int _viewPos;
+    private CullFaceMode _cullFaceMode;
 
 
     public Material(ShaderProgram program, Application application, DepthFunction function = DepthFunction.Less,
@@ -82,18 +82,15 @@ public class Material
         _program.SetUniform(_lightProj, ShadowProjection);
         _program.SetUniform(_lightView, ShadowView);
         _program.SetUniform(_shadowMap, _application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        _program.SetUniform(_lightPos, Globals.SunPos);
+        _program.SetUniform(_lightPos, SunPos);
         if (cubemap == null)
-        {
             _program.SetUniform(_skybox,
                 state == EngineState.GenerateCubemapState
                     ? _application.Skybox.Use(TextureSlotManager.GetUnit())
-                    : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get().Use(TextureSlotManager.GetUnit()));
-        }
+                    : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get()
+                        .Use(TextureSlotManager.GetUnit()));
         else
-        {
             _program.SetUniform(_skybox, cubemap.Get().Use(TextureSlotManager.GetUnit()));
-        }
         foreach (var setting in _settings) setting.Use(_program);
     }
 

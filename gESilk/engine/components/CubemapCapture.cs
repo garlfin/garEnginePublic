@@ -41,17 +41,17 @@ public class CubemapCapture : BaseCamera
     {
         var camera = CameraSystem.CurrentCamera;
         Set();
-        
+
         Globals.UpdateShadow();
         TransformSystem.Update(0f);
-        Owner.Application.State(EngineState.RenderShadowState);
-        Owner.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
+        Owner!.Application.State(EngineState.RenderShadowState);
+        Owner!.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(0f);
         Owner.Application.State(EngineState.GenerateCubemapState);
-        
-        int _fbo, _rbo;
-        _fbo = GL.GenFramebuffer();
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
+
+        int _rbo;
+        var fbo = GL.GenFramebuffer();
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
         GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
 
         _rbo = GL.GenRenderbuffer();
@@ -88,7 +88,7 @@ public class CubemapCapture : BaseCamera
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
-        GL.DeleteFramebuffer(_fbo);
+        GL.DeleteFramebuffer(fbo);
         GL.DeleteRenderbuffer(_rbo);
 
         camera.Set();
@@ -106,7 +106,7 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
     {
         var nearest = Components[0];
         var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);
-        
+
         for (var index = 0; index < Components.Count; index++)
         {
             var item = Components[index];
@@ -115,6 +115,7 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
             nearest = item;
             minDistance = distance;
         }
+
         return nearest!;
     }
 }

@@ -12,12 +12,9 @@ public class Shader
         GL.ShaderSource(_id, data);
         GL.CompileShader(_id);
 
-        string shaderLog = GL.GetShaderInfoLog(_id);
+        var shaderLog = GL.GetShaderInfoLog(_id);
 
-        if (shaderLog.Length > 1)
-        {
-            Console.WriteLine(shaderLog);
-        }
+        if (shaderLog.Length > 1) Console.WriteLine(shaderLog);
     }
 
     public int Get()

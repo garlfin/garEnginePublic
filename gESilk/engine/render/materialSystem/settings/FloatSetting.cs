@@ -5,8 +5,8 @@ namespace gESilk.engine.render.materialSystem.settings;
 
 public class FloatSetting : ShaderSetting
 {
-    private float _prevValue;
     private readonly float _value;
+    private float _prevValue;
 
     public FloatSetting(string name, float value) : base(name)
     {

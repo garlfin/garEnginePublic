@@ -26,7 +26,7 @@ public static class Globals
             DepthFar = 50f
         };
         var shader = new ShaderProgram("../../../resources/shader/depth.glsl");
-        DepthMaterial = new Material(shader, Program.MainWindow);
+        DepthMaterial = new Material(shader, Program.MainWindow ?? throw new InvalidOperationException());
 
         cubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         cubeMesh.IsSkybox(true);

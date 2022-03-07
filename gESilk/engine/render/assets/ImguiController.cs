@@ -9,20 +9,19 @@ namespace gESilk.engine.render.assets;
 
 public class ImGuiController
 {
+    private readonly Vector2 _scaleFactor = Vector2.One;
+    private readonly int _windowHeight;
+
+    private readonly int _windowWidth;
     private Texture _fontTexture;
     private bool _frameBegun;
     private int _indexBuffer;
     private int _indexBufferSize;
-
-    private readonly Vector2 _scaleFactor = Vector2.One;
     private ShaderProgram _shader;
 
     private int _vertexArray;
     private int _vertexBuffer;
     private int _vertexBufferSize;
-    private readonly int _windowHeight;
-
-    private readonly int _windowWidth;
 
     public ImGuiController(int width, int height)
     {
@@ -170,10 +169,7 @@ public class ImGuiController
             for (var cmd_i = 0; cmd_i < cmd_list.CmdBuffer.Size; cmd_i++)
             {
                 var pcmd = cmd_list.CmdBuffer[cmd_i];
-                if (pcmd.UserCallback != IntPtr.Zero)
-                {
-                    throw new NotImplementedException();
-                }
+                if (pcmd.UserCallback != IntPtr.Zero) throw new NotImplementedException();
 
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, (int) pcmd.TextureId);

@@ -1,5 +1,4 @@
 ﻿using gESilk.engine.components;
-using gESilk.engine.render.assets;
 using gESilk.engine.window;
 
 namespace gESilk.engine;
@@ -7,8 +6,8 @@ namespace gESilk.engine;
 public class Entity
 {
     private readonly List<Component> _components = new();
-    public readonly string Name;
     public readonly bool IsStatic;
+    public readonly string Name;
     public Application Application;
 
     public Entity(Application application, string name = "Entity", bool isStatic = true)
@@ -17,7 +16,6 @@ public class Entity
         Name = name;
         Application = application;
         IsStatic = isStatic;
-        
     }
 
     public void AddComponent(Component component)
@@ -26,7 +24,7 @@ public class Entity
         _components.Add(component);
     }
 
-    public T? GetComponent<T>() where T : Component
+    public T GetComponent<T>() where T : Component
     {
         return _components.Where(component => component.GetType() == typeof(T)).Cast<T>().FirstOrDefault();
     }
@@ -34,10 +32,10 @@ public class Entity
 
 public static class EntityManager
 {
-    public static List<Entity> Entities = new List<Entity>();
+    public static List<Entity> Entities = new();
 
     public static void AddEntity(Entity entity)
-    { 
+    {
         if (!Entities.Contains(entity)) Entities.Add(entity);
     }
 

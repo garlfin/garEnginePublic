@@ -15,47 +15,47 @@ public class CubemapTexture : Texture
         Format = PixelInternalFormat.Rgba16f;
 
 
-        int originalID = GL.GenTexture();
+        var originalID = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, originalID);
         var exrFile = EXRFile.FromFile(path);
         var part = exrFile.Parts[0];
         part.OpenParallel(path);
 
-        float[] bytes = part.GetFloats(ChannelConfiguration.RGB, true, GammaEncoding.Linear, false);
+        var bytes = part.GetFloats(ChannelConfiguration.RGB, true, GammaEncoding.Linear, false);
 
-        GCHandle pinnedArray = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+        var pinnedArray = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-        IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+        var pointer = pinnedArray.AddrOfPinnedObject();
 
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb32f, 2048, 1024, 0,
-            OpenTK.Graphics.OpenGL4.PixelFormat.Rgb,
+            PixelFormat.Rgb,
             PixelType.Float, pointer);
 
         pinnedArray.Free();
         part.Close();
-        
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
-        
+
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         Width = 512;
         Height = 512;
         for (var i = 0; i < 6; i++)
             GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgb32f, 512, 512, 0,
-                OpenTK.Graphics.OpenGL4.PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
+                PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.LinearMipmapLinear);
+            (int) TextureMinFilter.LinearMipmapLinear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Linear);
+            (int) TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR,
-            (int)TextureWrapMode.ClampToEdge);
+            (int) TextureWrapMode.ClampToEdge);
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
 
         var program = new ShaderProgram("../../../resources/shader/preSkybox.glsl");
@@ -90,9 +90,11 @@ public class CubemapTexture : Texture
             program.SetUniform("model", Matrix4.Identity);
             program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
-            program.SetUniform("projection", Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
+            program.SetUniform("projection",
+                Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
             Globals.cubeMesh.Render();
         }
+
         GL.Enable(EnableCap.CullFace);
         GL.DepthFunc(DepthFunction.Less);
 

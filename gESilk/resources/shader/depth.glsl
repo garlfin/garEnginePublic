@@ -9,8 +9,8 @@ uniform mat4 model;
 void main() {
     gl_Position = vec4(vPosition, 1.0) * model * view * projection;
 }
- -FRAGMENT-
-    #version 330
+-FRAGMENT-
+#version 330
 
 
 void main() {

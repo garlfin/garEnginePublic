@@ -7,8 +7,8 @@ namespace gESilk.engine.components;
 
 public class CubemapRenderer : Component
 {
-    private readonly Mesh _mesh;
     private readonly Application _application;
+    private readonly Mesh _mesh;
 
     public CubemapRenderer(Application application)
     {

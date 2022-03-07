@@ -20,10 +20,7 @@ public class Mesh
 
     public void Render()
     {
-        foreach (var mesh in _meshes)
-        {
-            mesh.Data.Render();
-        }
+        foreach (var mesh in _meshes) mesh.Data.Render();
     }
 
     public void Render(List<Material> materials, Matrix4 model)

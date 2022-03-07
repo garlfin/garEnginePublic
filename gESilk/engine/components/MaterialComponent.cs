@@ -1,5 +1,4 @@
 ﻿using gESilk.engine.render.assets;
-using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using OpenTK.Mathematics;
 

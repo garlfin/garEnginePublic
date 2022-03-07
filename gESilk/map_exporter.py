@@ -4,13 +4,13 @@ from mathutils import Vector
 import shutil
 import os
 
-exportFolder = "C:/Users/scion/Documents/GitHub/garEnginePublic/gESilk/resources/maps/" 
+exportFolder = "C:/Users/scion/Documents/GitHub/garEnginePublic/gESilk/resources/maps/"
 myFile = open(exportFolder + "test.map", "wb")
 
 def radToDeg(input):
     return input * (180 / 3.14159265359)
 
-def packVector3(data: Vector, scale = 1):
+def packVector3(data: Vector):
     return struct.pack('fff', data.x, data.y, data.z)
 
 def packVector3Rad(data: Vector):
@@ -32,7 +32,7 @@ def packTransform(object):
         data += packVector3Rad(Vector((0.0,0.0,0.0)))
     else:
         data += packVector3Rad(item.rotation_euler)
-    data += packVector3(item.scale, item.data.influence_distance if object.type == "LIGHT_PROBE" else 1)
+    data += packVector3(item.scale)
     return data
 
 def copyPathReturn(originalPath):
@@ -58,10 +58,10 @@ for material in bpy.data.materials:
     principled = material.node_tree.nodes["Principled BSDF"]
 
     final_data += packString("ALBEDO")
-    final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Base Color'].links[0].from_node.image.filepath))
+    final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Base Color'].links[0].from_node.inputs["Color1"].links[0].from_node.image.filepath))
 
     final_data += packString("SPECULAR")
-    final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Roughness'].links[0].from_node.image.inputs['Color'].links[0].from_node.image.filepath))
+    final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Roughness'].links[0].from_node.inputs['Image'].links[0].from_node.image.filepath))
 
     final_data += packString("NORMAL")
     final_data += packString("../../../resources/texture/" + copyPathReturn(principled.inputs['Normal'].links[0].from_node.inputs['Color'].links[0].from_node.image.filepath))

@@ -90,12 +90,13 @@ public class BasicCamera
 
     public void SetViewTo(Vector3? lookPos = null, Vector3? upDir = null)
     {
-        Vector3 rotation = Matrix4.LookAt(Position, lookPos ?? Position + _front, upDir ?? Up).ExtractRotation()
+        var rotation = Matrix4.LookAt(Position, lookPos ?? Position + _front, upDir ?? Up).ExtractRotation()
             .ToEulerAngles();
         Yaw = rotation.Y;
         Pitch = rotation.X;
         UpdateVectors();
     }
+
     // Get the projection matrix using the same method we have used up until this point
     public Matrix4 GetProjectionMatrix()
     {
