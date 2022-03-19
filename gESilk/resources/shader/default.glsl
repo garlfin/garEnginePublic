@@ -49,6 +49,8 @@ uniform sampler2D specularTex;
 uniform float ior = 1.450;
 uniform float normalStrength = 1.0;
 uniform float worldStrength = 1.0;
+uniform vec3 cubemapLoc = vec3(0);
+uniform vec3 cubemapScale = vec3(1);
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -68,6 +70,24 @@ const float totalTexels = pow(pcfCount * 2.0 + 1.0, 2);
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
     return F0 + (max(1.0 - roughness, F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+vec3 CubemapParallaxUV(vec3 normal) {
+    vec3 dirWS = FragPos - viewPos;
+    vec3 reflectionDirWS = reflect(dirWS, normal);
+    
+    vec3 BoxMax = cubemapScale + cubemapLoc;
+    vec3 BoxMin = cubemapScale * -1 + cubemapLoc;
+
+    vec3 FirstIntersect = (BoxMax - FragPos) / reflectionDirWS;
+    vec3 SecondIntersect = (BoxMin - FragPos) / reflectionDirWS;
+    
+    vec3 Furthest = max(FirstIntersect, SecondIntersect);
+    float Distance = min(min(Furthest.x, Furthest.y), Furthest.z);
+    
+    vec3 IntersectPos = FragPos + reflectionDirWS * Distance;
+    
+    return IntersectPos - cubemapLoc;
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
@@ -106,7 +126,7 @@ void main() {
 
     float mipmapLevel = float(textureQueryLevels(skyBox));
 
-    vec3 skyboxSampler = textureLod(skyBox, reflect(viewDir, normal), roughness * mipmapLevel).rgb;
+    vec3 skyboxSampler = textureLod(skyBox, CubemapParallaxUV(normal), roughness * mipmapLevel).rgb;
     skyboxSampler = vec3(1.0) - exp(-skyboxSampler);
 
     float ambient = min(ShadowCalculation(FragPosLightSpace, normalize(noNormalNormal), lightDir)+0.5, max(dot(lightDir, normal), 0.0)*0.5+0.5);

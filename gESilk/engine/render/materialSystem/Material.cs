@@ -83,12 +83,14 @@ public class Material
         _program.SetUniform(_lightView, ShadowView);
         _program.SetUniform(_shadowMap, _application.ShadowTex.Use(TextureSlotManager.GetUnit()));
         _program.SetUniform(_lightPos, SunPos);
+        var currentCubemap = CubemapCaptureManager.GetNearest(model.ExtractTranslation());
+        _program.SetUniform("cubemapLoc", currentCubemap.Owner.GetComponent<Transform>().Location);
+        _program.SetUniform("cubemapScale", currentCubemap.Owner.GetComponent<Transform>().Scale*2);
         if (cubemap == null)
             _program.SetUniform(_skybox,
-                state == EngineState.GenerateCubemapState
+                state is EngineState.GenerateCubemapState
                     ? _application.Skybox.Use(TextureSlotManager.GetUnit())
-                    : CubemapCaptureManager.GetNearest(model.ExtractTranslation()).Get()
-                        .Use(TextureSlotManager.GetUnit()));
+                    : currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
         else
             _program.SetUniform(_skybox, cubemap.Get().Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
