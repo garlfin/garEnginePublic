@@ -100,22 +100,35 @@ public class CubemapCapture : BaseCamera
     }
 }
 
+
+
 internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
 {
+    private static bool IsInBounds(Vector3 box, Vector3 position)
+    {
+        return box.X < position.X || box.Y < position.Y || box.Z < position.Z;
+    }
     public static CubemapCapture GetNearest(Vector3 currentLocation)
     {
+        foreach (var item in Components)
+        {
+            var itemTransform = item.Owner.GetComponent<Transform>();
+            if (IsInBounds(itemTransform.Location - itemTransform.Scale, currentLocation) && !IsInBounds(itemTransform.Location + itemTransform.Scale, currentLocation) ) return item;
+        }
+        
+        Console.WriteLine("Not in any bounds, falling back to nearest.");
+        
         var nearest = Components[0];
         var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);
 
-        for (var index = 0; index < Components.Count; index++)
+        foreach (var item in Components)
         {
-            var item = Components[index];
             var distance = Vector3.Distance(item.Owner.GetComponent<Transform>().Location, currentLocation);
             if (!(distance <= minDistance)) continue;
             nearest = item;
             minDistance = distance;
         }
 
-        return nearest!;
+        return nearest;
     }
 }
