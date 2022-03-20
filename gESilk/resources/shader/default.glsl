@@ -121,6 +121,11 @@ float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
     return F0 + (max(1.0 - roughness, F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
+vec3 fresnelSchlickRoughnessColor(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}   
+
 void main()
 {	
 
@@ -140,11 +145,11 @@ void main()
 
     float mipmapLevel = float(textureQueryLevels(skyBox));
    
-    vec3 skyboxIrradiance = textureLod(skyBox, normal, mipmapLevel*0.8).rgb;
-    skyboxIrradiance = skyboxIrradiance / (skyboxIrradiance + vec3(1.0));
+    vec3 skyboxIrradiance = textureLod(skyBox, normal, mipmapLevel * 0.7).rgb;
    
     float ambient = max(0, dot(lightDir, normal))*0.5+0.5;
     ambient = min(ambient, min(1, ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5));
+   
     
     vec4 skyboxWithAlpha = textureLod(skyBox, CubemapParallaxUV(normal), roughness * mipmapLevel);
     vec3 skyboxSampler = skyboxWithAlpha.rgb;
@@ -152,7 +157,7 @@ void main()
         skyboxSampler = textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb;
     } 
     
-    skyboxSampler = vec3(1.0) - exp(-skyboxSampler); 
+    //skyboxSampler = vec3(1.0) - exp(-skyboxSampler); 
     
     ambient = mix(ambient, 1.0, metallic);
     albedoSample *= (skyboxIrradiance * 0.2) + ambient;
