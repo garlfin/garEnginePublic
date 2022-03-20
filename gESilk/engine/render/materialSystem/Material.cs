@@ -75,6 +75,7 @@ public class Material
         {
             _program.SetUniform(_view, ShadowView);
             _program.SetUniform(_projection, ShadowProjection);
+            GL.Disable(EnableCap.CullFace);
         }
         else
         {
@@ -91,12 +92,13 @@ public class Material
         _program.SetUniform(_lightPos, SunPos);
 
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
-        
+
         _program.SetUniform(_cubemapLoc, currentCubemap.Owner.GetComponent<Transform>().Location);
         _program.SetUniform(_cubemapScale, currentCubemap.Owner.GetComponent<Transform>().Scale);
         _program.SetUniform(_cubemapGlobal, _application.Skybox.Use(TextureSlotManager.GetUnit()));
         _program.SetUniform(_skybox,
-            state is EngineState.GenerateCubemapState ? _application.Skybox.Use(TextureSlotManager.GetUnit())
+            state is EngineState.GenerateCubemapState
+                ? _application.Skybox.Use(TextureSlotManager.GetUnit())
                 : currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
     }

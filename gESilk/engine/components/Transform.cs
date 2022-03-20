@@ -17,9 +17,9 @@ public class Transform : Component
 
     public override void Update(float gameTime)
     {
-        Model = Matrix4.CreateTranslation(Location) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(Rotation.X)) *
+        Model = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(Rotation.X)) *
                 Matrix4.CreateRotationY(MathHelper.DegreesToRadians(Rotation.Y)) *
-                Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation.Z)) * Matrix4.CreateScale(Scale);
+                Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation.Z)) * Matrix4.CreateTranslation(Location);
     }
 }
 

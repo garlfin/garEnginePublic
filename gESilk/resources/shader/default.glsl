@@ -148,7 +148,8 @@ void main()
     vec3 skyboxIrradiance = textureLod(skyBox, normal, mipmapLevel * 0.7).rgb;
    
     float ambient = max(0, dot(lightDir, normal))*0.5+0.5;
-    ambient = min(ambient, min(1, ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir)+0.5));
+    float shadow = ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir);
+    ambient = min(ambient, min(1, shadow + 0.5));
    
     
     vec4 skyboxWithAlpha = textureLod(skyBox, CubemapParallaxUV(normal), roughness * mipmapLevel);
@@ -165,7 +166,7 @@ void main()
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     float spec = pow(max(dot(normal, halfwayDir), 0.0), pow(2-roughness, 8)) * (1-roughness);
     
-    albedoSample = mix(albedoSample + (skyboxSampler * fresnelSchlickRoughness(dot(viewDir, normal), 0.04, roughness)) + spec, albedoSample * (skyboxSampler + spec), metallic);
+    albedoSample = mix(albedoSample + (skyboxSampler * fresnelSchlickRoughness(dot(viewDir, normal), 0.04, roughness)) + (spec*shadow), albedoSample * (skyboxSampler + (spec*shadow)), metallic);
     
     FragColor = vec4(albedoSample, 1.0);
     FragLoc = vec4(viewFragPos, metallic);

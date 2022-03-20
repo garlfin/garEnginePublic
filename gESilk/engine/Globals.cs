@@ -36,8 +36,10 @@ public static class Globals
     {
         SunPos.Normalize();
         var currentCameraPos = CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location;
-        _shadowCamera.Position = currentCameraPos + new Vector3(10);
-        ShadowView = _shadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(10));
+        _shadowCamera.Position = currentCameraPos + new Vector3(0, 25, 0) + _shadowCamera.Right * -10 +
+                                 _shadowCamera.Front * 10;
+        ShadowView = _shadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(0, 25, 0) +
+                                                 _shadowCamera.Right * -10 + _shadowCamera.Front * 10);
         ShadowProjection = _shadowCamera.GetOrthoProjectionMatrix(20f);
     }
 }

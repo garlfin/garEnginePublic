@@ -100,24 +100,25 @@ public class CubemapCapture : BaseCamera
     }
 }
 
-
-
 internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
 {
-    private static bool IsInBounds(Vector3 box, Vector3 position)
+    private static bool IsInBounds(Vector3 box1, Vector3 box2, Vector3 position)
     {
-        return box.X < position.X || box.Y < position.Y || box.Z < position.Z;
+        return position.X < box1.X && position.X > box2.X && position.Y < box1.Y &&
+               position.Y > box2.Y && position.Z < box1.Z && position.Z > box2.Z;
     }
+
     public static CubemapCapture GetNearest(Vector3 currentLocation)
     {
         foreach (var item in Components)
         {
             var itemTransform = item.Owner.GetComponent<Transform>();
-            if (IsInBounds(itemTransform.Location - itemTransform.Scale, currentLocation) && !IsInBounds(itemTransform.Location + itemTransform.Scale, currentLocation) ) return item;
+            if (IsInBounds(itemTransform.Location - itemTransform.Scale, itemTransform.Location + itemTransform.Scale,
+                    currentLocation)) return item;
         }
-        
-        Console.WriteLine("Not in any bounds, falling back to nearest.");
-        
+
+        //Console.WriteLine("Not in any bounds, falling back to nearest.");
+
         var nearest = Components[0];
         var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);
 
