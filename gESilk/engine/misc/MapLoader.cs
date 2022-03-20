@@ -68,7 +68,7 @@ public static class MapLoader
             ReadString(reader);
             temp.AddSetting(new TextureSetting("normalMap", new ImageTexture(ReadString(reader), application)));
             temp.AddSetting(new FloatSetting("normalStrength", reader.ReadSingle()));
-            
+
 
             _materials.Add(new MatHolder(matName, temp));
         }
@@ -130,7 +130,7 @@ public static class MapLoader
         }
 
         foreach (var entity in EntityManager.Entities.Where(entity => entity.GetComponent<MaterialComponent>() != null))
-            entity.GetComponent<MaterialComponent>()!.GetNearestCubemap();
+            entity.GetComponent<MaterialComponent>().GetNearestCubemap();
     }
 
     private static Material FindMat(string name)

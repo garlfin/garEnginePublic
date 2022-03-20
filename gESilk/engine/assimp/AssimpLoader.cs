@@ -28,8 +28,15 @@ public static class AssimpLoader
                                  PostProcessSteps.CalculateTangentSpace)
     {
         Mesh outMesh = new();
+
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException(path);
+        }
+
         _scene = Globals.Assimp.ImportFile(path, steps);
 
+        if (_scene is null || _scene.HasMeshes == false) throw new Exception($"Error in mesh: {path}");
         foreach (var mesh in _scene.Meshes)
         {
             MeshData tempMesh = new();

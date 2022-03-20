@@ -1,8 +1,6 @@
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\SharpFont.dll.config
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\models\cube.obj
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\models\plane.dae
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\models\sphere.obj
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\models\teapot.obj
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\gESilk.exe
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\texture\brick_albedo.tif
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\texture\brick_normal.png

@@ -23,6 +23,9 @@ public class Material
     private readonly int _skybox;
     private readonly int _view;
     private readonly int _viewPos;
+    private readonly int _cubemapLoc;
+    private readonly int _cubemapScale;
+    private readonly int _cubemapGlobal;
     private CullFaceMode _cullFaceMode;
 
 
@@ -43,6 +46,9 @@ public class Material
         _skybox = _program.GetUniform("skyBox");
         _shadowMap = _program.GetUniform("shadowMap");
         _lightPos = _program.GetUniform("lightPos");
+        _cubemapLoc = _program.GetUniform("cubemapLoc");
+        _cubemapScale = _program.GetUniform("cubemapScale");
+        _cubemapGlobal = _program.GetUniform("skyboxGlobal");
     }
 
     public void SetCullMode(CullFaceMode mode)
@@ -84,8 +90,9 @@ public class Material
         _program.SetUniform(_shadowMap, _application.ShadowTex.Use(TextureSlotManager.GetUnit()));
         _program.SetUniform(_lightPos, SunPos);
         var currentCubemap = CubemapCaptureManager.GetNearest(model.ExtractTranslation());
-        _program.SetUniform("cubemapLoc", currentCubemap.Owner.GetComponent<Transform>().Location);
-        _program.SetUniform("cubemapScale", currentCubemap.Owner.GetComponent<Transform>().Scale*2);
+        _program.SetUniform(_cubemapLoc, currentCubemap.Owner.GetComponent<Transform>().Location);
+        _program.SetUniform(_cubemapScale, currentCubemap.Owner.GetComponent<Transform>().Scale);
+        _program.SetUniform(_cubemapGlobal, _application.Skybox.Use(TextureSlotManager.GetUnit()));
         if (cubemap == null)
             _program.SetUniform(_skybox,
                 state is EngineState.GenerateCubemapState
