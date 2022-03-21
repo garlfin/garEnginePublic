@@ -42,12 +42,14 @@ public class CubemapCapture : BaseCamera
         var camera = CameraSystem.CurrentCamera;
         Set();
 
+        EngineState previousState = Owner.Application.State();
+        
         Globals.UpdateShadow();
         TransformSystem.Update(0f);
         Owner!.Application.State(EngineState.RenderShadowState);
         Owner!.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(0f);
-        Owner.Application.State(EngineState.GenerateCubemapState);
+        Owner.Application.State(previousState);
 
         int _rbo;
         var fbo = GL.GenFramebuffer();

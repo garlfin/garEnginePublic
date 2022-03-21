@@ -69,7 +69,6 @@ public partial class Application
 
     protected virtual void BakeCubemaps()
     {
-        _state = EngineState.GenerateCubemapState;
         CubemapCaptureManager.Update(0f);
     }
 

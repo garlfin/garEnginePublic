@@ -30,7 +30,10 @@ public partial class Application
         SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
         MapLoader.LoadMap("../../../resources/maps/test.map", this);
-
+       
+        _state = EngineState.GenerateCubemapState;
+        BakeCubemaps();
+        _state = EngineState.IterationCubemapState;
         BakeCubemaps();
     }
 
