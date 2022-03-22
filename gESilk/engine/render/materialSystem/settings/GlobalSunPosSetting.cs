@@ -1,4 +1,5 @@
-﻿using gESilk.engine.render.assets;
+﻿using gESilk.engine.components;
+using gESilk.engine.render.assets;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
@@ -15,6 +16,6 @@ public class GlobalSunPosSetting : ShaderSetting
     public override void Use(ShaderProgram program)
     {
         if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
-        program.SetUniform(RealLocation, Globals.SunPos);
+        program.SetUniform(RealLocation, LightSystem.SunPos);
     }
 }

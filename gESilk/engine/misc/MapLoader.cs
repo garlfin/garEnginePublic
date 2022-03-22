@@ -117,11 +117,30 @@ public static class MapLoader
             {
                 var probe = new Entity(application);
                 probe.AddComponent(transform);
-                probe.AddComponent(new CubemapCapture(new EmptyCubemapTexture(1024)));
+                probe.AddComponent(new CubemapCapture(1024));
             }
             else if (itemType == "LIGHT")
             {
-                Globals.SunPos = location;
+                string lightType = ReadString(reader);
+                if (lightType == "SUN")
+                {
+                    var Sun = new Entity(application);
+                    Sun.AddComponent(new SunLight());
+                    Sun.AddComponent(transform);
+                    Sun.GetComponent<SunLight>().Set();
+                }
+                else if (lightType == "POINT")
+                {
+                    float lightPower = reader.ReadSingle();
+                    float lightSize = reader.ReadSingle();
+                    Vector3 lightColor = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+
+                    var Light = new Entity(application);
+                    Light.AddComponent(new PointLight(lightPower));
+                    Light.GetComponent<PointLight>().Radius = lightSize;
+                    Light.GetComponent<PointLight>().Color = lightColor;
+                    Light.AddComponent(transform);
+                }
             }
             else
             {

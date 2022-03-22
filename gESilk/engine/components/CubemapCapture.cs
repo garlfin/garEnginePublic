@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.misc;
+using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
@@ -9,18 +10,22 @@ namespace gESilk.engine.components;
 public class CubemapCapture : BaseCamera
 {
     private readonly EmptyCubemapTexture _texture;
+    private readonly EmptyCubemapTexture _texturePong;
 
 
-    public CubemapCapture(EmptyCubemapTexture texture)
+    public CubemapCapture(int size)
     {
         CubemapCaptureManager.Register(this);
-        _texture = texture;
+        _texture = new EmptyCubemapTexture(size);
+        _texturePong = new EmptyCubemapTexture(size);
         _camera = new BasicCamera(new Vector3(0), 1f);
     }
 
     public Texture Get()
     {
-        return _texture;
+        return Owner.Application.State() is EngineState.IterationCubemapState or EngineState.GenerateCubemapState
+            ? _texture
+            : _texturePong;
     }
 
     private Vector3 GetAngle(int index)
@@ -40,14 +45,17 @@ public class CubemapCapture : BaseCamera
     public override void Update(float gameTime)
     {
         var camera = CameraSystem.CurrentCamera;
-        Set();
 
         EngineState previousState = Owner.Application.State();
-        
-        Globals.UpdateShadow();
+
+        _camera.Position = Owner.GetComponent<Transform>().Location;
+        _camera.Fov = 90;
+        Set();
+
+        LightSystem.UpdateShadow();
         TransformSystem.Update(0f);
-        Owner!.Application.State(EngineState.RenderShadowState);
-        Owner!.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
+        Owner.Application.State(EngineState.RenderShadowState);
+        Owner.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(0f);
         Owner.Application.State(previousState);
 
@@ -65,15 +73,15 @@ public class CubemapCapture : BaseCamera
 
         GL.Viewport(0, 0, _texture.Width, _texture.Height);
 
-        _camera.Position = Owner.GetComponent<Transform>().Location;
-        _camera.Fov = 90;
 
         var entityTransform = Owner.GetComponent<Transform>();
 
         for (var i = 0; i < 6; i++)
         {
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
-                TextureTarget.TextureCubeMapPositiveX + i, _texture.Get(), 0);
+                TextureTarget.TextureCubeMapPositiveX + i,
+                Owner.Application.State() is EngineState.IterationCubemapState ? _texturePong.Get() : _texture.Get(),
+                0);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             View = Matrix4.LookAt(entityTransform.Location, entityTransform.Location + GetAngle(i),
@@ -84,7 +92,14 @@ public class CubemapCapture : BaseCamera
             CubemapMManager.Update(0f);
         }
 
-        GL.BindTexture(TextureTarget.TextureCubeMap, _texture.Get());
+        if (Owner.Application.State() is EngineState.IterationCubemapState)
+        {
+            AssetManager.Remove(_texture);
+            _texture.Delete();
+        }
+
+        GL.BindTexture(TextureTarget.TextureCubeMap,
+            Owner.Application.State() is EngineState.IterationCubemapState ? _texturePong.Get() : _texture.Get());
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

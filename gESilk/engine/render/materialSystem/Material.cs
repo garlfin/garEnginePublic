@@ -4,7 +4,6 @@ using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using static gESilk.engine.Globals;
 
 namespace gESilk.engine.render.materialSystem;
 
@@ -73,8 +72,8 @@ public class Material
         var state = _application.State();
         if (state == EngineState.RenderShadowState)
         {
-            _program.SetUniform(_view, ShadowView);
-            _program.SetUniform(_projection, ShadowProjection);
+            _program.SetUniform(_view, LightSystem.ShadowView);
+            _program.SetUniform(_projection, LightSystem.ShadowProjection);
             GL.Disable(EnableCap.CullFace);
         }
         else
@@ -86,10 +85,10 @@ public class Material
         }
 
         _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location);
-        _program.SetUniform(_lightProj, ShadowProjection);
-        _program.SetUniform(_lightView, ShadowView);
+        _program.SetUniform(_lightProj, LightSystem.ShadowProjection);
+        _program.SetUniform(_lightView, LightSystem.ShadowView);
         _program.SetUniform(_shadowMap, _application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        _program.SetUniform(_lightPos, SunPos);
+        _program.SetUniform(_lightPos, LightSystem.SunPos);
 
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
@@ -100,6 +99,17 @@ public class Material
             state is EngineState.GenerateCubemapState
                 ? _application.Skybox.Use(TextureSlotManager.GetUnit())
                 : currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
+
+        _program.SetUniform("lightsCount", LightSystem.Components.Count);
+        for (var index = 0; index < LightSystem.Components.Count; index++)
+        {
+            var light = LightSystem.Components[index];
+            _program.SetUniform($"lights[{index}].Color", light.Color);
+            _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
+            _program.SetUniform($"lights[{index}].intensity", light.Power / 500);
+            _program.SetUniform($"lights[{index}].radius", light.Power / 100);
+        }
+
         foreach (var setting in _settings) setting.Use(_program);
     }
 

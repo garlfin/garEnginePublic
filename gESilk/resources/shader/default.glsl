@@ -37,6 +37,13 @@ void main() {
 }
     //-FRAGMENT-
     #version 430
+    
+struct pointLight {
+    vec3 Position;
+    vec3 Color;
+    float intensity;
+    float radius;
+};
 
 uniform samplerCube skyBox;
 uniform sampler2D albedo;
@@ -52,6 +59,11 @@ uniform float worldStrength = 1.0;
 uniform vec3 cubemapLoc = vec3(0);
 uniform vec3 cubemapScale = vec3(1);
 uniform samplerCube skyboxGlobal;
+uniform int lightsCount;
+
+#define MAX_LIGHTS 64
+
+uniform pointLight lights[MAX_LIGHTS];
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -69,12 +81,11 @@ const int pcfCount = 4;
 const float totalTexels = pow(pcfCount * 2.0 + 1.0, 2);
 
 bool isOutOfBounds(vec3 box, vec3 position){
-    if (box.x > position.x || box.y > position.y || box.z > position.z) return true; else return false;
+    return box.x > position.x || box.y > position.y || box.z > position.z;
 }
 
 
-vec3 CubemapParallaxUV(vec3 normal) {
-    vec3 dirWS = FragPos - viewPos;
+vec3 CubemapParallaxUV(vec3 normal, vec3 dirWS) {
     vec3 reflectionDirWS = reflect(dirWS, normal);
     
     vec3 BoxMax = cubemapScale + cubemapLoc;
@@ -88,7 +99,7 @@ vec3 CubemapParallaxUV(vec3 normal) {
     
     vec3 IntersectPos = FragPos + reflectionDirWS * Distance;
     
-    if (isOutOfBounds(BoxMin, FragPos) || !isOutOfBounds(BoxMax, FragPos))
+    if (isOutOfBounds(BoxMin, FragPos) || isOutOfBounds(FragPos, BoxMax))
     {
         return reflectionDirWS;
     }
@@ -146,29 +157,48 @@ void main()
     float mipmapLevel = float(textureQueryLevels(skyBox));
    
     vec3 skyboxIrradiance = textureLod(skyBox, normal, mipmapLevel * 0.7).rgb;
-   
-    float ambient = max(0, dot(lightDir, normal))*0.5+0.5;
-    float shadow = ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir);
-    ambient = min(ambient, min(1, shadow + 0.5));
-   
     
-    vec4 skyboxWithAlpha = textureLod(skyBox, CubemapParallaxUV(normal), roughness * mipmapLevel);
-    vec3 skyboxSampler = skyboxWithAlpha.rgb;
+    vec3 ambient = vec3(max(0, dot(lightDir, normal))*0.5+0.5);
+    float shadow = ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir);
+    
+    vec3 finalAmbient = vec3(0);
+    vec3 finalSpec = vec3(0);
+ 
+    for (int i = 0; i < lightsCount; i++) {
+        vec3 pointLightPos = normalize(lights[i].Position - FragPos);
+        float pointLightValue = max(0.0,dot(normal, pointLightPos))*0.5+0.5;
+        float distance = length(lights[i].Position - FragPos);
+        float attenuation = smoothstep(1, 0, min(distance, lights[i].radius)/lights[i].radius);  
+   
+        
+        vec3 halfwayDir = normalize(pointLightPos + viewDir);  
+        finalSpec += pow(max(dot(normal, halfwayDir), 0.0), pow(2-roughness, 8)) * (1-roughness) * attenuation * lights[i].Color *  lights[i].intensity;
+        finalAmbient += pointLightValue * attenuation * lights[i].Color *  lights[i].intensity;
+    }
+    
+    ambient = min(ambient, vec3(min(1, shadow + 0.5)));
+    ambient += finalAmbient;
+    
+    vec4 skyboxWithAlpha = textureLod(skyBox, CubemapParallaxUV(normal, -viewDir) , roughness * mipmapLevel);
+    vec3 skyboxSampler = skyboxWithAlpha.rgb; 
     if (skyboxWithAlpha.a < 0.5) {
         skyboxSampler = textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb;
     } 
     
-    //skyboxSampler = vec3(1.0) - exp(-skyboxSampler); 
-    
-    ambient = mix(ambient, 1.0, metallic);
+    ambient = mix(ambient, vec3(1.0), metallic);
     albedoSample *= (skyboxIrradiance * 0.2) + ambient;
     
     vec3 halfwayDir = normalize(lightDir + viewDir);  
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), pow(2-roughness, 8)) * (1-roughness);
+    vec3 spec = vec3(pow(max(dot(normal, halfwayDir), 0.0), pow(2-roughness, 8)) * (1-roughness) * shadow);
+    spec += finalSpec;
+   
     
-    albedoSample = mix(albedoSample + (skyboxSampler * fresnelSchlickRoughness(dot(viewDir, normal), 0.04, roughness)) + (spec*shadow), albedoSample * (skyboxSampler + (spec*shadow)), metallic);
+    albedoSample = mix(albedoSample + (skyboxSampler * fresnelSchlickRoughness(dot(viewDir, normal), 0.04, roughness)) + spec, albedoSample * (skyboxSampler + spec), metallic);
+
+    albedoSample = vec3(1.0) - exp(-albedoSample);
+ 
     
-    FragColor = vec4(albedoSample, 1.0);
+    FragColor = vec4(albedoSample , 1.0);
     FragLoc = vec4(viewFragPos, metallic);
     FragNormal = vec4(viewNormal, dot(normalize(noNormalNormal), viewDir));
 }
