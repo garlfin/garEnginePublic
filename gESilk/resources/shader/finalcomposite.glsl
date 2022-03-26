@@ -100,8 +100,9 @@ void main()
     vec3 hdrColor = outScreenTex * aoData + (texture(bloom, TexCoord).rgb * bloomIntensity);
 
     // exposure tone mapping
-    //vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
+    vec3 mapped = vec3(1.0) - exp(-hdrColor);
     // gamma correction 
-    hdrColor = pow(hdrColor, vec3(1.0 / gamma));
+    hdrColor = pow(hdrColor, vec3(1.0 / 2.2));
+    
     FragColor = vec4(hdrColor, 1.0);
 }

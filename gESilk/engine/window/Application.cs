@@ -30,11 +30,12 @@ public partial class Application
         SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
         MapLoader.LoadMap("../../../resources/maps/test.map", this);
-       
+
         _state = EngineState.GenerateCubemapState;
         BakeCubemaps();
         _state = EngineState.IterationCubemapState;
         BakeCubemaps();
+        foreach (var cubemap in CubemapCaptureManager.Components) cubemap.DeleteOldAssets();
     }
 
     protected virtual void OnUpdate(FrameEventArgs args)
@@ -43,7 +44,7 @@ public partial class Application
         // Logic stuff here
         // generally, nothing goes here. everything should be in a component but im really lazy and i dont want to make a component that just moves the sphere
         //_entity.GetComponent<Transform>()!.Location = ((float) Math.Sin(_time * 3.141 / 5) * 5, 5f, 0f);
-        BehaviorSystem.Update((float) args.Time);
+        BehaviorSystem.Update((float)args.Time);
 
         if (!_window.IsKeyDown(Keys.Escape) || _alreadyClosed) return;
         _alreadyClosed = true;

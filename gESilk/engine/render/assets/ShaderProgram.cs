@@ -31,8 +31,10 @@ public class ShaderProgram : Asset
 
         var programLog = GL.GetProgramInfoLog(_shaderId);
 
-        Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
-        if (!string.IsNullOrEmpty(programLog)) throw new Exception("SHADER ERROR");
+        if (string.IsNullOrEmpty(programLog)) return;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("SHADER ERROR: " + programLog);
+        Console.ForegroundColor = default;
     }
 
     public void Use()
@@ -54,52 +56,52 @@ public class ShaderProgram : Asset
     {
         var uniform = GetUniform(name);
         if (uniform == -1) return;
-        GL.Uniform1(uniform, value);
+        GL.ProgramUniform1(_shaderId, uniform, value);
     }
 
     public void SetUniform(int name, int value)
     {
         if (name == -1) return;
-        GL.Uniform1(name, value);
+        GL.ProgramUniform1(_shaderId, name, value);
     }
 
     public void SetUniform(string name, float value)
     {
         var uniform = GetUniform(name);
         if (uniform == -1) return;
-        GL.Uniform1(uniform, value);
+        GL.ProgramUniform1(_shaderId, uniform, value);
     }
 
     public void SetUniform(int name, float value)
     {
         if (name == -1) return;
-        GL.Uniform1(name, value);
+        GL.ProgramUniform1(_shaderId, name, value);
     }
 
     public void SetUniform(string name, Matrix4 value)
     {
         var uniform = GetUniform(name);
         if (uniform == -1) return;
-        GL.UniformMatrix4(uniform, true, ref value);
+        GL.ProgramUniformMatrix4(_shaderId, uniform, true, ref value);
     }
 
     public void SetUniform(int name, Matrix4 value)
     {
         if (name == -1) return;
-        GL.UniformMatrix4(name, true, ref value);
+        GL.ProgramUniformMatrix4(_shaderId, name, true, ref value);
     }
 
     public void SetUniform(string name, Vector3 value)
     {
         var uniform = GetUniform(name);
         if (uniform == -1) return;
-        GL.Uniform3(uniform, value);
+        GL.ProgramUniform3(_shaderId, uniform, value);
     }
 
     public void SetUniform(int name, Vector3 value)
     {
         if (name == -1) return;
-        GL.Uniform3(name, value);
+        GL.ProgramUniform3(_shaderId, name, value);
     }
 
     public override void Delete()

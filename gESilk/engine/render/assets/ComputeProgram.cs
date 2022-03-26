@@ -27,7 +27,7 @@ public class ComputeProgram : Asset
 
 
         var programLog = GL.GetProgramInfoLog(_shaderId);
-        Console.WriteLine(!string.IsNullOrEmpty(programLog) ? programLog : $"{_shaderId}: Program Initialized");
+        if (!string.IsNullOrEmpty(programLog)) throw new Exception(programLog);
     }
 
     public void Use()
@@ -48,7 +48,7 @@ public class ComputeProgram : Asset
     public void Dispatch(int width, int height, int groupx = 16, int groupy = 16)
     {
         Use();
-        GL.DispatchCompute((int) Math.Ceiling((float) width / groupx), (int) Math.Ceiling((float) height / groupy), 1);
+        GL.DispatchCompute((int)Math.Ceiling((float)width / groupx), (int)Math.Ceiling((float)height / groupy), 1);
         GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
     }
 

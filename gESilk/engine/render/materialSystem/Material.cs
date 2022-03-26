@@ -11,20 +11,22 @@ public class Material
 {
     private readonly Application _application;
     private readonly DepthFunction _function;
-    private readonly int _lightPos;
-    private readonly int _lightProj;
-    private readonly int _lightView;
-    private readonly int _model;
+    private readonly CachedUniform<Vector3> _lightPos;
+    private readonly CachedUniform<Matrix4> _lightProj;
+    private readonly CachedUniform<Matrix4> _lightView;
+    private readonly CachedUniform<Matrix4> _model;
     private readonly ShaderProgram _program;
-    private readonly int _projection;
+    private readonly CachedUniform<Matrix4> _projection;
     private readonly List<ShaderSetting> _settings = new();
-    private readonly int _shadowMap;
-    private readonly int _skybox;
-    private readonly int _view;
-    private readonly int _viewPos;
-    private readonly int _cubemapLoc;
-    private readonly int _cubemapScale;
-    private readonly int _cubemapGlobal;
+    private readonly CachedUniform<int> _shadowMap;
+    private readonly CachedUniform<int> _skybox;
+    private readonly CachedUniform<int> _brdfLUT;
+    private readonly CachedUniform<int> _irradiance;
+    private readonly CachedUniform<Matrix4> _view;
+    private readonly CachedUniform<Vector3> _viewPos;
+    private readonly CachedUniform<Vector3> _cubemapLoc;
+    private readonly CachedUniform<Vector3> _cubemapScale;
+    private readonly CachedUniform<int> _cubemapGlobal;
     private CullFaceMode _cullFaceMode;
 
 
@@ -36,18 +38,20 @@ public class Material
         _function = function;
         _cullFaceMode = cullFaceMode;
 
-        _model = _program.GetUniform("model");
-        _view = _program.GetUniform("view");
-        _projection = _program.GetUniform("projection");
-        _viewPos = _program.GetUniform("viewPos");
-        _lightProj = _program.GetUniform("lightProjection");
-        _lightView = _program.GetUniform("lightView");
-        _skybox = _program.GetUniform("skyBox");
-        _shadowMap = _program.GetUniform("shadowMap");
-        _lightPos = _program.GetUniform("lightPos");
-        _cubemapLoc = _program.GetUniform("cubemapLoc");
-        _cubemapScale = _program.GetUniform("cubemapScale");
-        _cubemapGlobal = _program.GetUniform("skyboxGlobal");
+        _model = new CachedUniform<Matrix4>(_program, "model");
+        _view = new CachedUniform<Matrix4>(_program, "view");
+        _projection = new CachedUniform<Matrix4>(_program, "projection");
+        _viewPos = new CachedUniform<Vector3>(_program, "viewPos");
+        _lightProj = new CachedUniform<Matrix4>(_program, "lightProjection");
+        _lightView = new CachedUniform<Matrix4>(_program, "lightView");
+        _skybox = new CachedUniform<int>(_program, "skyBox");
+        _shadowMap = new CachedUniform<int>(_program, "shadowMap");
+        _lightPos = new CachedUniform<Vector3>(_program, "lightPos");
+        _cubemapLoc = new CachedUniform<Vector3>(_program, "cubemapLoc");
+        _cubemapScale = new CachedUniform<Vector3>(_program, "cubemapScale");
+        _cubemapGlobal = new CachedUniform<int>(_program, "skyboxGlobal");
+        _irradiance = new CachedUniform<int>(_program, "irradianceTex");
+        _brdfLUT = new CachedUniform<int>(_program, "brdfLUT");
     }
 
     public void SetCullMode(CullFaceMode mode)
@@ -68,48 +72,60 @@ public class Material
         _program.Use();
         if (!doCull) GL.Disable(EnableCap.CullFace);
         GL.CullFace(_cullFaceMode);
-        _program.SetUniform(_model, model);
+
+        if (_application.State() is EngineState.GenerateBdrfState) return;
+
+        _model.Use(model);
+
         var state = _application.State();
         if (state == EngineState.RenderShadowState)
         {
-            _program.SetUniform(_view, LightSystem.ShadowView);
-            _program.SetUniform(_projection, LightSystem.ShadowProjection);
+            _view.Use(LightSystem.ShadowView);
+            _projection.Use(LightSystem.ShadowProjection);
             GL.Disable(EnableCap.CullFace);
         }
         else
         {
-            _program.SetUniform(_view, clearTranslation
+            _view.Use(clearTranslation
                 ? CameraSystem.CurrentCamera.View.ClearTranslation()
                 : CameraSystem.CurrentCamera.View);
-            _program.SetUniform(_projection, CameraSystem.CurrentCamera.Projection);
+            _projection.Use(CameraSystem.CurrentCamera.Projection);
         }
 
-        _program.SetUniform(_viewPos, CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location);
-        _program.SetUniform(_lightProj, LightSystem.ShadowProjection);
-        _program.SetUniform(_lightView, LightSystem.ShadowView);
-        _program.SetUniform(_shadowMap, _application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        _program.SetUniform(_lightPos, LightSystem.SunPos);
+        _viewPos.Use(CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Model.ExtractTranslation());
+        _lightProj.Use(LightSystem.ShadowProjection);
+        _lightView.Use(LightSystem.ShadowView);
+        _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
+        _lightPos.Use(LightSystem.SunPos);
 
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
-        _program.SetUniform(_cubemapLoc, currentCubemap.Owner.GetComponent<Transform>().Location);
-        _program.SetUniform(_cubemapScale, currentCubemap.Owner.GetComponent<Transform>().Scale);
-        _program.SetUniform(_cubemapGlobal, _application.Skybox.Use(TextureSlotManager.GetUnit()));
-        _program.SetUniform(_skybox,
-            state is EngineState.GenerateCubemapState
-                ? _application.Skybox.Use(TextureSlotManager.GetUnit())
-                : currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
-
-        _program.SetUniform("lightsCount", LightSystem.Components.Count);
-        for (var index = 0; index < LightSystem.Components.Count; index++)
+        _cubemapLoc.Use(currentCubemap.Owner.GetComponent<Transform>().Location);
+        _cubemapScale.Use(currentCubemap.Owner.GetComponent<Transform>().Scale);
+        _cubemapGlobal.Use(_application.Skybox.Use(TextureSlotManager.GetUnit()));
+        _skybox.Use(
+            (state is EngineState.GenerateCubemapState ? _application.Skybox : currentCubemap.Get()).Use(
+                TextureSlotManager.GetUnit()));
+        _irradiance.Use(
+            (state is EngineState.GenerateCubemapState
+                ? _application.Skybox.Irradiance
+                : currentCubemap.GetIrradiance()).Use(TextureSlotManager.GetUnit()));
+        if (_application.State() is EngineState.RenderState or EngineState.GenerateCubemapState
+            or EngineState.IterationCubemapState)
         {
-            var light = LightSystem.Components[index];
-            _program.SetUniform($"lights[{index}].Color", light.Color);
-            _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
-            _program.SetUniform($"lights[{index}].intensity", light.Power / 500);
-            _program.SetUniform($"lights[{index}].radius", light.Power / 100);
+            _program.SetUniform("lightsCount", LightSystem.Components.Count);
+            for (var index = 0; index < LightSystem.Components.Count; index++)
+            {
+                var light = LightSystem.Components[index];
+                _program.SetUniform($"lights[{index}].Color", light.Color);
+                _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
+                _program.SetUniform($"lights[{index}].intensity", light.Power / 50);
+                _program.SetUniform($"lights[{index}].radius", light.Radius);
+            }
         }
 
+        _program.SetUniform("stage", (int)_application.State());
+        _brdfLUT.Use(_application.bdrfLUT.Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
     }
 

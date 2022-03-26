@@ -9,7 +9,6 @@ internal static class GlDebug
 
     public static void Init()
     {
-        Console.WriteLine("DEBUG MODE");
         GL.DebugMessageCallback(Dp, IntPtr.Zero);
         GL.Enable(EnableCap.DebugOutput);
     }
@@ -17,7 +16,15 @@ internal static class GlDebug
     private static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length,
         IntPtr message, IntPtr userParam)
     {
-        if (severity == DebugSeverity.DebugSeverityHigh)
-            Console.WriteLine("Debug: " + Marshal.PtrToStringAnsi(message, length));
+        Console.ForegroundColor =
+            severity is DebugSeverity.DebugSeverityLow or DebugSeverity.DontCare or DebugSeverity.DebugSeverityMedium
+                ? ConsoleColor.Green
+                : ConsoleColor.Yellow;
+        Console.WriteLine(
+            (severity is DebugSeverity.DontCare or DebugSeverity.DebugSeverityNotification ? "Info: " : "Warning: ") +
+            Marshal.PtrToStringAnsi(message, length));
+        Console.ForegroundColor = default;
+
+        if (severity is DebugSeverity.DebugSeverityHigh) throw new Exception(Marshal.PtrToStringAnsi(message, length));
     }
 }

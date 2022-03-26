@@ -10,13 +10,15 @@ namespace gESilk.engine.render.assets.textures;
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
 public class CubemapTexture : Texture
 {
+    public readonly EmptyCubemapTexture Irradiance;
+
     public CubemapTexture(string path)
     {
         Format = PixelInternalFormat.Rgba16f;
 
 
-        var originalID = GL.GenTexture();
-        GL.BindTexture(TextureTarget.Texture2D, originalID);
+        var originalId = GL.GenTexture();
+        GL.BindTexture(TextureTarget.Texture2D, originalId);
         var exrFile = EXRFile.FromFile(path);
         var part = exrFile.Parts[0];
         part.OpenParallel(path);
@@ -34,89 +36,124 @@ public class CubemapTexture : Texture
         pinnedArray.Free();
         part.Close();
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
-        Width = 512;
-        Height = 512;
+
+        Width = Height = 512;
+
         for (var i = 0; i < 6; i++)
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgb32f, 512, 512, 0,
-                PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba32f, 512, 512, 0,
+                PixelFormat.Rgba, PixelType.Float, IntPtr.Zero);
+
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter,
-            (int) TextureMinFilter.LinearMipmapLinear);
+            (int)TextureMinFilter.LinearMipmapLinear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter,
-            (int) TextureMagFilter.Linear);
+            (int)TextureMagFilter.Linear);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS,
-            (int) TextureWrapMode.ClampToEdge);
+            (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT,
-            (int) TextureWrapMode.ClampToEdge);
+            (int)TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR,
-            (int) TextureWrapMode.ClampToEdge);
+            (int)TextureWrapMode.ClampToEdge);
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
 
         var program = new ShaderProgram("../../../resources/shader/preSkybox.glsl");
         program.Use();
 
-        int _fbo, _rbo;
-
-        _fbo = GL.GenFramebuffer();
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
-        GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
-
-        _rbo = GL.GenRenderbuffer();
-        GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _rbo);
-        GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent24, Width,
-            Height);
-        GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment,
-            RenderbufferTarget.Renderbuffer, _rbo);
-
-        GL.Viewport(0, 0, Width, Height);
+        var renderBuffer = new RenderBuffer(512, 512);
+        renderBuffer.Bind();
         GL.Disable(EnableCap.CullFace);
         GL.DepthFunc(DepthFunction.Always);
+
+        program.Use();
+        GL.ActiveTexture(TextureUnit.Texture0);
+        GL.BindTexture(TextureTarget.Texture2D, originalId);
+        program.SetUniform("equirectangularMap", 0);
+        program.SetUniform("model", Matrix4.Identity);
+        program.SetUniform("projection",
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
+
         for (var i = 0; i < 6; i++)
         {
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
                 TextureTarget.TextureCubeMapPositiveX + i, Id, 0);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            program.Use();
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, originalID);
-            program.SetUniform("equirectangularMap", 0);
-            program.SetUniform("model", Matrix4.Identity);
+
             program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
-            program.SetUniform("projection",
-                Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
+
             Globals.cubeMesh.Render();
         }
 
-        GL.Enable(EnableCap.CullFace);
-        GL.DepthFunc(DepthFunction.Less);
 
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
 
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+        GL.DeleteTexture(originalId);
 
-        GL.DeleteFramebuffer(_fbo);
-        GL.DeleteRenderbuffer(_rbo);
+        renderBuffer.Delete();
+        AssetManager.Remove(renderBuffer);
 
-        GL.DeleteTexture(originalID);
         program.Delete();
         AssetManager.Remove(program);
+
+        renderBuffer = new RenderBuffer(32, 32);
+        renderBuffer.Bind();
+
+        program = new ShaderProgram("../../../resources/shader/irradiance.glsl");
+
+        Irradiance = new EmptyCubemapTexture(32, false);
+
+        program.Use();
+        program.SetUniform("environmentMap", Use(0));
+        program.SetUniform("model", Matrix4.Identity);
+        program.SetUniform("projection",
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
+
+        for (var i = 0; i < 6; i++)
+        {
+            Irradiance.BindToBuffer(renderBuffer, FramebufferAttachment.ColorAttachment0,
+                TextureTarget.TextureCubeMapPositiveX + i);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
+                i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+
+            Globals.cubeMesh.Render();
+        }
+
+        renderBuffer.Delete();
+        AssetManager.Remove(renderBuffer);
+        program.Delete();
+        AssetManager.Remove(program);
+
+        GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+
+        GL.Enable(EnableCap.CullFace);
+        GL.DepthFunc(DepthFunction.Less);
     }
+
 
     public override int Use(int slot)
     {
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         return slot;
+    }
+
+    public override void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel,
+        TextureTarget target = TextureTarget.Texture2D, int level = 0)
+    {
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
+        GL.BindTexture(TextureTarget.Texture2D, Id);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, 0);
     }
 
     private Vector3 GetAngle(int index)

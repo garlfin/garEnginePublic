@@ -6,7 +6,7 @@ public struct BloomSettings
     {
     }
 
-    public float Threshold = 1f;
+    public float Threshold = 1.5f;
     public float Knee = 0.1f;
 }
 

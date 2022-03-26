@@ -11,6 +11,8 @@ public class CubemapCapture : BaseCamera
 {
     private readonly EmptyCubemapTexture _texture;
     private readonly EmptyCubemapTexture _texturePong;
+    private readonly EmptyCubemapTexture _irradiance;
+    private readonly EmptyCubemapTexture _irradiancePong;
 
 
     public CubemapCapture(int size)
@@ -18,14 +20,24 @@ public class CubemapCapture : BaseCamera
         CubemapCaptureManager.Register(this);
         _texture = new EmptyCubemapTexture(size);
         _texturePong = new EmptyCubemapTexture(size);
+        _irradiance = new EmptyCubemapTexture(32, false);
+        _irradiancePong = new EmptyCubemapTexture(32, false);
         _camera = new BasicCamera(new Vector3(0), 1f);
     }
 
     public Texture Get()
     {
-        return Owner.Application.State() is EngineState.IterationCubemapState or EngineState.GenerateCubemapState
+        return Owner.Application.State() is EngineState.GenerateCubemapState or EngineState.IterationCubemapState
             ? _texture
-            : _texturePong;
+            : _texturePong; // texturePong is the 2nd iteration
+    }
+
+
+    public Texture GetIrradiance()
+    {
+        return Owner.Application.State() is EngineState.GenerateCubemapState or EngineState.IterationCubemapState
+            ? _irradiance
+            : _irradiancePong; // texturePong is the 2nd iteration
     }
 
     private Vector3 GetAngle(int index)
@@ -80,7 +92,7 @@ public class CubemapCapture : BaseCamera
         {
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0,
                 TextureTarget.TextureCubeMapPositiveX + i,
-                Owner.Application.State() is EngineState.IterationCubemapState ? _texturePong.Get() : _texture.Get(),
+                Owner.Application.State() is EngineState.GenerateCubemapState ? _texture.Get() : _texturePong.Get(),
                 0);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -92,14 +104,9 @@ public class CubemapCapture : BaseCamera
             CubemapMManager.Update(0f);
         }
 
-        if (Owner.Application.State() is EngineState.IterationCubemapState)
-        {
-            AssetManager.Remove(_texture);
-            _texture.Delete();
-        }
 
         GL.BindTexture(TextureTarget.TextureCubeMap,
-            Owner.Application.State() is EngineState.IterationCubemapState ? _texturePong.Get() : _texture.Get());
+            Owner.Application.State() is EngineState.GenerateCubemapState ? _texture.Get() : _texturePong.Get());
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -109,6 +116,50 @@ public class CubemapCapture : BaseCamera
         GL.DeleteRenderbuffer(_rbo);
 
         camera.Set();
+
+        GL.Disable(EnableCap.CullFace);
+        GL.DepthFunc(DepthFunction.Always);
+
+        var renderBuffer = new RenderBuffer(32, 32);
+        renderBuffer.Bind();
+
+        var program = new ShaderProgram("../../../resources/shader/irradiance.glsl");
+
+        program.Use();
+        program.SetUniform("environmentMap", Get().Use(0));
+        program.SetUniform("model", Matrix4.Identity);
+        program.SetUniform("projection",
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
+
+        for (var i = 0; i < 6; i++)
+        {
+            (Owner.Application.State() is EngineState.GenerateCubemapState ? _irradiance : _irradiancePong)
+                .BindToBuffer(renderBuffer, FramebufferAttachment.ColorAttachment0,
+                    TextureTarget.TextureCubeMapPositiveX + i);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
+                i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+
+            Globals.cubeMesh.Render();
+        }
+
+        renderBuffer.Delete();
+        AssetManager.Remove(renderBuffer);
+        program.Delete();
+        AssetManager.Remove(program);
+
+        GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+
+        GL.Enable(EnableCap.CullFace);
+        GL.DepthFunc(DepthFunction.Less);
+    }
+
+    public void DeleteOldAssets()
+    {
+        AssetManager.Remove(_texture);
+        _texture.Delete();
     }
 
     public Entity GetOwner()

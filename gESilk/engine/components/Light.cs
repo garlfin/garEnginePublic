@@ -31,10 +31,8 @@ class LightSystem : BaseSystem<PointLight>
 
         SunPos.Normalize();
         var currentCameraPos = CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location;
-        ShadowCamera.Position = currentCameraPos + new Vector3(0, 25, 0) + ShadowCamera.Right * -10 +
-                                ShadowCamera.Front * 10;
-        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(0, 25, 0) +
-                                                ShadowCamera.Right * -10 + ShadowCamera.Front * 10);
+        ShadowCamera.Position = currentCameraPos + new Vector3(0, 25, 0);
+        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(0, 25, 0));
         ShadowProjection = ShadowCamera.GetOrthoProjectionMatrix(20f);
     }
 }

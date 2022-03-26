@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
@@ -34,7 +33,8 @@ public partial class Application
     private double _time;
     public FrameBuffer ShadowMap;
     public RenderTexture ShadowTex;
-    public Texture Skybox;
+    public CubemapTexture Skybox;
+    public RenderTexture bdrfLUT;
 
     public Application(int width, int height, string name)
     {
@@ -70,6 +70,7 @@ public partial class Application
     {
         CubemapCaptureManager.Update(0f);
     }
+
 
     protected void OnRender(FrameEventArgs args)
     {
@@ -186,9 +187,44 @@ public partial class Application
 
     protected virtual void InitRenderer()
     {
-        if (Debugger.IsAttached) GlDebug.Init();
+        GlDebug.Init();
 
         LoadExtensions();
+
+        GL.ClearColor(Color.White);
+        GL.Enable(EnableCap.DepthTest);
+        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.TextureCubeMapSeamless);
+
+        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
+
+        var prevState = _state;
+        _state = EngineState.GenerateBdrfState;
+
+        bdrfLUT = new RenderTexture(512, 512, PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.Float, false,
+            TextureWrapMode.ClampToEdge);
+
+        var bdrfRenderBuffer = new RenderBuffer(512, 512);
+        bdrfLUT.BindToBuffer(bdrfRenderBuffer, FramebufferAttachment.ColorAttachment0);
+
+        var bdrfEntity = new Entity(this);
+        bdrfEntity.AddComponent(new FbRenderer(renderPlaneMesh));
+        var brdfShader = new ShaderProgram("../../../resources/shader/bdrfLUT.glsl");
+        bdrfRenderBuffer.Bind();
+        bdrfEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
+            new Material(brdfShader, this, DepthFunction.Always)));
+        bdrfEntity.GetComponent<FbRenderer>().Update(0f);
+        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+        GL.Viewport(0, 0, 1280, 720);
+
+        AssetManager.Remove(bdrfRenderBuffer);
+        bdrfRenderBuffer.Delete();
+        AssetManager.Remove(brdfShader);
+        brdfShader.Delete();
+
+
+        _state = prevState;
 
         _bloomTexSize = new Vector2i(_width, _height) / 2;
         _bloomTexSize += new Vector2i(_mBloomComputeWorkGroupSize - _bloomTexSize.X % _mBloomComputeWorkGroupSize,
@@ -212,13 +248,6 @@ public partial class Application
 
 
         _bloomProgram = new ComputeProgram("../../../resources/shader/bloom.glsl");
-
-        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
-
-        GL.ClearColor(Color.White);
-        GL.Enable(EnableCap.DepthTest);
-        GL.Enable(EnableCap.CullFace);
-        GL.Enable(EnableCap.TextureCubeMapSeamless);
 
         _window.CursorGrabbed = true;
 

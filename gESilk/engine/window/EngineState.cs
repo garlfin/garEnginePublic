@@ -8,5 +8,6 @@ public enum EngineState
     PostProcessState = 3,
     GenerateCubemapState = 4,
     GenerateSkyboxState = 5,
-    IterationCubemapState = 6
+    IterationCubemapState = 6,
+    GenerateBdrfState = 7
 }

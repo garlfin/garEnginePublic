@@ -45,8 +45,9 @@ void main()
 {
     vec2 uv = SampleSphericalMap(normalize(TexCoords));
     vec3 color = texture(equirectangularMap, uv).rgb;
-
-    //color = vec3(1.0) - exp(-color * 1); 
+    
+    color = min(color, vec3(1.5));
+    
     FragColor = vec4(color, 1.0);
 }
 

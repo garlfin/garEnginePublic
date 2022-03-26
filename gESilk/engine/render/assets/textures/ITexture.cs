@@ -48,19 +48,20 @@ public abstract class Texture : Asset
 
     public static int GetMipLevelCount(int width, int height)
     {
-        return (int) Math.Floor(Math.Log2(Math.Min(width, height)));
+        return (int)Math.Floor(Math.Log2(Math.Min(width, height)));
     }
 
     public virtual void Use(int slot, TextureAccess access, int level = 0)
     {
-        GL.BindImageTexture(slot, Id, 0, false, 0, access, (SizedInternalFormat) Format);
+        GL.BindImageTexture(slot, Id, 0, false, 0, access, (SizedInternalFormat)Format);
     }
 
-    public virtual void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel)
+    public virtual void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel,
+        TextureTarget target = TextureTarget.Texture2D, int level = 0)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
         GL.BindTexture(TextureTarget.Texture2D, Id);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, TextureTarget.Texture2D, Id, 0);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, 0);
     }
 
     public virtual void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel, bool isShadow = false)
