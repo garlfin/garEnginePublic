@@ -35,6 +35,7 @@ public partial class Application
     public RenderTexture ShadowTex;
     public CubemapTexture Skybox;
     public RenderTexture bdrfLUT;
+    private ShaderProgram _irradianceCalculation, _specularCalculation;
 
     public Application(int width, int height, string name)
     {
@@ -198,6 +199,9 @@ public partial class Application
 
         var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
 
+        _irradianceCalculation = new ShaderProgram("../../../resources/shader/irradiance.glsl");
+        _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
+
         var prevState = _state;
         _state = EngineState.GenerateBdrfState;
 
@@ -352,6 +356,16 @@ public partial class Application
     public void State(EngineState state)
     {
         _state = state;
+    }
+
+    public ShaderProgram GetIrradianceProgram()
+    {
+        return _irradianceCalculation;
+    }
+
+    public ShaderProgram GetSpecularProgram()
+    {
+        return _specularCalculation;
     }
 
     public void Run()

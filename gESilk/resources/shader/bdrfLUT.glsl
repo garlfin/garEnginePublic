@@ -1,4 +1,6 @@
-﻿#version 330 core
+﻿// I love you Joey DeVries https://learnopengl.com/About -- BRDF Code / Epic Games
+
+#version 330 core
 
 layout (location = 0) in vec2 inPos;
 layout (location = 2) in vec2 inTexCoords;

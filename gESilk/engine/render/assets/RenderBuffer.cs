@@ -35,10 +35,11 @@ public class RenderBuffer : Asset
         return _fbo;
     }
 
-    public void Bind(ClearBufferMask mask = ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit)
+    public void Bind(ClearBufferMask mask = ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit,
+        bool setVP = true)
     {
         GL.DepthMask(true);
-        GL.Viewport(0, 0, _width, _height);
+        if (setVP) GL.Viewport(0, 0, _width, _height);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
         GL.Clear(mask);
     }

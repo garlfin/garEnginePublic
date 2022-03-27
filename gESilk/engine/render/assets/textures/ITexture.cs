@@ -51,6 +51,11 @@ public abstract class Texture : Asset
         return (int)Math.Floor(Math.Log2(Math.Min(width, height)));
     }
 
+    public int GetMipsCount()
+    {
+        return (int)Math.Floor(Math.Log2(Math.Min(Width, Height)));
+    }
+
     public virtual void Use(int slot, TextureAccess access, int level = 0)
     {
         GL.BindImageTexture(slot, Id, 0, false, 0, access, (SizedInternalFormat)Format);

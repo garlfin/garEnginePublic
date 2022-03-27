@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using SharpEXR;
@@ -12,7 +13,7 @@ public class CubemapTexture : Texture
 {
     public readonly EmptyCubemapTexture Irradiance;
 
-    public CubemapTexture(string path)
+    public CubemapTexture(string path, Application application)
     {
         Format = PixelInternalFormat.Rgba16f;
 
@@ -93,7 +94,7 @@ public class CubemapTexture : Texture
 
 
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
-        GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
+        GenerateMipsSpecular(application.GetSpecularProgram());
 
         GL.DeleteTexture(originalId);
 
@@ -104,9 +105,9 @@ public class CubemapTexture : Texture
         AssetManager.Remove(program);
 
         renderBuffer = new RenderBuffer(32, 32);
-        renderBuffer.Bind();
+        renderBuffer.Bind(default, false);
 
-        program = new ShaderProgram("../../../resources/shader/irradiance.glsl");
+        program = application.GetIrradianceProgram();
 
         Irradiance = new EmptyCubemapTexture(32, false);
 
@@ -129,10 +130,9 @@ public class CubemapTexture : Texture
             Globals.cubeMesh.Render();
         }
 
+
         renderBuffer.Delete();
         AssetManager.Remove(renderBuffer);
-        program.Delete();
-        AssetManager.Remove(program);
 
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
@@ -152,8 +152,8 @@ public class CubemapTexture : Texture
         TextureTarget target = TextureTarget.Texture2D, int level = 0)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
-        GL.BindTexture(TextureTarget.Texture2D, Id);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, 0);
+        GL.BindTexture(TextureTarget.TextureCubeMap, Id);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, level);
     }
 
     private Vector3 GetAngle(int index)
@@ -168,5 +168,48 @@ public class CubemapTexture : Texture
             5 => new Vector3(0, 0, -1), //negz
             _ => Vector3.Zero
         };
+    }
+
+    public void GenerateMipsSpecular(ShaderProgram program)
+    {
+        int mips = GetMipsCount();
+
+        RenderBuffer buffer = new RenderBuffer(512, 512);
+        buffer.Bind();
+
+        program.Use();
+
+        program.SetUniform("environmentMap", Use(0));
+        program.SetUniform("projection",
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
+
+        GL.Disable(EnableCap.DepthTest);
+        GL.Disable(EnableCap.CullFace);
+
+        for (int mip = 1; mip < mips; mip++)
+        {
+            var mipSize = GetMipSize(mip);
+            GL.Viewport(0, 0, (int)mipSize.X, (int)mipSize.Y);
+            program.SetUniform("roughness", (float)mip / (mips - 1));
+
+            for (int i = 0; i < 6; i++)
+            {
+                BindToBuffer(buffer, FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapPositiveX + i,
+                    mip);
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
+                    i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+
+                Globals.cubeMesh.Render();
+            }
+        }
+
+        buffer.Delete();
+        AssetManager.Remove(buffer);
+
+        GL.Enable(EnableCap.DepthTest);
+        GL.Enable(EnableCap.CullFace);
     }
 }

@@ -37,7 +37,7 @@ public class CubemapCapture : BaseCamera
     {
         return Owner.Application.State() is EngineState.GenerateCubemapState or EngineState.IterationCubemapState
             ? _irradiance
-            : _irradiancePong; // texturePong is the 2nd iteration
+            : _irradiancePong; // irradiancePong is the 2nd iteration
     }
 
     private Vector3 GetAngle(int index)
@@ -104,10 +104,12 @@ public class CubemapCapture : BaseCamera
             CubemapMManager.Update(0f);
         }
 
+        var currentTex = Owner.Application.State() is EngineState.GenerateCubemapState
+            ? _texture
+            : _texturePong;
 
-        GL.BindTexture(TextureTarget.TextureCubeMap,
-            Owner.Application.State() is EngineState.GenerateCubemapState ? _texture.Get() : _texturePong.Get());
-        GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
+        GL.BindTexture(TextureTarget.TextureCubeMap, currentTex.Get());
+        currentTex.GenerateMipsSpecular(Owner.Application.GetSpecularProgram());
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
@@ -123,7 +125,7 @@ public class CubemapCapture : BaseCamera
         var renderBuffer = new RenderBuffer(32, 32);
         renderBuffer.Bind();
 
-        var program = new ShaderProgram("../../../resources/shader/irradiance.glsl");
+        var program = Owner.Application.GetIrradianceProgram();
 
         program.Use();
         program.SetUniform("environmentMap", Get().Use(0));
@@ -147,8 +149,6 @@ public class CubemapCapture : BaseCamera
 
         renderBuffer.Delete();
         AssetManager.Remove(renderBuffer);
-        program.Delete();
-        AssetManager.Remove(program);
 
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
@@ -160,6 +160,8 @@ public class CubemapCapture : BaseCamera
     {
         AssetManager.Remove(_texture);
         _texture.Delete();
+        AssetManager.Remove(_irradiance);
+        _irradiance.Delete();
     }
 
     public Entity GetOwner()

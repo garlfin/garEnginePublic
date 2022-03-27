@@ -16,15 +16,17 @@ internal static class GlDebug
     private static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length,
         IntPtr message, IntPtr userParam)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
+        if (severity is DebugSeverity.DebugSeverityHigh) throw new Exception(Marshal.PtrToStringAnsi(message, length));
+
         Console.ForegroundColor =
             severity is DebugSeverity.DebugSeverityLow or DebugSeverity.DontCare or DebugSeverity.DebugSeverityMedium
+                or DebugSeverity.DebugSeverityNotification
                 ? ConsoleColor.Green
                 : ConsoleColor.Yellow;
         Console.WriteLine(
             (severity is DebugSeverity.DontCare or DebugSeverity.DebugSeverityNotification ? "Info: " : "Warning: ") +
             Marshal.PtrToStringAnsi(message, length));
         Console.ForegroundColor = default;
-
-        if (severity is DebugSeverity.DebugSeverityHigh) throw new Exception(Marshal.PtrToStringAnsi(message, length));
     }
 }

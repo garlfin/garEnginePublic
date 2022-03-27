@@ -1,4 +1,5 @@
-﻿#version 430
+﻿// I love you Joey DeVries https://learnopengl.com/About -- BRDF Code
+#version 430
 
 layout(location = 0) in vec3 vPosition;
 layout(location = 1) in vec3 vNormal;
@@ -241,7 +242,6 @@ void main()
     vec4 skyboxWithAlpha = textureLod(skyBox, cubemapUV.rgb , roughness * mipmapLevel);
     vec3 skyboxSampler = skyboxWithAlpha.rgb; 
     skyboxSampler = mix(skyboxSampler, textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb, max(1-skyboxWithAlpha.a, cubemapUV.a));
-    
     vec3 kS = fresnelSchlick(max(dot(normal, viewDir), 0.0), F0);
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;  
@@ -271,7 +271,7 @@ void main()
    
         vec3 radiance = lights[i].Color * lights[i].intensity * attenuation; 
        
-        if (stage == 0) albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, 1, albedoCopy, lights[i].radius) * radiance,0,lights[i].intensity);
+        albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, 1, albedoCopy, lights[i].radius) * radiance,0,lights[i].intensity);
        
     }
  

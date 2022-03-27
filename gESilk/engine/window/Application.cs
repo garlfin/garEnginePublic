@@ -20,7 +20,7 @@ public partial class Application
         var basePath = "../../../resources/cubemap/";
 
 
-        Skybox = new CubemapTexture("../../../resources/texture/autumn.exr");
+        Skybox = new CubemapTexture("../../../resources/texture/autumn.exr", this);
 
         var skybox = new Entity(this);
 
