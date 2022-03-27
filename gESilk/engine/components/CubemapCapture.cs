@@ -109,7 +109,8 @@ public class CubemapCapture : BaseCamera
             : _texturePong;
 
         GL.BindTexture(TextureTarget.TextureCubeMap, currentTex.Get());
-        currentTex.GenerateMipsSpecular(Owner.Application.GetSpecularProgram());
+        GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
+        currentTex.GenerateMipsSpecular(Owner.Application);
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);

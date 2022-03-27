@@ -117,7 +117,7 @@ public static class MapLoader
             {
                 var probe = new Entity(application);
                 probe.AddComponent(transform);
-                probe.AddComponent(new CubemapCapture(1024));
+                probe.AddComponent(new CubemapCapture(512));
             }
             else if (itemType == "LIGHT")
             {

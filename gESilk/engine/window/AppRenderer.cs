@@ -35,7 +35,8 @@ public partial class Application
     public RenderTexture ShadowTex;
     public CubemapTexture Skybox;
     public RenderTexture bdrfLUT;
-    private ShaderProgram _irradianceCalculation, _specularCalculation;
+    private ShaderProgram _irradianceCalculation, _specularCalculation, _pongProgram;
+    public Mesh renderPlaneMesh;
 
     public Application(int width, int height, string name)
     {
@@ -197,10 +198,11 @@ public partial class Application
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.TextureCubeMapSeamless);
 
-        var renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
+        renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
 
         _irradianceCalculation = new ShaderProgram("../../../resources/shader/irradiance.glsl");
         _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
+        _pongProgram = new ShaderProgram("../../../resources/shader/prefilterpong.glsl");
 
         var prevState = _state;
         _state = EngineState.GenerateBdrfState;
@@ -212,7 +214,7 @@ public partial class Application
         bdrfLUT.BindToBuffer(bdrfRenderBuffer, FramebufferAttachment.ColorAttachment0);
 
         var bdrfEntity = new Entity(this);
-        bdrfEntity.AddComponent(new FbRenderer(renderPlaneMesh));
+        bdrfEntity.AddComponent(new FbRenderer());
         var brdfShader = new ShaderProgram("../../../resources/shader/bdrfLUT.glsl");
         bdrfRenderBuffer.Bind();
         bdrfEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
@@ -283,7 +285,7 @@ public partial class Application
             .AddSetting(new TextureSetting("ao", _blurTex));
         _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("bloom", _bloomRTs[2]));
-        _finalShadingEntity.AddComponent(new FbRenderer(renderPlaneMesh));
+        _finalShadingEntity.AddComponent(new FbRenderer());
 
 
         const int shadowSize = 1024 * 4;
@@ -306,7 +308,7 @@ public partial class Application
             .AddSetting(new Vec3ArraySetting("Samples", data.ToArray()));
         _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("NoiseTex", new NoiseTexture()));
-        _ssaoEntity.AddComponent(new FbRenderer(renderPlaneMesh));
+        _ssaoEntity.AddComponent(new FbRenderer());
 
         _ssaoMap = new FrameBuffer(_width, _height);
         _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
@@ -321,7 +323,7 @@ public partial class Application
             new Material(blurShader, this, DepthFunction.Always)));
         _blurEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
             .AddSetting(new TextureSetting("ssaoInput", _ssaoTex));
-        _blurEntity.AddComponent(new FbRenderer(renderPlaneMesh));
+        _blurEntity.AddComponent(new FbRenderer());
 
         _blurMap = new FrameBuffer(_width, _height);
 
@@ -366,6 +368,11 @@ public partial class Application
     public ShaderProgram GetSpecularProgram()
     {
         return _specularCalculation;
+    }
+
+    public ShaderProgram GetPongProgram()
+    {
+        return _pongProgram;
     }
 
     public void Run()

@@ -86,7 +86,7 @@ void main()
     vec3 V = R;
 
     const uint SAMPLE_COUNT = 1024u;
-    vec3 prefilteredColor = vec3(0.0);
+    vec4 prefilteredColor = vec4(0.0);
     float totalWeight = 0.0;
     
     for(uint i = 0u; i < SAMPLE_COUNT; ++i)
@@ -111,12 +111,12 @@ void main()
 
             float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
             
-            prefilteredColor += textureLod(environmentMap, L, mipLevel).rgb * NdotL;
+            prefilteredColor += textureLod(environmentMap, L, mipLevel) * NdotL;
             totalWeight      += NdotL;
         }
     }
 
     prefilteredColor = prefilteredColor / totalWeight;
 
-    FragColor = vec4(prefilteredColor, 1.0);
+    FragColor = prefilteredColor;
 }

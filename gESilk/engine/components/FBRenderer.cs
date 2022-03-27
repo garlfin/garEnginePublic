@@ -6,16 +6,16 @@ namespace gESilk.engine.components;
 
 public class FbRenderer : Component
 {
-    private readonly Mesh _mesh;
+    private Mesh _mesh;
 
-    public FbRenderer(Mesh mesh)
+    public FbRenderer()
     {
         FbRendererSystem.Register(this);
-        _mesh = mesh;
     }
 
     public override void Update(float gameTime)
     {
+        _mesh ??= Owner.Application.renderPlaneMesh;
         _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(), Matrix4.Identity);
     }
 

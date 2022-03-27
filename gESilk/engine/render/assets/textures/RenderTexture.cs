@@ -7,7 +7,7 @@ public class RenderTexture : Texture
     public RenderTexture(int width, int height, PixelInternalFormat type = PixelInternalFormat.Rgba16f,
         PixelFormat format = PixelFormat.Rgba, PixelType byteType = PixelType.Float, bool shadow = false,
         TextureWrapMode mode = TextureWrapMode.ClampToBorder, TextureMinFilter minFilter = TextureMinFilter.Linear,
-        TextureMagFilter magFilter = TextureMagFilter.Linear)
+        TextureMagFilter magFilter = TextureMagFilter.Linear, bool computeMips = false)
     {
         Format = type;
         Id = GL.GenTexture();
@@ -17,6 +17,7 @@ public class RenderTexture : Texture
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)magFilter);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)mode);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)mode);
+        if (computeMips) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         if (!shadow) return;
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode,
             (int)TextureCompareMode.CompareRefToTexture);
@@ -34,14 +35,12 @@ public class RenderTexture : Texture
         TextureTarget target = TextureTarget.Texture2D, int level = 0)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
-        GL.BindTexture(TextureTarget.Texture2D, Id);
-        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, 0);
+        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, level);
     }
 
     public override void BindToBuffer(FrameBuffer buffer, FramebufferAttachment attachmentLevel, bool isShadow = false)
     {
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Fbo);
-        GL.BindTexture(TextureTarget.Texture2D, Id);
         if (isShadow)
         {
             GL.DrawBuffer(DrawBufferMode.None);

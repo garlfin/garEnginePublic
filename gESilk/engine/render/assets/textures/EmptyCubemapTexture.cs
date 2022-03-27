@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -40,37 +41,45 @@ public class EmptyCubemapTexture : Texture
     public override void BindToBuffer(RenderBuffer buffer, FramebufferAttachment attachmentLevel,
         TextureTarget target = TextureTarget.Texture2D, int level = 0)
     {
-        GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, level);
     }
 
-    public void GenerateMipsSpecular(ShaderProgram program)
+    public void GenerateMipsSpecular(Application application)
     {
         int mips = GetMipsCount();
 
-        RenderBuffer buffer = new RenderBuffer(512, 512);
+        RenderTexture pongTexture = new RenderTexture(Width, Height, PixelInternalFormat.Rgba16f,
+            minFilter: TextureMinFilter.LinearMipmapLinear, computeMips: true);
+
+        RenderBuffer buffer = new RenderBuffer(Width, Height);
         buffer.Bind();
 
-        program.Use();
+        var program = application.GetSpecularProgram();
+        var pongProgram = application.GetPongProgram();
+
 
         program.SetUniform("environmentMap", Use(0));
         program.SetUniform("projection",
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
 
+        pongProgram.SetUniform("colorTex", pongTexture.Use(1));
+
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.CullFace);
 
-        for (int mip = 1; mip < mips; mip++)
+        for (int mip = 0; mip < mips; mip++)
         {
             var mipSize = GetMipSize(mip);
             GL.Viewport(0, 0, (int)mipSize.X, (int)mipSize.Y);
-            program.SetUniform("roughness", (float)mip / (mips - 1));
+            program.SetUniform("roughness", (float)mip / (mips + 1));
+            pongProgram.SetUniform("lod", mip);
 
             for (int i = 0; i < 6; i++)
             {
-                BindToBuffer(buffer, FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapPositiveX + i,
-                    mip);
+                program.Use();
+
+                pongTexture.BindToBuffer(buffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, mip);
 
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -78,11 +87,23 @@ public class EmptyCubemapTexture : Texture
                     i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
 
                 Globals.cubeMesh.Render();
+
+                pongProgram.Use();
+
+                BindToBuffer(buffer, FramebufferAttachment.ColorAttachment0, TextureTarget.TextureCubeMapPositiveX + i,
+                    mip);
+
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                application.renderPlaneMesh.Render();
             }
         }
 
         buffer.Delete();
         AssetManager.Remove(buffer);
+
+        pongTexture.Delete();
+        AssetManager.Remove(pongTexture);
 
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
