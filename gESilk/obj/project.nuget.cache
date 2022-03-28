@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LNpGe7VN4v6uph4APzRZu/1zjnuSqoO7XC2h0KZtBQJ8c4pOOfjsTKGqrEZAr1CZIP9QNVgRwU0V8NUvWbexDg==",
+  "dgSpecHash": "5VIfcAgTJZkSLUBiG5AF0HMVWedqrXKpZ0D5LOZFOLGY98FKMEVqULIfHt3dotyKJ9RzRSZf/UQBiLGHUCrMzQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
+  "projectFilePath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\imgui.net\\1.86.0\\imgui.net.1.86.0.nupkg.sha512",

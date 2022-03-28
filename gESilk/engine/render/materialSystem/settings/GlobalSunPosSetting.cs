@@ -16,6 +16,6 @@ public class GlobalSunPosSetting : ShaderSetting
     public override void Use(ShaderProgram program)
     {
         if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
-        program.SetUniform(RealLocation, LightSystem.SunPos);
+        program.SetUniform(RealLocation, LightSystem.emitterLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
     }
 }

@@ -78,7 +78,7 @@ public partial class Application
     {
         CameraSystem.Update(0f);
         TransformSystem.Update(0f);
-        LightSystem.UpdateShadow();
+        LightSystem.UpdateShadow(0);
 
         _state = EngineState.RenderShadowState;
         ShadowMap.Bind(ClearBufferMask.DepthBufferBit);

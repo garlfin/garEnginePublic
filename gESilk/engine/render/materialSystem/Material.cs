@@ -96,7 +96,7 @@ public class Material
         _lightProj.Use(LightSystem.ShadowProjection);
         _lightView.Use(LightSystem.ShadowView);
         _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        _lightPos.Use(LightSystem.SunPos);
+        _lightPos.Use(LightSystem.emitterLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
 
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
@@ -110,6 +110,8 @@ public class Material
             (state is EngineState.GenerateCubemapState
                 ? _application.Skybox.Irradiance
                 : currentCubemap.GetIrradiance()).Use(TextureSlotManager.GetUnit()));
+        _program.SetUniform("stage", (int)_application.State());
+        _brdfLUT.Use(_application.bdrfLUT.Use(TextureSlotManager.GetUnit()));
         if (_application.State() is EngineState.RenderState or EngineState.GenerateCubemapState
             or EngineState.IterationCubemapState)
         {
@@ -121,12 +123,11 @@ public class Material
                 _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
                 _program.SetUniform($"lights[{index}].intensity", light.Power / 50);
                 _program.SetUniform($"lights[{index}].radius", light.Radius);
+                _program.SetUniform($"pointShadowMaps[{index}]", light.getShadowMap().Use(TextureSlotManager.GetUnit()));
             }
         }
-
-        _program.SetUniform("stage", (int)_application.State());
-        _brdfLUT.Use(_application.bdrfLUT.Use(TextureSlotManager.GetUnit()));
-        foreach (var setting in _settings) setting.Use(_program);
+        foreach (var setting in _settings) 
+            setting.Use(_program);
     }
 
     public void Cleanup()
