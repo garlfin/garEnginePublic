@@ -65,9 +65,10 @@ uniform int stage;
 uniform sampler2D brdfLUT; 
 uniform samplerCube irradianceTex;
 
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 10
 
 uniform pointLight lights[MAX_LIGHTS];
+//uniform samplerCube shadowMaps[MAX_LIGHTS];
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -86,6 +87,23 @@ const float totalTexels = pow(pcfCount * 2.0 + 1.0, 2);
 
 bool isOutOfBounds(vec3 box, vec3 position){
     return box.x > position.x || box.y > position.y || box.z > position.z;
+}
+
+float ShadowCalculation(pointLight light, samplerCube depthMap)
+{
+
+    vec3 fragToLight = FragPos - light.Position;
+
+    float closestDepth = texture(depthMap, fragToLight).r;
+
+    closestDepth *= 100;
+
+    float currentDepth = length(fragToLight);
+
+    float bias = 0.05;
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
 }
 
 const float PI = 3.14159265359;
@@ -183,18 +201,18 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-}  
+}
 
-vec3 calculateLight(vec3 lightDir, vec3 viewDir, float roughness, vec3 F0, float metallic, vec3 normal, float shadow, vec3 albedoCopy, float radius = 0.5){
-  
-    
-        vec3 halfwayDir = normalize(lightDir + viewDir);  
-        radius = max(0.01, radius);     
-        roughness = clamp(roughness, radius * 0.1, 1.0);
-        // cook-torrance brdf
-        float NDF = DistributionGGX(normal, halfwayDir, roughness);    
-        float G   = GeometrySmith(normal, viewDir, lightDir, roughness);      
-        vec3 F    = fresnelSchlick(dot(halfwayDir, viewDir), F0);       
+vec3 calculateLight(vec3 lightDir, vec3 viewDir, float roughness, vec3 F0, float metallic, vec3 normal, float shadow, vec3 albedoCopy, float radius){
+
+
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    radius = max(0.01, radius);
+    roughness = clamp(roughness, radius * 0.1, 1.0);
+    // cook-torrance brdf
+    float NDF = DistributionGGX(normal, halfwayDir, roughness);
+    float G   = GeometrySmith(normal, viewDir, lightDir, roughness);
+    vec3 F    = fresnelSchlick(dot(halfwayDir, viewDir), F0);       
             
         vec3 kS = F;
         vec3 kD = vec3(1.0) - kS;
@@ -258,8 +276,8 @@ void main()
      albedoSample *= irradianceSample.rgb;
      
      albedoSample = ((1-metallic) * albedoSample + skyboxSampler) * ao;
-    
-     albedoSample += calculateLight(lightDir, viewDir, roughness, F0, metallic, normal, shadow, albedoCopy);
+
+    albedoSample += calculateLight(lightDir, viewDir, roughness, F0, metallic, normal, shadow, albedoCopy, 0.5);
    
     for (int i = 0; i < lightsCount; i++) {
     
@@ -269,8 +287,9 @@ void main()
         float num = clamp(1-pow(distance/(lights[i].intensity*10), 4), 0, 1);
         float attenuation = (num*num)/((distance*distance)+1+lights[i].radius);
    
-        vec3 radiance = lights[i].Color * lights[i].intensity * attenuation; 
-       
+        vec3 radiance = lights[i].Color * lights[i].intensity * attenuation;
+
+        //float pointShadow = ShadowCalculation(lights[i], shadowMaps[i]);
         albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, 1, albedoCopy, lights[i].radius) * radiance,0,lights[i].intensity);
        
     }

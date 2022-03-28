@@ -145,7 +145,7 @@ public class CubemapCapture : BaseCamera
             program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
 
-            Globals.cubeMesh.Render();
+            Globals.CubeMesh.Render();
         }
 
         renderBuffer.Delete();
@@ -187,8 +187,6 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
             if (IsInBounds(itemTransform.Location - itemTransform.Scale, itemTransform.Location + itemTransform.Scale,
                     currentLocation)) return item;
         }
-
-        //Console.WriteLine("Not in any bounds, falling back to nearest.");
 
         var nearest = Components[0];
         var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);

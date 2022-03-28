@@ -1,7 +1,6 @@
 ﻿using gESilk.engine.render.assets;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace gESilk.engine.components;
@@ -18,26 +17,27 @@ public class ModelRenderer : Component
 
     public override void Update(float gameTime)
     {
-        var _modelTransform = Owner.GetComponent<Transform>();
+        var modelTransform = Owner.GetComponent<Transform>();
 
         var state = Owner.Application.State();
 
         if (state is EngineState.RenderState)
         {
-            _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(),
-                _modelTransform?.Model ?? Matrix4.Identity, DepthFunction.Equal,
-                Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
+            _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
+                DepthFunction.Equal, Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
         }
-        else if (state is EngineState.RenderShadowState or EngineState.RenderDepthState)
-        {
-            _mesh.Render(Globals.DepthMaterial, _modelTransform?.Model ?? Matrix4.Identity,
-                Owner.GetComponent<MaterialComponent>()?.GetMaterials());
-        }
-        else if (state is EngineState.GenerateCubemapState or EngineState.GenerateSkyboxState or EngineState.IterationCubemapState)
+        else if (state is EngineState.GenerateCubemapState or EngineState.GenerateSkyboxState
+                 or EngineState.IterationCubemapState)
         {
             if (!Owner.IsStatic) return;
-            _mesh.Render(Owner.GetComponent<MaterialComponent>()?.GetMaterials(),
-                _modelTransform?.Model ?? Matrix4.Identity);
+            _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
+                DepthFunction.Less, Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
+        }
+        else
+        {
+            _mesh.Render(
+                state is EngineState.RenderPointShadowState ? Globals.LinearDepthMaterial : Globals.DepthMaterial,
+                modelTransform.Model);
         }
     }
 

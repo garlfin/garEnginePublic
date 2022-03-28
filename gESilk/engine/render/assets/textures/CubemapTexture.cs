@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using gESilk.engine.render.materialSystem;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -91,7 +92,7 @@ public class CubemapTexture : Texture
             program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
 
-            Globals.cubeMesh.Render();
+            Globals.CubeMesh.Render();
         }
 
 
@@ -133,7 +134,7 @@ public class CubemapTexture : Texture
             program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                 i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
 
-            Globals.cubeMesh.Render();
+            Globals.CubeMesh.Render();
         }
 
 
@@ -218,7 +219,7 @@ public class CubemapTexture : Texture
                 program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
                     i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
 
-                Globals.cubeMesh.Render();
+                Globals.CubeMesh.Render();
 
                 pongProgram.Use();
 

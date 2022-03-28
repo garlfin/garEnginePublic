@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
-using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
@@ -125,10 +124,10 @@ public static class MapLoader
                 if (lightType == "SUN")
                 {
                     var Sun = new Entity(application);
-                    Sun.AddComponent(new SunLight());
+                    Sun.AddComponent(new Light());
                     Sun.AddComponent(transform);
                     Sun.GetComponent<Transform>().Location.Normalize();
-                    Sun.GetComponent<SunLight>().Set();
+                    Sun.GetComponent<Light>().Set();
                 }
                 else if (lightType == "POINT")
                 {

@@ -14,7 +14,7 @@ public class CubemapRenderer : Component
     {
         _application = application;
         CubemapMManager.Register(this);
-        _mesh = Globals.cubeMesh;
+        _mesh = Globals.CubeMesh;
     }
 
     public override void Update(float gameTime)

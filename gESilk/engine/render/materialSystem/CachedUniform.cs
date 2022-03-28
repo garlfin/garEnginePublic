@@ -1,5 +1,4 @@
-﻿using gESilk.engine.render.assets;
-using gESilk.engine.render.assets.textures;
+﻿using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Mathematics;
 
@@ -9,37 +8,44 @@ public class CachedUniform<T>
 {
     private int _id;
     private readonly ShaderProgram _program;
+    private readonly string _uniformName;
 
 
     public CachedUniform(ShaderProgram program, string uniformName)
     {
         _program = program;
+        _uniformName = uniformName;
         _id = program.GetUniform(uniformName);
     }
 
-    public void Use(T _value)
+    public void RecalculateUniform()
+    {
+        _id = _program.GetUniform(_uniformName);
+    }
+
+    public void Use(T value)
     {
         if (_id == -1) return;
 
-        switch (_value)
+        switch (value)
         {
             case int:
-                _program.SetUniform(_id, (int)(object)_value);
+                _program.SetUniform(_id, (int)(object)value);
                 break;
             case Vector3:
-                _program.SetUniform(_id, (Vector3)(object)_value);
+                _program.SetUniform(_id, (Vector3)(object)value);
                 break;
             case float:
-                _program.SetUniform(_id, (float)(object)_value);
+                _program.SetUniform(_id, (float)(object)value);
                 break;
             case Matrix4:
-                _program.SetUniform(_id, (Matrix4)(object)_value);
+                _program.SetUniform(_id, (Matrix4)(object)value);
                 break;
             case Texture:
-                _program.SetUniform(_id, ((Texture)(object)_value).Use(TextureSlotManager.GetUnit()));
+                _program.SetUniform(_id, ((Texture)(object)value).Use(TextureSlotManager.GetUnit()));
                 break;
             default:
-                throw new ArgumentException($"Type {_value.GetType()} is not recognized.");
+                throw new ArgumentException($"Type {value.GetType()} is not recognized.");
         }
     }
 }

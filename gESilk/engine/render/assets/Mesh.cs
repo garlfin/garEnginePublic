@@ -20,7 +20,7 @@ public class Mesh
 
     public void Render()
     {
-        foreach (var mesh in _meshes) mesh.Data.Render();
+        foreach (var mesh in _meshes) mesh.Data?.Render();
     }
 
     public void Render(List<Material> materials, Matrix4 model)
@@ -32,6 +32,14 @@ public class Mesh
             materials[mesh.MaterialId].Cleanup();
         }
     }
+
+    public void Render(Material material, Matrix4 model)
+    {
+        material.Use(_isSkybox, model, null);
+        foreach (var mesh in _meshes) mesh.Data?.Render();
+        material.Cleanup();
+    }
+
 
     public void Render(List<Material> materials, Matrix4 model, DepthFunction function, CubemapCapture? capture)
     {

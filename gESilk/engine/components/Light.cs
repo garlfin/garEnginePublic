@@ -1,38 +1,41 @@
-﻿using gESilk.engine.misc;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
 
 public class Light : Component
 {
+    public void Set()
+    {
+        LightSystem.CurrentLight = this;
+    }
+
+    public virtual void UpdateShadowMatrices()
+    {
+        var SunPos = Owner.GetComponent<Transform>().Location.Normalized();
+        var currentCameraPos = CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location;
+        LightSystem.ShadowView = Matrix4.LookAt(currentCameraPos + new Vector3(0, 25, 0),
+            currentCameraPos - SunPos + new Vector3(0, 25, 0), Vector3.UnitZ);
+        LightSystem.ShadowProjection = Matrix4.CreateOrthographic(40f, 40f, 0.1f, 100f);
+    }
+
+    public virtual void UpdateShadowMatrices(int index)
+    {
+    }
 }
 
 class LightSystem : BaseSystem<PointLight>
 {
-    public static SunLight Sun;
+    public static Light CurrentLight;
 
-    public static readonly BasicCamera ShadowCamera;
     public static Matrix4 ShadowView;
     public static Matrix4 ShadowProjection;
 
-    public static Vector3 SunPos;
-
     static LightSystem()
     {
-        ShadowCamera = new BasicCamera(new Vector3(10, 10, 10), 1f)
-        {
-            DepthFar = 50f
-        };
     }
 
     public static void UpdateShadow()
     {
-        SunPos = Sun.Owner.GetComponent<Transform>().Location;
-
-        SunPos.Normalize();
-        var currentCameraPos = CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Location;
-        ShadowCamera.Position = currentCameraPos + new Vector3(0, 25, 0);
-        ShadowView = ShadowCamera.GetViewMatrix(currentCameraPos - SunPos + new Vector3(0, 25, 0));
-        ShadowProjection = ShadowCamera.GetOrthoProjectionMatrix(20f);
+        CurrentLight.UpdateShadowMatrices();
     }
 }

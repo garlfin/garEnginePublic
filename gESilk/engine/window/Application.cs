@@ -1,6 +1,5 @@
 ﻿using gESilk.engine.components;
 using gESilk.engine.misc;
-using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
@@ -30,6 +29,16 @@ public partial class Application
         SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
         MapLoader.LoadMap("../../../resources/maps/test.map", this);
+
+        var previousLight = LightSystem.CurrentLight;
+
+        _state = EngineState.RenderPointShadowState;
+        foreach (var light in LightSystem.Components)
+        {
+            light.UpdateShadowMatrices();
+        }
+
+        previousLight.Set();
 
         _state = EngineState.GenerateCubemapState;
         BakeCubemaps();

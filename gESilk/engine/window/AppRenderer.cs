@@ -205,7 +205,7 @@ public partial class Application
         _pongProgram = new ShaderProgram("../../../resources/shader/prefilterpong.glsl");
 
         var prevState = _state;
-        _state = EngineState.GenerateBdrfState;
+        _state = EngineState.GenerateBrdfState;
 
         bdrfLUT = new RenderTexture(512, 512, PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.Float, false,
             TextureWrapMode.ClampToEdge);

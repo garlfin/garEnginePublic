@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using gESilk.engine.render.assets.textures;
+using gESilk.engine.render.materialSystem;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -92,7 +93,7 @@ public class ImGuiController
         _fontTexture = new TextureFromIntPtr(width, height, pixels);
 
 
-        io.Fonts.SetTexID((IntPtr) _fontTexture.Get());
+        io.Fonts.SetTexID((IntPtr)_fontTexture.Get());
 
         io.Fonts.ClearTexData();
     }
@@ -108,7 +109,7 @@ public class ImGuiController
             var vertexSize = cmd_list.VtxBuffer.Size * Unsafe.SizeOf<ImDrawVert>();
             if (vertexSize > _vertexBufferSize)
             {
-                var newSize = (int) Math.Max(_vertexBufferSize * 1.5f, vertexSize);
+                var newSize = (int)Math.Max(_vertexBufferSize * 1.5f, vertexSize);
                 GL.NamedBufferData(_vertexBuffer, newSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
                 _vertexBufferSize = newSize;
 
@@ -118,7 +119,7 @@ public class ImGuiController
             var indexSize = cmd_list.IdxBuffer.Size * sizeof(ushort);
             if (indexSize > _indexBufferSize)
             {
-                var newSize = (int) Math.Max(_indexBufferSize * 1.5f, indexSize);
+                var newSize = (int)Math.Max(_indexBufferSize * 1.5f, indexSize);
                 GL.NamedBufferData(_indexBuffer, newSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
                 _indexBufferSize = newSize;
 
@@ -172,17 +173,17 @@ public class ImGuiController
                 if (pcmd.UserCallback != IntPtr.Zero) throw new NotImplementedException();
 
                 GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.Texture2D, (int) pcmd.TextureId);
+                GL.BindTexture(TextureTarget.Texture2D, (int)pcmd.TextureId);
 
 
                 // We do _windowHeight - (int)clip.W instead of (int)clip.Y because gl has flipped Y when it comes to these coordinates
                 var clip = pcmd.ClipRect;
-                GL.Scissor((int) clip.X, _windowHeight - (int) clip.W, (int) (clip.Z - clip.X),
-                    (int) (clip.W - clip.Y));
+                GL.Scissor((int)clip.X, _windowHeight - (int)clip.W, (int)(clip.Z - clip.X),
+                    (int)(clip.W - clip.Y));
 
 
-                GL.DrawElements(BeginMode.Triangles, (int) pcmd.ElemCount, DrawElementsType.UnsignedShort,
-                    (int) pcmd.IdxOffset * sizeof(ushort));
+                GL.DrawElements(BeginMode.Triangles, (int)pcmd.ElemCount, DrawElementsType.UnsignedShort,
+                    (int)pcmd.IdxOffset * sizeof(ushort));
             }
         }
 

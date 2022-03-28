@@ -1,8 +1,8 @@
-﻿using gESilk.engine.render.materialSystem;
+﻿using gESilk.engine.render.assets;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace gESilk.engine.render.assets;
+namespace gESilk.engine.render.materialSystem;
 
 public class ShaderProgram : Asset
 {

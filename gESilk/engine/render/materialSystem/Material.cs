@@ -1,5 +1,4 @@
 ﻿using gESilk.engine.components;
-using gESilk.engine.render.assets;
 using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
@@ -28,7 +27,6 @@ public class Material
     private readonly CachedUniform<Vector3> _cubemapScale;
     private readonly CachedUniform<int> _cubemapGlobal;
     private CullFaceMode _cullFaceMode;
-
 
     public Material(ShaderProgram program, Application application, DepthFunction function = DepthFunction.Less,
         CullFaceMode cullFaceMode = CullFaceMode.Back)
@@ -73,7 +71,7 @@ public class Material
         if (!doCull) GL.Disable(EnableCap.CullFace);
         GL.CullFace(_cullFaceMode);
 
-        if (_application.State() is EngineState.GenerateBdrfState) return;
+        if (_application.State() is EngineState.GenerateBrdfState) return;
 
         _model.Use(model);
 
@@ -96,7 +94,7 @@ public class Material
         _lightProj.Use(LightSystem.ShadowProjection);
         _lightView.Use(LightSystem.ShadowView);
         _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        _lightPos.Use(LightSystem.SunPos);
+        _lightPos.Use(LightSystem.CurrentLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
 
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
@@ -121,6 +119,7 @@ public class Material
                 _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
                 _program.SetUniform($"lights[{index}].intensity", light.Power / 50);
                 _program.SetUniform($"lights[{index}].radius", light.Radius);
+                //_program.SetUniform($"shadowMaps[{index}]", light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
             }
         }
 
