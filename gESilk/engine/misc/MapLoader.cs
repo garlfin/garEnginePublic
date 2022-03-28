@@ -125,10 +125,10 @@ public static class MapLoader
                 if (lightType == "SUN")
                 {
                     var Sun = new Entity(application);
-                    Sun.AddComponent(new Light());
+                    Sun.AddComponent(new SunLight());
                     Sun.AddComponent(transform);
                     Sun.GetComponent<Transform>().Location.Normalize();
-                    Sun.GetComponent<Light>().Set();
+                    Sun.GetComponent<SunLight>().Set();
                 }
                 else if (lightType == "POINT")
                 {

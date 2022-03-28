@@ -8,15 +8,15 @@ namespace gESilk.engine.render.assets.textures;
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
 public class EmptyCubemapTexture : Texture
 {
-    public EmptyCubemapTexture(int size, bool genMips = true, PixelInternalFormat format = PixelInternalFormat.Rgba16f, PixelFormat pixelFormat = PixelFormat.Rgba, PixelType pixelType = PixelType.Float)
+    public EmptyCubemapTexture(int size, bool genMips = true)
     {
         Format = PixelInternalFormat.Rgba16f;
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         Width = Height = size;
         for (var i = 0; i < 6; i++)
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, format, size, size, 0,
-                pixelFormat, pixelType, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, PixelInternalFormat.Rgba16f, size, size, 0,
+                PixelFormat.Rgba, PixelType.Float, IntPtr.Zero);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter,
             (int)(genMips ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear));
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter,

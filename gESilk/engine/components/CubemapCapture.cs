@@ -64,7 +64,7 @@ public class CubemapCapture : BaseCamera
         _camera.Fov = 90;
         Set();
 
-        LightSystem.UpdateShadow(0);
+        LightSystem.UpdateShadow();
         TransformSystem.Update(0f);
         Owner.Application.State(EngineState.RenderShadowState);
         Owner.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);

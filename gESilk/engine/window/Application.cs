@@ -31,14 +31,6 @@ public partial class Application
 
         MapLoader.LoadMap("../../../resources/maps/test.map", this);
 
-
-        Light sun = LightSystem.emitterLight;
-        _state = EngineState.RenderShadowState;
-        foreach (var light in LightSystem.Components)
-        {
-            light.RenderShadow();
-        }
-        sun.Set();
         _state = EngineState.GenerateCubemapState;
         BakeCubemaps();
         _state = EngineState.IterationCubemapState;
