@@ -105,15 +105,13 @@ float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec
 
     float currentDepth = length(fragToLight);
 
-    float bias = max(0.05 * (1.0 - dot(normal, normalize(lightPos - FragPos))), 0.05);
-    
-    float diskRadius = (1.0 + (length(viewPos - FragPos) / 100)) / 25;
+    float bias = max(0.05 * (1.0 - dot(normal, normalize(light.Position - FragPos))), 0.01);
     
     float shadow = 0;
     
     for(int i = 0; i < 20; ++i)
     {
-        float closestDepth = texture(depthMap, fragToLight + (sampleOffsetDirections[i] * diskRadius)).r;
+        float closestDepth = texture(depthMap, fragToLight + (sampleOffsetDirections[i] * 0.01)).r;
         closestDepth *= 100;
         if(currentDepth - bias > closestDepth) shadow += 0.05;
     }
@@ -274,33 +272,32 @@ void main()
   
     vec4 cubemapUV = CubemapParallaxUV(reflect(-viewDir, normal));
     vec4 skyboxWithAlpha = textureLod(skyBox, cubemapUV.rgb , roughness * mipmapLevel);
-    vec3 skyboxSampler = skyboxWithAlpha.rgb; 
+    vec3 skyboxSampler = skyboxWithAlpha.rgb;
     skyboxSampler = mix(skyboxSampler, textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb, max(1-skyboxWithAlpha.a, cubemapUV.a));
     vec3 kS = fresnelSchlick(max(dot(normal, viewDir), 0.0), F0);
     vec3 kD = 1.0 - kS;
-    kD *= 1.0 - metallic;  
-  
-    vec2 envBRDF  = texture(brdfLUT, vec2(max(dot(normal, viewDir), 0.0), roughness)).rg;
-    
-    skyboxSampler = skyboxSampler * (fresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness) * envBRDF.x + envBRDF.y);
-    
+    kD *= 1.0 - metallic;
 
-     vec4 irradianceSample = texture(irradianceTex, CubemapParallaxUV(normal).rgb);
-     irradianceSample = vec4(mix(irradianceSample.rgb, texture(irradianceTex, reflect(-viewDir, normal)).rgb, cubemapUV.a),1);
-   
-      
-     albedoSample *= irradianceSample.rgb;
-     
-     albedoSample = ((1-metallic) * albedoSample + skyboxSampler) * ao;
+    vec2 envBRDF  = texture(brdfLUT, vec2(max(dot(normal, viewDir), 0.0), roughness)).rg;
+
+    skyboxSampler = skyboxSampler * (fresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness) * envBRDF.x + envBRDF.y);
+
+
+    vec4 irradianceSample = texture(irradianceTex, normal.rgb);
+    //irradianceSample = vec4(mix(irradianceSample.rgb, texture(irradianceTex, reflect(-viewDir, normal)).rgb, cubemapUV.a),1);
+
+    albedoSample *= irradianceSample.rgb;
+
+    albedoSample = ((1-metallic) * albedoSample + skyboxSampler) * ao;
 
     albedoSample += calculateLight(lightDir, viewDir, roughness, F0, metallic, normal, shadow, albedoCopy, 0.5);
    
     for (int i = 0; i < lightsCount; i++) {
-    
+
         vec3 pointLightPos = normalize(lights[i].Position - FragPos);
-        
+
         float distance = length(lights[i].Position - FragPos);
-        float num = clamp(1-pow(distance/(lights[i].intensity*10), 4), 0, 1);
+        float num = clamp(1-pow(distance/(lights[i].intensity), 4), 0, 1);
         float attenuation = (num*num)/((distance*distance)+1+lights[i].radius);
    
         vec3 radiance = lights[i].Color * lights[i].intensity * attenuation;

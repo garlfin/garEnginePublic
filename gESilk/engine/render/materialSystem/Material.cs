@@ -117,7 +117,7 @@ public class Material
                 var light = LightSystem.Components[index];
                 _program.SetUniform($"lights[{index}].Color", light.Color);
                 _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
-                _program.SetUniform($"lights[{index}].intensity", light.Power / 50);
+                _program.SetUniform($"lights[{index}].intensity", light.Power / 25);
                 _program.SetUniform($"lights[{index}].radius", light.Radius);
                 _program.SetUniform($"shadowMaps[{index}]", light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
             }
