@@ -76,7 +76,7 @@ public class Material
         _model.Use(model);
 
         var state = _application.State();
-        if (state == EngineState.RenderShadowState)
+        if (state is EngineState.RenderShadowState or EngineState.RenderPointShadowState)
         {
             _view.Use(LightSystem.ShadowView);
             _projection.Use(LightSystem.ShadowProjection);

@@ -32,6 +32,8 @@ public partial class Application
 
         var previousLight = LightSystem.CurrentLight;
 
+        TransformSystem.Update(0f);
+            
         _state = EngineState.RenderPointShadowState;
         foreach (var light in LightSystem.Components)
         {

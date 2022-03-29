@@ -49,6 +49,7 @@ public class PointLight : Light
 
     public override void UpdateShadowMatrices()
     {
+        GL.Viewport(0,0,_size, _size);
         _buffer = new FrameBuffer(_size, _size);
         Set();
 
