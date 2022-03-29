@@ -119,8 +119,17 @@ public class Material
                 _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
                 _program.SetUniform($"lights[{index}].intensity", light.Power / 50);
                 _program.SetUniform($"lights[{index}].radius", light.Radius);
-                //_program.SetUniform($"shadowMaps[{index}]", light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
+                _program.SetUniform($"shadowMaps[{index}]", light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
             }
+
+            for (var index = 0; index < 10 - LightSystem.Components.Count; index++) // 10 is the max number of lights 
+            {
+                int currentUnit = TextureSlotManager.GetUnit();
+                GL.ActiveTexture(TextureUnit.Texture0 + currentUnit);
+                GL.BindTexture(TextureTarget.TextureCubeMap, 0);
+                _program.SetUniform($"shadowMaps[{index + LightSystem.Components.Count}]", currentUnit);
+            }
+            // Fill in the rest of the slots with empty textures cause opengl was crying about it
         }
 
         _program.SetUniform("stage", (int)_application.State());

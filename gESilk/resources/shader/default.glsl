@@ -68,7 +68,7 @@ uniform samplerCube irradianceTex;
 #define MAX_LIGHTS 10
 
 uniform pointLight lights[MAX_LIGHTS];
-//uniform samplerCube shadowMaps[MAX_LIGHTS];
+uniform samplerCube shadowMaps[MAX_LIGHTS];
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -85,24 +85,40 @@ layout (location = 2) out vec4 FragLoc;
 const int pcfCount = 4;
 const float totalTexels = pow(pcfCount * 2.0 + 1.0, 2);
 
+vec3 sampleOffsetDirections[20] = vec3[]
+(
+vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
+vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+);
+
 bool isOutOfBounds(vec3 box, vec3 position){
     return box.x > position.x || box.y > position.y || box.z > position.z;
 }
 
-float ShadowCalculation(pointLight light, samplerCube depthMap)
+float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec3 viewPos)
 {
 
     vec3 fragToLight = FragPos - light.Position;
 
-    float closestDepth = texture(depthMap, fragToLight).r;
-
-    closestDepth *= 100;
-
     float currentDepth = length(fragToLight);
 
-    float bias = 0.05;
-    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
-
+    float bias = max(0.05 * (1.0 - dot(normal, normalize(lightPos - FragPos))), 0.05);
+    
+    float diskRadius = (1.0 + (length(viewPos - FragPos) / 100)) / 25;
+    
+    float shadow = 0;
+    
+    for(int i = 0; i < 20; ++i)
+    {
+        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        closestDepth *= 100;
+        if(currentDepth - bias > closestDepth) shadow += 1.0;
+    }
+    shadow /= 20;
+    
     return shadow;
 }
 
@@ -242,9 +258,11 @@ void main()
     
     vec3 F0 = mix(vec3(0.04), albedoSample, metallic);
     
+    vec3 maplessNormal = normalize(noNormalNormal);
+    
     vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1, -1, 1) + vec3(0, 1, 0);
     normal = normalize((normal * 2.0 - 1.0) * TBN);
-    normal = mix(normalize(noNormalNormal), normal, normalStrength);
+    normal = mix(maplessNormal, normal, normalStrength);
 
     vec3 lightDir = normalize(lightPos);
     vec3 viewDir = normalize(viewPos - FragPos); 
@@ -252,7 +270,7 @@ void main()
 
     float mipmapLevel = float(textureQueryLevels(skyBox));
 
-    float shadow = ShadowCalculation(FragPosLightSpace, noNormalNormal, lightDir);
+    float shadow = ShadowCalculation(FragPosLightSpace, maplessNormal, lightDir);
    
     //albedoSample *= textureLod(skyBox, CubemapParallaxUV(normal).xyz, mipmapLevel * 0.8).rgb;
   
@@ -289,12 +307,12 @@ void main()
    
         vec3 radiance = lights[i].Color * lights[i].intensity * attenuation;
 
-        //float pointShadow = ShadowCalculation(lights[i], shadowMaps[i]);
-        albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, 1, albedoCopy, lights[i].radius) * radiance,0,lights[i].intensity);
+        float pointShadow = 1 - ShadowCalculation(lights[i], shadowMaps[i], maplessNormal, viewPos);
+        albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, pointShadow, albedoCopy, lights[i].radius) * radiance,0,lights[i].intensity);
        
     }
  
     FragColor = vec4(albedoSample, 1.0);
     FragLoc = vec4(viewFragPos, metallic);
-    FragNormal = vec4(viewNormal, dot(normalize(noNormalNormal), viewDir));
+    FragNormal = vec4(viewNormal, dot(normalize(maplessNormal), viewDir));
 }
