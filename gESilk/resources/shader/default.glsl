@@ -85,7 +85,7 @@ layout (location = 2) out vec4 FragLoc;
 const int pcfCount = 4;
 const float totalTexels = pow(pcfCount * 2.0 + 1.0, 2);
 
-vec3 sampleOffsetDirections[20] = vec3[]
+const vec3 sampleOffsetDirections[20] = vec3[]
 (
 vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
 vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
@@ -113,12 +113,10 @@ float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec
     
     for(int i = 0; i < 20; ++i)
     {
-        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        float closestDepth = texture(depthMap, fragToLight + (sampleOffsetDirections[i] * diskRadius)).r;
         closestDepth *= 100;
-        if(currentDepth - bias > closestDepth) shadow += 1.0;
+        if(currentDepth - bias > closestDepth) shadow += 0.05;
     }
-    shadow /= 20;
-    
     return shadow;
 }
 

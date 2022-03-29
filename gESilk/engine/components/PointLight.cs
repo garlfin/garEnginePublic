@@ -24,7 +24,6 @@ public class PointLight : Light
         Power = power;
         LightSystem.Register(this);
         _size = width;
-
         _texture = new EmptyCubemapTexture(width, false, PixelInternalFormat.DepthComponent24,
             PixelFormat.DepthComponent);
     }

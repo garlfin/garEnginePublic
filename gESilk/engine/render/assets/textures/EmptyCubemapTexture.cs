@@ -9,7 +9,7 @@ namespace gESilk.engine.render.assets.textures;
 public class EmptyCubemapTexture : Texture
 {
     public EmptyCubemapTexture(int size, bool genMips = true, PixelInternalFormat format = PixelInternalFormat.Rgba16f,
-        PixelFormat byteFormat = PixelFormat.Rgba)
+        PixelFormat byteFormat = PixelFormat.Rgba, bool isShadow = false)
     {
         Format = format;
         Id = GL.GenTexture();
@@ -30,6 +30,11 @@ public class EmptyCubemapTexture : Texture
             (int)TextureWrapMode.ClampToEdge);
 
         if (genMips) GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
+        if (!isShadow) return;
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureCompareMode,
+            (int)TextureCompareMode.CompareRefToTexture);
+        GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureCompareFunc, (int)All.Less);
+        
     }
 
     public override int Use(int slot)
