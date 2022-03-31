@@ -11,6 +11,9 @@ public class Shader
         _id = GL.CreateShader(type);
         GL.ShaderSource(_id, data);
         GL.CompileShader(_id);
+
+        string log = GL.GetShaderInfoLog(_id);
+        if (!string.IsNullOrEmpty(log)) Console.WriteLine(log);
     }
 
     public int Get()

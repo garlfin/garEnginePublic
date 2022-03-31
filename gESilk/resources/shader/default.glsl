@@ -115,10 +115,10 @@ float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec
 
     float shadow = 0;
     int samples = 25;
-    float radius = light.radius * length(lightToFrag) * 0.01;
+    
     for (int i = 0; i < samples; ++i)
     {
-        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * radius).r;
+        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * 0.01).r;
         closestDepth *= 100;
         shadow += (currentDepth - bias > closestDepth) ? 1.0 : 0.0;
     }
