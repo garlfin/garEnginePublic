@@ -1,5 +1,4 @@
-﻿using gESilk.engine.render.assets;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
@@ -21,7 +20,7 @@ public class Vec3Setting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
-        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
+        base.Use(program);
         program.SetUniform(UniformName, _value);
     }
 }

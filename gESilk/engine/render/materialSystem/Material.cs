@@ -133,7 +133,7 @@ public class Material
         }
 
         _program.SetUniform("stage", (int)_application.State());
-        _brdfLUT.Use(_application.bdrfLUT.Use(TextureSlotManager.GetUnit()));
+        _brdfLUT.Use(_application.BrdfLut.Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
     }
 

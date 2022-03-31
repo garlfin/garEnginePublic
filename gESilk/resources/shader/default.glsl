@@ -85,13 +85,17 @@ layout (location = 2) out vec4 FragLoc;
 const int pcfCount = 4;
 const float totalTexels = pow(pcfCount * 2.0 + 1.0, 2);
 
-const vec3 sampleOffsetDirections[20] = vec3[]
+const vec3 sampleOffsetDirections[25] = vec3[]
 (
-vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
-vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
-vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
-vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
-vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+vec3(0, 0, 0), vec3(0, -1, -1), vec3(0, 0, 1),
+vec3(0, 1, 1), vec3(0, 1, -1), vec3(0, -1, 6),
+vec3(0, -1, 1), vec3(0, 0, -1), vec3(0, 1, 0),
+vec3(1, 0, 0), vec3(1, -1, -1), vec3(1, 0, 1),
+vec3(1, 1, -1), vec3(1, -1, 0), vec3(1, -1, 1),
+vec3(1, 0, -1), vec3(1, 1, 0), vec3(-1, 0, 0),
+vec3(-1, 1, 1), vec3(-1, 1, -1), vec3(-1, -1, 0),
+vec3(-1, -1, 1), vec3(-1, 0, -1), vec3(-1, 1, 0),
+vec3(-1, 0, 1)
 );
 
 bool isOutOfBounds(vec3 box, vec3 position){
@@ -105,17 +109,20 @@ float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec
 
     float currentDepth = length(fragToLight);
 
-    float bias = max(0.05 * (1.0 - dot(normal, normalize(light.Position - FragPos))), 0.01);
-    
+    vec3 lightToFrag = light.Position - FragPos;
+
+    float bias = max(0.05 * (1.0 - dot(normal, normalize(lightToFrag))), 0.01);
+
     float shadow = 0;
-    
-    for(int i = 0; i < 20; ++i)
+    int samples = 25;
+    float radius = light.radius * length(lightToFrag) * 0.01;
+    for (int i = 0; i < samples; ++i)
     {
-        float closestDepth = texture(depthMap, fragToLight + (sampleOffsetDirections[i] * 0.01)).r;
+        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * radius).r;
         closestDepth *= 100;
-        if(currentDepth - bias > closestDepth) shadow += 0.05;
+        shadow += (currentDepth - bias > closestDepth) ? 1.0 : 0.0;
     }
-    return shadow;
+    return shadow / float(samples);
 }
 
 const float PI = 3.14159265359;
@@ -284,7 +291,7 @@ void main()
 
 
     vec4 irradianceSample = texture(irradianceTex, normal.rgb);
-    //irradianceSample = vec4(mix(irradianceSample.rgb, texture(irradianceTex, reflect(-viewDir, normal)).rgb, cubemapUV.a),1);
+    //irradianceSample = vec4(mix(irradianceSample.rgb, texture(irradianceTex, normal).rgb, cubemapUV.a),1);
 
     albedoSample *= irradianceSample.rgb;
 

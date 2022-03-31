@@ -1,5 +1,4 @@
-﻿using gESilk.engine.render.assets;
-using gESilk.engine.render.assets.textures;
+﻿using gESilk.engine.render.assets.textures;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
@@ -15,7 +14,7 @@ public class TextureSetting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
-        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
+        base.Use(program);
         program.SetUniform(RealLocation, _value.Use(TextureSlotManager.GetUnit()));
     }
 }

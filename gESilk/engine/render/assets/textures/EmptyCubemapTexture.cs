@@ -34,7 +34,6 @@ public class EmptyCubemapTexture : Texture
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureCompareMode,
             (int)TextureCompareMode.CompareRefToTexture);
         GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureCompareFunc, (int)All.Less);
-        
     }
 
     public override int Use(int slot)
@@ -108,7 +107,7 @@ public class EmptyCubemapTexture : Texture
 
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                application.renderPlaneMesh.Render();
+                application.RenderPlaneMesh.Render();
             }
         }
 

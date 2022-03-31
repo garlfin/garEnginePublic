@@ -1,5 +1,4 @@
-﻿using gESilk.engine.render.assets;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
@@ -15,8 +14,7 @@ public class FloatSetting : ShaderSetting
 
     public override void Use(ShaderProgram program)
     {
-        if (RealLocation == -1) RealLocation = program.GetUniform(UniformName);
-        if (RealLocation == -1) return;
+        base.Use(program);
         GL.GetUniform(program.Get(), RealLocation, out _prevValue);
         program.SetUniform(RealLocation, _value);
     }

@@ -228,7 +228,7 @@ public class CubemapTexture : Texture
 
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                _application.renderPlaneMesh.Render();
+                _application.RenderPlaneMesh.Render();
             }
         }
 

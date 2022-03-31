@@ -9,7 +9,7 @@ public abstract class BaseCamera : Component
     protected float _clipEnd;
     protected float _clipStart;
     protected float _fov;
-    public Matrix4 View, Projection;
+    public Matrix4 View, Projection, PreviousView = Matrix4.Identity;
 
 
     public BasicCamera GetBasicCamera()
@@ -24,6 +24,11 @@ public abstract class BaseCamera : Component
 
     public override void Update(float gameTime)
     {
+    }
+
+    public virtual void UpdatePreviousMatrix()
+    {
+        PreviousView = View;
     }
 }
 

@@ -5,7 +5,6 @@ using gESilk.engine.misc;
 using gESilk.engine.render.assets;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
-using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -19,7 +18,7 @@ public partial class Application
     private readonly BloomSettings _bloomSettings = new();
     private readonly int _width, _height, _mBloomComputeWorkGroupSize;
     private readonly GameWindow _window;
-    private readonly HashSet<string> OpenGLExtensions = new();
+    private readonly HashSet<string> _openGlExtensions = new();
     private bool _alreadyClosed, _firstRender;
     private ComputeProgram _bloomProgram;
     private Vector2i _bloomTexSize;
@@ -28,15 +27,20 @@ public partial class Application
     private RenderBuffer _renderBuffer;
     private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex;
     private RenderTexture _renderTexture;
-    private FrameBuffer _ssaoMap, _blurMap;
+    private FrameBuffer _postProcessingBuffer;
     private EngineState _state;
     private double _time;
     public FrameBuffer ShadowMap;
     public RenderTexture ShadowTex;
     public CubemapTexture Skybox;
-    public RenderTexture bdrfLUT;
+    public RenderTexture BrdfLut;
     private ShaderProgram _irradianceCalculation, _specularCalculation, _pongProgram;
-    public Mesh renderPlaneMesh;
+    public Mesh RenderPlaneMesh;
+    private ShaderProgram _framebufferShader;
+    private ShaderProgram _framebufferShaderSsao;
+    private ShaderProgram _blurShader;
+    private NoiseTexture _noiseTexture;
+    private Vector3[] _data;
 
     public Application(int width, int height, string name)
     {
@@ -97,14 +101,43 @@ public partial class Application
 
         _state = EngineState.PostProcessState;
         RenderBloom();
-        _ssaoMap.Bind(null);
-        _ssaoEntity.GetComponent<FbRenderer>().Update(0f);
 
-        _blurMap.Bind(null);
-        _blurEntity.GetComponent<FbRenderer>().Update(0f);
+        GL.Disable(EnableCap.CullFace);
+        GL.Disable(EnableCap.DepthTest);
+
+        _framebufferShaderSsao.Use();
+        _framebufferShaderSsao.SetUniform("screenTexture", _renderTexture.Use(0));
+        _framebufferShaderSsao.SetUniform("screenTextureNormal", _renderNormal.Use(1));
+        _framebufferShaderSsao.SetUniform("screenTexturePos", _renderPos.Use(2));
+        _framebufferShaderSsao.SetUniform("NoiseTex", _noiseTexture.Use(3));
+        _framebufferShaderSsao.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
+        for (var i = 0; i < _data.Length; i++) _framebufferShaderSsao.SetUniform($"Samples[{i}]", _data[i]);
+
+        _ssaoTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
+        _postProcessingBuffer.Bind(null);
+        RenderPlaneMesh.Render();
+
+        _blurShader.Use();
+        _blurShader.SetUniform("ssaoInput", _ssaoTex.Use(0));
+
+        _blurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
+        RenderPlaneMesh.Render();
+
+        _framebufferShader.Use();
+        _framebufferShader.SetUniform("screenTexture", _renderTexture.Use(0));
+        _framebufferShader.SetUniform("ao", _blurTex.Use(1));
+        _framebufferShader.SetUniform("bloom", _bloomRTs[2].Use(2));
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        _finalShadingEntity.GetComponent<FbRenderer>().Update(0f);
+        RenderPlaneMesh.Render();
+
+        foreach (var camera in CameraSystem.Components)
+        {
+            camera.UpdatePreviousMatrix();
+        }
+
+        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.DepthTest);
 
         if (_alreadyClosed) GL.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -160,8 +193,6 @@ public partial class Application
 
         _bloomRTs[2].Use(0, TextureAccess.WriteOnly, _mips - 1);
 
-        //currentMip--;
-
         _bloomProgram.SetUniform("LodAndMode", new Vector2(_mips - 2, (int)BloomMode.BloomModeUpsampleFirst));
 
         _bloomRTs[0].Use(1);
@@ -198,28 +229,26 @@ public partial class Application
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.TextureCubeMapSeamless);
 
-        renderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
+        _window.CursorGrabbed = true;
 
-        _irradianceCalculation = new ShaderProgram("../../../resources/shader/irradiance.glsl");
-        _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
-        _pongProgram = new ShaderProgram("../../../resources/shader/prefilterpong.glsl");
+        RenderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
 
         var prevState = _state;
         _state = EngineState.GenerateBrdfState;
 
-        bdrfLUT = new RenderTexture(512, 512, PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.Float, false,
+        BrdfLut = new RenderTexture(512, 512, PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.Float, false,
             TextureWrapMode.ClampToEdge);
 
         var bdrfRenderBuffer = new RenderBuffer(512, 512);
-        bdrfLUT.BindToBuffer(bdrfRenderBuffer, FramebufferAttachment.ColorAttachment0);
+        BrdfLut.BindToBuffer(bdrfRenderBuffer, FramebufferAttachment.ColorAttachment0);
 
-        var bdrfEntity = new Entity(this);
-        bdrfEntity.AddComponent(new FbRenderer());
         var brdfShader = new ShaderProgram("../../../resources/shader/bdrfLUT.glsl");
+
         bdrfRenderBuffer.Bind();
-        bdrfEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(brdfShader, this, DepthFunction.Always)));
-        bdrfEntity.GetComponent<FbRenderer>().Update(0f);
+        brdfShader.Use();
+
+        RenderPlaneMesh.Render();
+
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
         GL.Viewport(0, 0, 1280, 720);
@@ -229,38 +258,21 @@ public partial class Application
         AssetManager.Remove(brdfShader);
         brdfShader.Delete();
 
-
         _state = prevState;
 
         _bloomTexSize = new Vector2i(_width, _height) / 2;
         _bloomTexSize += new Vector2i(_mBloomComputeWorkGroupSize - _bloomTexSize.X % _mBloomComputeWorkGroupSize,
             _mBloomComputeWorkGroupSize - _bloomTexSize.Y % _mBloomComputeWorkGroupSize);
+
         _mips = Texture.GetMipLevelCount(_width, _height) - 4;
-
-        _renderBuffer = new RenderBuffer(_width, _height);
-        _renderTexture = new RenderTexture(_width, _height);
-        _renderNormal = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
-            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-        _renderPos = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
-            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-        _renderTexture.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0);
-        _renderNormal.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment1);
-        _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
-        _blurTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
-            false, TextureWrapMode.ClampToEdge);
-
         for (var i = 0; i < 3; i++)
             _bloomRTs[i] = new EmptyTexture(_bloomTexSize.X, _bloomTexSize.Y, PixelInternalFormat.Rgba16f, _mips);
 
+        _noiseTexture = new NoiseTexture();
 
-        _bloomProgram = new ComputeProgram("../../../resources/shader/bloom.glsl");
-
-        _window.CursorGrabbed = true;
+        _data = new Vector3[64];
 
         var rand = new Random();
-
-        var data = new Vector3[64];
-
         for (var i = 0; i < 64; i++)
         {
             var sample = new Vector3((float)(rand.NextDouble() * 2.0 - 1.0), (float)(rand.NextDouble() * 2.0 - 1.0),
@@ -270,64 +282,43 @@ public partial class Application
             var scale = i / 64f;
             scale = MathHelper.Lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
-            data[i] = sample;
+            _data[i] = sample;
         }
 
+        _framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.glsl");
+        _framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.glsl");
+        _blurShader = new ShaderProgram("../../../resources/shader/blur.glsl");
+        _bloomProgram = new ComputeProgram("../../../resources/shader/bloom.glsl");
+        _irradianceCalculation = new ShaderProgram("../../../resources/shader/irradiance.glsl");
+        _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
+        _pongProgram = new ShaderProgram("../../../resources/shader/prefilterpong.glsl");
 
-        var framebufferShader = new ShaderProgram("../../../resources/shader/finalcomposite.glsl");
 
-        _finalShadingEntity = new Entity(this);
-        _finalShadingEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(framebufferShader, this, DepthFunction.Always)));
-        _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTexture", _renderTexture));
-        _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("ao", _blurTex));
-        _finalShadingEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("bloom", _bloomRTs[2]));
-        _finalShadingEntity.AddComponent(new FbRenderer());
+        _renderBuffer = new RenderBuffer(_width, _height);
 
+        _renderTexture = new RenderTexture(_width, _height);
+        _renderNormal = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
+            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+        _renderPos = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
+            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+
+        _renderTexture.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0);
+        _renderNormal.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment1);
+        _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
+
+
+        _postProcessingBuffer = new FrameBuffer(_width, _height);
+        _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
+            false, TextureWrapMode.ClampToEdge);
+
+        _blurTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
+            false, TextureWrapMode.ClampToEdge);
 
         const int shadowSize = 1024 * 4;
         ShadowMap = new FrameBuffer(shadowSize, shadowSize);
         ShadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
             PixelFormat.DepthComponent, PixelType.Float, true);
         ShadowTex.BindToBuffer(ShadowMap, FramebufferAttachment.DepthAttachment, true);
-
-        var framebufferShaderSsao = new ShaderProgram("../../../resources/shader/SSAO.glsl");
-
-
-        _ssaoEntity = new Entity(this);
-        _ssaoEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(framebufferShaderSsao, this, DepthFunction.Always)));
-        _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTextureNormal", _renderNormal));
-        _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("screenTexturePos", _renderPos));
-        _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new Vec3ArraySetting("Samples", data.ToArray()));
-        _ssaoEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("NoiseTex", new NoiseTexture()));
-        _ssaoEntity.AddComponent(new FbRenderer());
-
-        _ssaoMap = new FrameBuffer(_width, _height);
-        _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
-            false, TextureWrapMode.ClampToEdge);
-        _ssaoTex.BindToBuffer(_ssaoMap, FramebufferAttachment.ColorAttachment0);
-
-
-        var blurShader = new ShaderProgram("../../../resources/shader/blur.glsl");
-
-        _blurEntity = new Entity(this);
-        _blurEntity.AddComponent(new MaterialComponent(renderPlaneMesh,
-            new Material(blurShader, this, DepthFunction.Always)));
-        _blurEntity.GetComponent<MaterialComponent>()?.GetMaterial(0)
-            .AddSetting(new TextureSetting("ssaoInput", _ssaoTex));
-        _blurEntity.AddComponent(new FbRenderer());
-
-        _blurMap = new FrameBuffer(_width, _height);
-
-        _blurTex.BindToBuffer(_blurMap, FramebufferAttachment.ColorAttachment0);
     }
 
     private void LoadExtensions()
@@ -336,13 +327,13 @@ public partial class Application
         for (var i = 0; i < count; i++)
         {
             var extension = GL.GetString(StringNameIndexed.Extensions, i);
-            OpenGLExtensions.Add(extension);
+            _openGlExtensions.Add(extension);
         }
     }
 
     public bool HasExtension(string name)
     {
-        return OpenGLExtensions.Contains(name);
+        return _openGlExtensions.Contains(name);
     }
 
     public GameWindow GetWindow()

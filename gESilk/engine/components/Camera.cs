@@ -11,7 +11,7 @@ public class Camera : BaseCamera
         _clipStart = clipStart;
         _clipEnd = clipEnd;
         CameraSystem.Register(this);
-        _camera = new BasicCamera(Vector3.Zero, (float) 1280 / 720)
+        _camera = new BasicCamera(Vector3.Zero, (float)1280 / 720)
         {
             DepthFar = clipEnd,
             DepthNear = clipStart
@@ -26,7 +26,7 @@ public class Camera : BaseCamera
         _camera.Yaw = entityTransform.Rotation.Y;
         _camera.Pitch = entityTransform.Rotation.X;
         View = _camera.GetViewMatrix();
-        Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_fov), (float) 1280 / 720,
+        Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_fov), (float)1280 / 720,
             _clipStart, _clipEnd);
     }
 }
