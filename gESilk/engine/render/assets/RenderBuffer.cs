@@ -35,13 +35,13 @@ public class RenderBuffer : Asset
         return _fbo;
     }
 
-    public void Bind(ClearBufferMask mask = ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit,
+    public void Bind(ClearBufferMask? mask = ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit,
         bool setVP = true)
     {
         GL.DepthMask(true);
         if (setVP) GL.Viewport(0, 0, _width, _height);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
-        GL.Clear(mask);
+        if (mask is not null) GL.Clear((ClearBufferMask)mask);
     }
 
     public void SetShadowBuffer()
@@ -53,6 +53,7 @@ public class RenderBuffer : Asset
 
     public override void Delete()
     {
+        if (_fbo == -1) return;
         GL.DeleteFramebuffer(_fbo);
         GL.DeleteRenderbuffer(_rbo);
     }

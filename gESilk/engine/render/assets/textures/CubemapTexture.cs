@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using gESilk.engine.misc;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
@@ -89,8 +90,7 @@ public class CubemapTexture : Texture
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
-                i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+            program.SetUniform("view", MiscMath.GetLookAt(Vector3.Zero, i));
 
             Globals.CubeMesh.Render();
         }
@@ -131,8 +131,7 @@ public class CubemapTexture : Texture
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
-                i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+            program.SetUniform("view", MiscMath.GetLookAt(Vector3.Zero, i));
 
             Globals.CubeMesh.Render();
         }
@@ -164,21 +163,7 @@ public class CubemapTexture : Texture
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentLevel, target, Id, level);
     }
 
-    private Vector3 GetAngle(int index)
-    {
-        return index switch
-        {
-            0 => new Vector3(1, 0, 0), // posx
-            1 => new Vector3(-1, 0, 0), // negx
-            2 => new Vector3(0, 1, 0), // posy
-            3 => new Vector3(0, -1, 0), // negy
-            4 => new Vector3(0, 0, 1), // posz
-            5 => new Vector3(0, 0, -1), //negz
-            _ => Vector3.Zero
-        };
-    }
-
-    public void GenerateMipsSpecular()
+    private void GenerateMipsSpecular()
     {
         int mips = GetMipsCount();
 
@@ -216,8 +201,7 @@ public class CubemapTexture : Texture
 
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
-                    i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+                program.SetUniform("view", MiscMath.GetLookAt(Vector3.Zero, i));
 
                 Globals.CubeMesh.Render();
 

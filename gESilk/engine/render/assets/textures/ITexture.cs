@@ -28,6 +28,7 @@ public abstract class Texture : Asset
 
     public override void Delete()
     {
+        if (Id == -1) return;
         GL.DeleteTexture(Id);
     }
 

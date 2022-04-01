@@ -73,6 +73,7 @@ public class VertexArray : Asset
 
     public override void Delete()
     {
+        if (_vao == -1) return;
         GL.DeleteVertexArray(_vao);
         GL.DeleteBuffer(_vbo);
         GL.DeleteBuffer(_ebo);

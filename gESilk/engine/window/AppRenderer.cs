@@ -19,10 +19,9 @@ public partial class Application
     private readonly int _width, _height, _mBloomComputeWorkGroupSize;
     private readonly GameWindow _window;
     private readonly HashSet<string> _openGlExtensions = new();
-    private bool _alreadyClosed, _firstRender;
+    private bool _alreadyClosed;
     private ComputeProgram _bloomProgram;
     private Vector2i _bloomTexSize;
-    private Entity _entity, _ssaoEntity, _blurEntity, _finalShadingEntity;
     private int _mips;
     private RenderBuffer _renderBuffer;
     private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex;
@@ -44,7 +43,6 @@ public partial class Application
 
     public Application(int width, int height, string name)
     {
-        _firstRender = true;
         _width = width;
         _height = height;
         _mBloomComputeWorkGroupSize = 16;
@@ -90,12 +88,12 @@ public partial class Application
 
         _state = EngineState.RenderDepthState;
         _renderBuffer.Bind(ClearBufferMask.DepthBufferBit);
-        
+
         GL.DepthMask(true);
         GL.ColorMask(false, false, false, false);
-        
+
         ModelRendererSystem.Update(0f);
-        
+
         GL.ColorMask(true, true, true, true);
         GL.DepthMask(false);
 

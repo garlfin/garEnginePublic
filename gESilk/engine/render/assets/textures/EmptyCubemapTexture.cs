@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using gESilk.engine.misc;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -95,8 +96,7 @@ public class EmptyCubemapTexture : Texture
 
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                program.SetUniform("view", Matrix4.LookAt(Vector3.Zero, Vector3.Zero + GetAngle(i),
-                    i is 2 or 3 ? i is 2 ? Vector3.UnitZ : -Vector3.UnitZ : -Vector3.UnitY));
+                program.SetUniform("view", MiscMath.GetLookAt(Vector3.Zero, i));
 
                 Globals.CubeMesh.Render();
 

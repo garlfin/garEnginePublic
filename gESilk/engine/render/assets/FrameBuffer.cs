@@ -27,11 +27,12 @@ public class FrameBuffer : Asset
         GL.DepthMask(true);
         GL.Viewport(0, 0, _width, _height);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, Fbo);
-        if (mask != null) GL.Clear((ClearBufferMask) mask);
+        if (mask != null) GL.Clear((ClearBufferMask)mask);
     }
 
     public override void Delete()
     {
+        if (Fbo == -1) return;
         GL.DeleteFramebuffer(Fbo);
     }
 }

@@ -14,6 +14,9 @@ public class Shader
 
         string log = GL.GetShaderInfoLog(_id);
         if (!string.IsNullOrEmpty(log)) Console.WriteLine(log);
+
+        // Oopsie memory leak TODO
+        // Free assets when done.
     }
 
     public int Get()

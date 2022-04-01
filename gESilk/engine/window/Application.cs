@@ -3,7 +3,6 @@ using gESilk.engine.misc;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -34,15 +33,13 @@ public partial class Application
         var previousLight = LightSystem.CurrentLight;
 
         TransformSystem.Update(0f);
-            
+
         _state = EngineState.RenderPointShadowState;
         foreach (var light in LightSystem.Components)
         {
             light.UpdateShadowMatrices();
         }
 
-        string message = "Starting cubemap generation.";
-        GL.DebugMessageInsert(DebugSourceExternal.DebugSourceApplication, DebugType.DontCare, 1099, DebugSeverity.DontCare, message.Length, message);
         previousLight.Set();
 
         _state = EngineState.GenerateCubemapState;

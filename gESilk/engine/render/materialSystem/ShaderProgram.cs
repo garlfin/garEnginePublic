@@ -106,6 +106,7 @@ public class ShaderProgram : Asset
 
     public override void Delete()
     {
+        if (_shaderId == -1) return;
         GL.DeleteProgram(_shaderId);
     }
 }
