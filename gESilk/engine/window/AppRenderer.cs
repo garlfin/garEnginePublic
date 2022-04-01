@@ -89,9 +89,13 @@ public partial class Application
         ModelRendererSystem.Update(0f);
 
         _state = EngineState.RenderDepthState;
-        _renderBuffer.Bind();
+        _renderBuffer.Bind(ClearBufferMask.DepthBufferBit);
+        
+        GL.DepthMask(true);
         GL.ColorMask(false, false, false, false);
+        
         ModelRendererSystem.Update(0f);
+        
         GL.ColorMask(true, true, true, true);
         GL.DepthMask(false);
 

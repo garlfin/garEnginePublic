@@ -70,8 +70,7 @@ public class Material
 
         // Various Setup
         GL.DepthFunc(function ?? _function);
-        if (!doCull) GL.Disable(EnableCap.CullFace);
-        GL.CullFace(_cullFaceMode);
+        if (doCull) GL.CullFace(_cullFaceMode); else GL.Disable(EnableCap.CullFace);
 
         var state = _application.State();
 
@@ -90,6 +89,9 @@ public class Material
             _projection.Use(CameraSystem.CurrentCamera.Projection);
         }
 
+        // Point lights need this information too
+        _lightPos.Use(LightSystem.CurrentLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
+        
         if (state is EngineState.RenderDepthState or EngineState.RenderShadowState
             or EngineState.RenderPointShadowState) return;
 
@@ -97,21 +99,24 @@ public class Material
         _lightProj.Use(LightSystem.ShadowProjection);
         _lightView.Use(LightSystem.ShadowView);
         _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        _lightPos.Use(LightSystem.CurrentLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
-
+        
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
         _cubemapLoc.Use(currentCubemap.Owner.GetComponent<Transform>().Location);
         _cubemapScale.Use(currentCubemap.Owner.GetComponent<Transform>().Scale);
         _cubemapGlobal.Use(_application.Skybox.Use(TextureSlotManager.GetUnit()));
 
-        _skybox.Use(
-            (state is EngineState.GenerateCubemapState ? _application.Skybox : currentCubemap.Get()).Use(
-                TextureSlotManager.GetUnit()));
-        _irradiance.Use(
-            (state is EngineState.GenerateCubemapState
-                ? _application.Skybox.Irradiance
-                : currentCubemap.GetIrradiance()).Use(TextureSlotManager.GetUnit()));
+        // In my head it makes more sense to use if instead of ternary operator
+        if (state is EngineState.GenerateCubemapState)
+        {
+            _skybox.Use(_application.Skybox.Use(TextureSlotManager.GetUnit()));
+            _irradiance.Use(_application.Skybox.Irradiance.Use(TextureSlotManager.GetUnit()));
+        }
+        else
+        {
+            _skybox.Use(currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
+            _irradiance.Use(currentCubemap.GetIrradiance().Use(TextureSlotManager.GetUnit()));
+        }
 
         _program.SetUniform("lightsCount", LightSystem.Components.Count);
         for (var index = 0; index < LightSystem.Components.Count; index++)
@@ -126,7 +131,7 @@ public class Material
 
         for (var index = 0; index < 10 - LightSystem.Components.Count; index++) // 10 is the max number of lights 
         {
-            int currentUnit = TextureSlotManager.GetUnit();
+            var currentUnit = TextureSlotManager.GetUnit();
             GL.ActiveTexture(TextureUnit.Texture0 + currentUnit);
             GL.BindTexture(TextureTarget.TextureCubeMap, 0);
             _program.SetUniform($"shadowMaps[{index + LightSystem.Components.Count}]", currentUnit);

@@ -94,12 +94,12 @@ public static class MapLoader
             {
                 var meshPath = ReadString(reader);
                 var matCount = reader.ReadInt32();
-                var matName = "nothing";
+                var matName = "";
                 for (var x = 0; x < matCount; x++) matName = ReadString(reader);
 
                 var loadedMesh = AssimpLoader.GetMeshFromFile(meshPath);
 
-                var mesh = new Entity(application, isStatic: !itemName.StartsWith("D_"));
+                var mesh = new Entity(application, itemName, !itemName.StartsWith("D_"));
                 mesh.AddComponent(transform);
                 mesh.AddComponent(new MaterialComponent(loadedMesh, FindMat(matName)));
                 mesh.AddComponent(new ModelRenderer(loadedMesh));

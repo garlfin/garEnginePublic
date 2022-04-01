@@ -21,17 +21,11 @@ public class ModelRenderer : Component
 
         var state = Owner.Application.State();
 
-        if (state is EngineState.RenderState)
+        if (state != EngineState.RenderPointShadowState && state != EngineState.RenderShadowState && state != EngineState.RenderDepthState)
         {
+            if (!Owner.IsStatic && state is not EngineState.RenderState) return;
             _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
-                DepthFunction.Equal, Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
-        }
-        else if (state is EngineState.GenerateCubemapState or EngineState.GenerateSkyboxState
-                 or EngineState.IterationCubemapState)
-        {
-            if (!Owner.IsStatic) return;
-            _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
-                DepthFunction.Less, Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
+               state is EngineState.RenderState ? DepthFunction.Equal : DepthFunction.Less, Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
         }
         else
         {
