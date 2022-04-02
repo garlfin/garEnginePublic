@@ -14,13 +14,15 @@ public class Shader
 
         string log = GL.GetShaderInfoLog(_id);
         if (!string.IsNullOrEmpty(log)) Console.WriteLine(log);
-
-        // Oopsie memory leak TODO
-        // Free assets when done.
     }
 
     public int Get()
     {
         return _id;
+    }
+
+    public void Delete()
+    {
+        GL.DeleteShader(_id);
     }
 }

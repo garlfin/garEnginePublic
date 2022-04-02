@@ -6,7 +6,7 @@ public class FrameBuffer : Asset
 {
     private readonly int _height;
     private readonly int _width;
-    public readonly int Fbo;
+    public int Fbo;
 
     public FrameBuffer(int width, int height)
     {
@@ -34,5 +34,6 @@ public class FrameBuffer : Asset
     {
         if (Fbo == -1) return;
         GL.DeleteFramebuffer(Fbo);
+        Fbo = -1;
     }
 }

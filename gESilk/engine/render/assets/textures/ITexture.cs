@@ -30,6 +30,7 @@ public abstract class Texture : Asset
     {
         if (Id == -1) return;
         GL.DeleteTexture(Id);
+        Id = -1;
     }
 
 

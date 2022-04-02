@@ -17,7 +17,7 @@ public static class AssetManager
     public static void Remove(Asset asset)
     {
         // This line may be very problematic. TODO
-        //asset.Delete();
+        asset.Delete();
         for (var index = 0; index < Assets.Count; index++)
         {
             var item = Assets[index];

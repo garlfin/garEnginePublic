@@ -6,7 +6,7 @@ namespace gESilk.engine.render.assets;
 
 public class ComputeProgram : Asset
 {
-    private readonly int _shaderId;
+    private int _shaderId;
 
     public ComputeProgram(string path)
     {
@@ -135,5 +135,6 @@ public class ComputeProgram : Asset
     {
         if (_shaderId == -1) return;
         GL.DeleteProgram(_shaderId);
+        _shaderId = -1;
     }
 }

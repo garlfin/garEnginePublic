@@ -4,7 +4,9 @@ namespace gESilk.engine.render.assets;
 
 public class RenderBuffer : Asset
 {
-    private readonly int _fbo, _width, _height, _rbo;
+    private int _fbo;
+    private readonly int _width, _height;
+    private int _rbo;
 
     public RenderBuffer(int width, int height)
     {
@@ -56,5 +58,6 @@ public class RenderBuffer : Asset
         if (_fbo == -1) return;
         GL.DeleteFramebuffer(_fbo);
         GL.DeleteRenderbuffer(_rbo);
+        _rbo = _fbo = -1;
     }
 }

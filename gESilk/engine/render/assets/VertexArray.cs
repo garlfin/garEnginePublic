@@ -11,7 +11,7 @@ public class VertexArray : Asset
     private readonly int _elementCount;
     private readonly int _nmvbo;
     private readonly int _tanvbo;
-    private readonly int _vao;
+    private int _vao;
     private readonly int _vbo;
     private readonly int _vtvbo;
 
@@ -80,5 +80,6 @@ public class VertexArray : Asset
         GL.DeleteBuffer(_nmvbo);
         GL.DeleteBuffer(_tanvbo);
         GL.DeleteBuffer(_vtvbo);
+        _vao = -1;
     }
 }
