@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace gESilk.engine.window;
 
@@ -141,7 +142,13 @@ public partial class Application
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.DepthTest);
 
-        if (_alreadyClosed) GL.Clear(ClearBufferMask.ColorBufferBit);
+        if (_window.IsKeyDown(Keys.Escape) && !_alreadyClosed)
+        {
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            _alreadyClosed = true;
+            OnClosing();
+            _window.Close();
+        }
 
         _window.SwapBuffers();
     }
