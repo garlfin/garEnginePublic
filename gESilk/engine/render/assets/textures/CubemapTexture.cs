@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using gESilk.engine.misc;
 using gESilk.engine.render.materialSystem;
+using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -150,6 +151,8 @@ public class CubemapTexture : Texture
 
     public override int Use(int slot)
     {
+        if (TextureSlotManager.IsSlotSame(slot, Id)) return slot;
+        TextureSlotManager.SetSlot(slot, Id);
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         return slot;

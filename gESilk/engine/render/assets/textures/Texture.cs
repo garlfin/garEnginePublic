@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using gESilk.engine.render.materialSystem.settings;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.render.assets.textures;
@@ -7,7 +8,8 @@ public abstract class Texture : Asset
 {
     protected PixelInternalFormat Format;
     protected int Id;
-    public int Width, Height;
+    protected int Width;
+    protected int Height;
 
     protected Texture()
     {
@@ -16,6 +18,8 @@ public abstract class Texture : Asset
 
     public virtual int Use(int slot)
     {
+        if (TextureSlotManager.IsSlotSame(slot, Id)) return slot;
+        TextureSlotManager.SetSlot(slot, Id);
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.Texture2D, Id);
         return slot;

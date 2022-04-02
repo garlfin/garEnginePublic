@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using gESilk.engine.misc;
+using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -39,6 +40,8 @@ public class EmptyCubemapTexture : Texture
 
     public override int Use(int slot)
     {
+        if (TextureSlotManager.IsSlotSame(slot, Id)) return slot;
+        TextureSlotManager.SetSlot(slot, Id);
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         return slot;
