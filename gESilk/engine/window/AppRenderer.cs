@@ -25,7 +25,7 @@ public partial class Application
     private Vector2i _bloomTexSize;
     private int _mips;
     private RenderBuffer _renderBuffer;
-    private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex;
+    private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex, _motionBlurTex;
     private RenderTexture _renderTexture;
     private FrameBuffer _postProcessingBuffer;
     private EngineState _state;
@@ -36,9 +36,7 @@ public partial class Application
     public RenderTexture BrdfLut;
     private ShaderProgram _irradianceCalculation, _specularCalculation, _pongProgram;
     public Mesh RenderPlaneMesh;
-    private ShaderProgram _framebufferShader;
-    private ShaderProgram _framebufferShaderSsao;
-    private ShaderProgram _blurShader;
+    private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _motionBlurShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
 
@@ -126,13 +124,25 @@ public partial class Application
         _blurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
         RenderPlaneMesh.Render();
 
+
         _framebufferShader.Use();
         _framebufferShader.SetUniform("screenTexture", _renderTexture.Use(0));
         _framebufferShader.SetUniform("ao", _blurTex.Use(1));
-        _framebufferShader.SetUniform("bloom", _bloomRTs[2].Use(2));
+        _framebufferShader.SetUniform("bloom", _bloomRTs[2].Use(3));
 
+        _motionBlurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
+        RenderPlaneMesh.Render();
+
+        _motionBlurShader.Use();
+        _motionBlurShader.SetUniform("colorTexture", _motionBlurTex.Use(0));
+        _motionBlurShader.SetUniform("positionTexture",
+            2); // I bound this not too long ago, might as well not bind it again.
+        _motionBlurShader.SetUniform("view", CameraSystem.CurrentCamera.View);
+        _motionBlurShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView.Inverted());
+        _motionBlurShader.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         RenderPlaneMesh.Render();
+
 
         foreach (var camera in CameraSystem.Components)
         {
@@ -300,7 +310,8 @@ public partial class Application
         _bloomProgram = new ComputeProgram("../../../resources/shader/bloom.glsl");
         _irradianceCalculation = new ShaderProgram("../../../resources/shader/irradiance.glsl");
         _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
-        _pongProgram = new ShaderProgram("../../../resources/shader/prefilterpong.glsl");
+        _pongProgram = new ShaderProgram("../../../resources/shader/texCopy.glsl");
+        _motionBlurShader = new ShaderProgram("../../../resources/shader/motionBlur.glsl");
 
 
         _renderBuffer = new RenderBuffer(_width, _height);
@@ -315,6 +326,9 @@ public partial class Application
         _renderNormal.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment1);
         _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
 
+        _motionBlurTex = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
+            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+
 
         _postProcessingBuffer = new FrameBuffer(_width, _height);
         _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
@@ -322,6 +336,7 @@ public partial class Application
 
         _blurTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);
+
 
         const int shadowSize = 1024 * 4;
         ShadowMap = new FrameBuffer(shadowSize, shadowSize);
