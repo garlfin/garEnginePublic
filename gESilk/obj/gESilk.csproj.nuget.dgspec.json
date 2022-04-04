@@ -42,29 +42,13 @@
               "target": "Package",
               "version": "[4.1.0, )"
             },
-            "ImGui.NET": {
-              "target": "Package",
-              "version": "[1.86.0, )"
-            },
             "OpenTK": {
-              "target": "Package",
-              "version": "[4.6.7, )"
-            },
-            "OpenTK.Mathematics": {
-              "target": "Package",
-              "version": "[4.6.7, )"
-            },
-            "OpenTK.Windowing.Desktop": {
               "target": "Package",
               "version": "[4.6.7, )"
             },
             "SharpEXR": {
               "target": "Package",
               "version": "[1.0.0.19, )"
-            },
-            "SharpFont": {
-              "target": "Package",
-              "version": "[4.0.1, )"
             },
             "System.Drawing.Common": {
               "target": "Package",

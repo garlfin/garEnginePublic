@@ -9,14 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AssimpNet" Version="4.1.0"/>
-        <PackageReference Include="ImGui.NET" Version="1.86.0"/>
-        <PackageReference Include="OpenTK" Version="4.6.7"/>
-        <PackageReference Include="OpenTK.Mathematics" Version="4.6.7"/>
-        <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.6.7"/>
-        <PackageReference Include="SharpEXR" Version="1.0.0.19"/>
-        <PackageReference Include="SharpFont" Version="4.0.1"/>
-        <PackageReference Include="System.Drawing.Common" Version="6.0.0"/>
+        <PackageReference Include="AssimpNet" Version="4.1.0" />
+        <PackageReference Include="OpenTK" Version="4.6.7" />
+        <PackageReference Include="SharpEXR" Version="1.0.0.19" />
+        <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -47,9 +43,9 @@
         <None Update="resources\texture\sponza_column_a_diff.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Remove="resources\maps\assets\Plane.001.fbx"/>
-        <None Remove="resources\maps\assets\Plane.fbx"/>
-        <None Remove="resources\maps\assets\D_Sphere.fbx"/>
+        <None Remove="resources\maps\assets\Plane.001.fbx" />
+        <None Remove="resources\maps\assets\Plane.fbx" />
+        <None Remove="resources\maps\assets\D_Sphere.fbx" />
     </ItemGroup>
 
     <ItemGroup>
@@ -59,13 +55,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="engine\misc\Debug.cs"/>
-        <Compile Include="engine\misc\debug.cs"/>
+        <Compile Remove="engine\misc\Debug.cs" />
+        <Compile Include="engine\misc\debug.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="cubemap"/>
-        <Folder Include="resources\maps\assets"/>
+        <Folder Include="cubemap" />
+        <Folder Include="resources\maps\assets" />
     </ItemGroup>
 
 </Project>

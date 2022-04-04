@@ -12,7 +12,4 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\scion\.nuget\packages\" />
   </ItemGroup>
-  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)sharpfont\4.0.1\build\SharpFont.props" Condition="Exists('$(NuGetPackageRoot)sharpfont\4.0.1\build\SharpFont.props')" />
-  </ImportGroup>
 </Project>
