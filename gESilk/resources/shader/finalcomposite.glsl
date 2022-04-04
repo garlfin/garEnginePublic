@@ -38,7 +38,7 @@ void main()
     vec3 ScreenTex = texture(screenTexture, TexCoord).rgb;
 
     float aoData = texture(ao, TexCoord).r;
-    vec3 hdrColor = ScreenTex * aoData + (texture(bloom, TexCoord).rgb * bloomIntensity);
+    vec3 hdrColor = ScreenTex + (texture(bloom, TexCoord).rgb * bloomIntensity) * aoData;
 
     // exposure tone mapping
     vec3 mapped = vec3(1.0) - exp(-hdrColor);
