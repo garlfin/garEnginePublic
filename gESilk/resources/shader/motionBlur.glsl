@@ -17,6 +17,8 @@ uniform mat4 prevView;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform int doBlur;
+
 out vec4 fragColor;
 
 void main() {
@@ -26,6 +28,9 @@ void main() {
     vec2 texCoord = gl_FragCoord.xy / texSize;
 
     fragColor = texture(colorTexture, texCoord);
+    
+    if (doBlur == 0) return;
+    
     vec4 prevPos = vec4(texture(positionTexture, texCoord).rgb, 1.0);
 
     vec4 currentPos = view * prevView * prevPos;

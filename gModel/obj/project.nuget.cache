@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "T1e9I5gWUxVZl6H5Z/55zKinuFqDixl2sIuVc5PMzhACs/BO7ZCTm04aKXHAnWjP3tapaSDDSgKTmWOiyuGNsQ==",
+  "dgSpecHash": "5RugOYLYhmBrlXDbFl1aiZ/eqqS98TJzdXf3r/0jAObIkxk4QywGtcZBNqKOaJMPEev+1JkkuAjwIr3YLJdUxA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gModel\\gModel.csproj",
+  "projectFilePath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gModel\\gModel.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\imgui.net\\1.86.0\\imgui.net.1.86.0.nupkg.sha512",

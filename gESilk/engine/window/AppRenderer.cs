@@ -19,7 +19,7 @@ public partial class Application
     private readonly BloomSettings _bloomSettings = new();
     private readonly int _width, _height, _mBloomComputeWorkGroupSize;
     private readonly GameWindow _window;
-    private readonly HashSet<string> _openGlExtensions = new();
+    private string[] _openGlExtensions;
     private bool _alreadyClosed;
     private ComputeProgram _bloomProgram;
     private Vector2i _bloomTexSize;
@@ -39,6 +39,7 @@ public partial class Application
     private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _motionBlurShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
+    private bool _doMotionBlur;
 
     public Application(int width, int height, string name)
     {
@@ -107,10 +108,9 @@ public partial class Application
         GL.Disable(EnableCap.DepthTest);
 
         _framebufferShaderSsao.Use();
-        _framebufferShaderSsao.SetUniform("screenTexture", _renderTexture.Use(0));
-        _framebufferShaderSsao.SetUniform("screenTextureNormal", _renderNormal.Use(1));
-        _framebufferShaderSsao.SetUniform("screenTexturePos", _renderPos.Use(2));
-        _framebufferShaderSsao.SetUniform("NoiseTex", _noiseTexture.Use(3));
+        _renderNormal.Use(1);
+        _renderPos.Use(2);
+        _noiseTexture.Use(3);
         _framebufferShaderSsao.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
         for (var i = 0; i < _data.Length; i++) _framebufferShaderSsao.SetUniform($"Samples[{i}]", _data[i]);
 
@@ -119,24 +119,23 @@ public partial class Application
         RenderPlaneMesh.Render();
 
         _blurShader.Use();
-        _blurShader.SetUniform("ssaoInput", _ssaoTex.Use(0));
+        _ssaoTex.Use(0);
 
         _blurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
         RenderPlaneMesh.Render();
 
 
         _framebufferShader.Use();
-        _framebufferShader.SetUniform("screenTexture", _renderTexture.Use(0));
-        _framebufferShader.SetUniform("ao", _blurTex.Use(1));
-        _framebufferShader.SetUniform("bloom", _bloomRTs[2].Use(3));
+        _renderTexture.Use(0);
+        _blurTex.Use(1);
+        _bloomRTs[2].Use(3);
+        
 
         _motionBlurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
         RenderPlaneMesh.Render();
 
         _motionBlurShader.Use();
-        _motionBlurShader.SetUniform("colorTexture", _motionBlurTex.Use(0));
-        _motionBlurShader.SetUniform("positionTexture",
-            2); // I bound this not too long ago, might as well not bind it again.
+        _motionBlurTex.Use(0);
         _motionBlurShader.SetUniform("view", CameraSystem.CurrentCamera.View);
         _motionBlurShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView.Inverted());
         _motionBlurShader.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
@@ -343,15 +342,29 @@ public partial class Application
         ShadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
             PixelFormat.DepthComponent, PixelType.Float, true);
         ShadowTex.BindToBuffer(ShadowMap, FramebufferAttachment.DepthAttachment, true);
+        
+        _framebufferShaderSsao.SetUniform("screenTextureNormal", 1);
+        _framebufferShaderSsao.SetUniform("screenTexturePos", 2);
+        _framebufferShaderSsao.SetUniform("NoiseTex", 3);
+        
+        _framebufferShader.SetUniform("screenTexture", 0);
+        _framebufferShader.SetUniform("ao", 1);
+        _framebufferShader.SetUniform("bloom", 3);
+        
+        _blurShader.SetUniform("ssaoInput", 0);
+        
+        _motionBlurShader.SetUniform("colorTexture", 0);
+        _motionBlurShader.SetUniform("doBlur", _doMotionBlur ? 1 : 0);
     }
 
     private void LoadExtensions()
     {
         var count = GL.GetInteger(GetPName.NumExtensions);
+        _openGlExtensions = new String[count];
         for (var i = 0; i < count; i++)
         {
             var extension = GL.GetString(StringNameIndexed.Extensions, i);
-            _openGlExtensions.Add(extension);
+            _openGlExtensions[i] = extension;
         }
     }
 
@@ -388,6 +401,16 @@ public partial class Application
     public ShaderProgram GetPongProgram()
     {
         return _pongProgram;
+    }
+
+    public void SetMotionBlur(bool blur)
+    {
+        _doMotionBlur = blur;
+    }
+
+    public bool GetMotionBlur()
+    {
+        return _doMotionBlur;
     }
 
     public void Run()
