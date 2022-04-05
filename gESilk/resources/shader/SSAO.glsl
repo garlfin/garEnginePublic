@@ -34,7 +34,7 @@ void main()
 
     vec2 texSize = vec2(1280, 720);
     vec4 fragPosWA = texture(screenTexturePos, TexCoord);
-    vec3 fragPos = fragPosWA.rgb;
+    vec3 fragPos = fragPosWA.rgb * (fragPosWA.a * 1000 + 1);
     vec4 normalWA = texture(screenTextureNormal, TexCoord);
     vec3 normal = normalWA.rgb;
     vec3 randomVec = texture(NoiseTex, TexCoord * NoiseScale).xyz;
