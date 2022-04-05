@@ -306,15 +306,15 @@ void main()
         float distance = length(lights[i].Position - FragPos);
         float num = clamp(1-pow(distance/(lights[i].intensity), 4), 0, 1);
         float attenuation = (num*num)/((distance*distance)+1+lights[i].radius);
-   
+
         vec3 radiance = lights[i].Color * lights[i].intensity * attenuation;
 
         float pointShadow = 1 - ShadowCalculation(lights[i], shadowMaps[i], maplessNormal, viewPos);
-        albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, pointShadow, albedoCopy, lights[i].radius) * radiance,0,lights[i].intensity);
-       
+        albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, pointShadow, albedoCopy, lights[i].radius) * radiance, 0, lights[i].intensity);
+
     }
- 
+
     FragColor = vec4(albedoSample, 1.0);
-    FragLoc = vec4(viewFragPos, metallic);
-    FragNormal = vec4(viewNormal, dot(normalize(maplessNormal), viewDir));
+    FragLoc = vec4(viewFragPos, 0.0);
+    FragNormal = vec4(viewNormal, metallic);
 }

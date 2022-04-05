@@ -34,8 +34,9 @@ void main()
 
     vec2 texSize = vec2(1280, 720);
     vec4 fragPosWA = texture(screenTexturePos, TexCoord);
-    vec3 fragPos = fragPosWA.xyz;
-    vec3 normal = texture(screenTextureNormal, TexCoord).rgb;
+    vec3 fragPos = fragPosWA.rgb;
+    vec4 normalWA = texture(screenTextureNormal, TexCoord);
+    vec3 normal = normalWA.rgb;
     vec3 randomVec = texture(NoiseTex, TexCoord * NoiseScale).xyz;
     vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
     vec3 bitangent = cross(normal, tangent);
@@ -43,20 +44,19 @@ void main()
 
     float occlusion = 0.0;
 
-
-
     for (int i = 0; i < 64; i++)
     {
         vec3 Sample= Samples[i];
-        Sample= TBN * Sample;
-        Sample= fragPos + Sample* SSAORadius;
+        Sample = TBN * Sample;
+        Sample = fragPos + Sample * SSAORadius;
 
         vec4 offset = vec4(Sample, 1.0);
         offset = offset * projection;
         offset.xyz /= offset.w;
         offset.xyz  = offset.xyz * 0.5 + 0.5;
 
-        float sampleDepth = texture(screenTexturePos, offset.xy).z;
+        vec4 sampleDepthWA = texture(screenTexturePos, offset.xy);
+        float sampleDepth = sampleDepthWA.z * (sampleDepthWA.a * 1000 + 1);
 
         float rangeCheck = smoothstep(0.0, 1.0, SSAORadius / abs(fragPos.z - sampleDepth));
 
@@ -64,7 +64,7 @@ void main()
     }
     occlusion = 1.0 - (occlusion / kernelSize);
 
-    occlusion = mix(occlusion, 1, fragPosWA.w);
+    occlusion = mix(occlusion, 1, normalWA.w);
 
     FragColor = occlusion;
 }
