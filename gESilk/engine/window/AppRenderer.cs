@@ -25,7 +25,7 @@ public partial class Application
     private Vector2i _bloomTexSize;
     private int _mips;
     private RenderBuffer _renderBuffer;
-    private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex, _motionBlurTex;
+    private RenderTexture _renderNormal, _renderPos, _ssaoTex, _blurTex, _abCompTex, _fxaaCompTex;
     private RenderTexture _renderTexture;
     private FrameBuffer _postProcessingBuffer;
     private EngineState _state;
@@ -36,7 +36,7 @@ public partial class Application
     public RenderTexture BrdfLut;
     private ShaderProgram _irradianceCalculation, _specularCalculation, _pongProgram;
     public Mesh RenderPlaneMesh;
-    private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _fxaaShader;
+    private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _fxaaShader, _mbShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
 
@@ -128,13 +128,21 @@ public partial class Application
         _renderTexture.Use(0);
         _blurTex.Use(1);
         _bloomRTs[2].Use(3);
-        
 
-        _motionBlurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
+
+        _abCompTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
         RenderPlaneMesh.Render();
 
         _fxaaShader.Use();
-        _motionBlurTex.Use(0);
+        _abCompTex.Use(0);
+        _fxaaCompTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
+        RenderPlaneMesh.Render();
+
+        _mbShader.Use();
+        _fxaaCompTex.Use(0);
+        _mbShader.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
+        _mbShader.SetUniform("view", CameraSystem.CurrentCamera.View.Inverted());
+        _mbShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         RenderPlaneMesh.Render();
 
@@ -307,22 +315,25 @@ public partial class Application
         _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
         _pongProgram = new ShaderProgram("../../../resources/shader/texCopy.glsl");
         _fxaaShader = new ShaderProgram("../../../resources/shader/fxaa.glsl");
+        _mbShader = new ShaderProgram("../../../resources/shader/motionBlur.glsl");
 
 
         _renderBuffer = new RenderBuffer(_width, _height);
 
         _renderTexture = new RenderTexture(_width, _height);
         _renderNormal = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
-            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            PixelType.Float, false, TextureWrapMode.ClampToEdge);
         _renderPos = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
-            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            PixelType.Float, false, TextureWrapMode.ClampToEdge);
 
         _renderTexture.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0);
         _renderNormal.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment1);
         _renderPos.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment2);
 
-        _motionBlurTex = new RenderTexture(_width, _height, PixelInternalFormat.Rgba16f, PixelFormat.Rgba,
-            PixelType.Float, false, TextureWrapMode.ClampToEdge, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+        _abCompTex = new RenderTexture(_width, _height, PixelInternalFormat.Rgba8, PixelFormat.Rgba,
+            PixelType.UnsignedByte, false, TextureWrapMode.ClampToEdge);
+        _fxaaCompTex = new RenderTexture(_width, _height, PixelInternalFormat.Rgba8, PixelFormat.Rgba,
+            PixelType.UnsignedByte, false, TextureWrapMode.ClampToEdge);
 
 
         _postProcessingBuffer = new FrameBuffer(_width, _height);
@@ -338,18 +349,23 @@ public partial class Application
         ShadowTex = new RenderTexture(shadowSize, shadowSize, PixelInternalFormat.DepthComponent,
             PixelFormat.DepthComponent, PixelType.Float, true);
         ShadowTex.BindToBuffer(ShadowMap, FramebufferAttachment.DepthAttachment, true);
-        
+
         _framebufferShaderSsao.SetUniform("screenTextureNormal", 1);
         _framebufferShaderSsao.SetUniform("screenTexturePos", 2);
         _framebufferShaderSsao.SetUniform("NoiseTex", 3);
-        
+
         _framebufferShader.SetUniform("screenTexture", 0);
         _framebufferShader.SetUniform("ao", 1);
         _framebufferShader.SetUniform("bloom", 3);
-        
+
         _blurShader.SetUniform("ssaoInput", 0);
-        
+
         _fxaaShader.SetUniform("tex", 0);
+
+        _mbShader.SetUniform("doBlur",
+            MotionBlur ? 1 : 0); // Ok now why cant you cast a bool to an int in c# that just makes 0 sense
+        _mbShader.SetUniform("positionTexture", 2);
+        _mbShader.SetUniform("colorTexture", 0);
     }
 
     private void LoadExtensions()
@@ -383,6 +399,7 @@ public partial class Application
     public ShaderProgram PongProgram => _pongProgram;
 
     public bool MotionBlur { get; set; }
+
     public void Run()
     {
         _window.Load += OnLoad;

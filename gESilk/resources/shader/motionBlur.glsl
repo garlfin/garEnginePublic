@@ -30,16 +30,18 @@ void main() {
     fragColor = texture(colorTexture, texCoord);
     
     if (doBlur == 0) return;
-    
+
     vec4 prevPos = vec4(texture(positionTexture, texCoord).rgb, 1.0);
 
     vec4 currentPos = view * prevView * prevPos;
     currentPos = projection * currentPos;
     currentPos /= currentPos.w;
+    currentPos = currentPos * 0.5 + 0.5;
 
     prevPos = projection * prevPos;
     prevPos /= prevPos.w;
-    vec2 direction = (prevPos.xy - currentPos.xy) * 0.025;
+    prevPos = prevPos * 0.5 + 0.5;// Naming error: should be the opposite too lazy to fix...
+    vec2 direction = (prevPos.xy - currentPos.xy) / samples * 0.1;
 
     if (length(direction) <= 0.0) return;
     for (int i = 0; i < samples; ++i, texCoord -= direction) fragColor += texture(colorTexture, texCoord);
