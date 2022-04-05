@@ -36,7 +36,7 @@ public partial class Application
     public RenderTexture BrdfLut;
     private ShaderProgram _irradianceCalculation, _specularCalculation, _pongProgram;
     public Mesh RenderPlaneMesh;
-    private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _motionBlurShader;
+    private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _fxaaShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
     private bool _doMotionBlur;
@@ -134,11 +134,8 @@ public partial class Application
         _motionBlurTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
         RenderPlaneMesh.Render();
 
-        _motionBlurShader.Use();
+        _fxaaShader.Use();
         _motionBlurTex.Use(0);
-        _motionBlurShader.SetUniform("view", CameraSystem.CurrentCamera.View);
-        _motionBlurShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView.Inverted());
-        _motionBlurShader.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         RenderPlaneMesh.Render();
 
@@ -310,7 +307,7 @@ public partial class Application
         _irradianceCalculation = new ShaderProgram("../../../resources/shader/irradiance.glsl");
         _specularCalculation = new ShaderProgram("../../../resources/shader/prefilter.glsl");
         _pongProgram = new ShaderProgram("../../../resources/shader/texCopy.glsl");
-        _motionBlurShader = new ShaderProgram("../../../resources/shader/motionBlur.glsl");
+        _fxaaShader = new ShaderProgram("../../../resources/shader/fxaa.glsl");
 
 
         _renderBuffer = new RenderBuffer(_width, _height);
@@ -353,8 +350,7 @@ public partial class Application
         
         _blurShader.SetUniform("ssaoInput", 0);
         
-        _motionBlurShader.SetUniform("colorTexture", 0);
-        _motionBlurShader.SetUniform("doBlur", _doMotionBlur ? 1 : 0);
+        _fxaaShader.SetUniform("tex", 0);
     }
 
     private void LoadExtensions()

@@ -25,13 +25,7 @@ const float exposure = 0.8;
 uniform sampler2D screenTexture;
 uniform sampler2D ao;
 uniform sampler2D bloom;
-uniform float bloomIntensity = 0.8;
-
-const vec2 u_texelStep = vec2(1.0/1280, 1.0/720);
-
-const float u_mulReduce = 9.0;
-const float u_minReduce = 128.0;
-const float u_maxSpan = 8.0;
+uniform float bloomIntensity = 1;
 
 void main()
 {
