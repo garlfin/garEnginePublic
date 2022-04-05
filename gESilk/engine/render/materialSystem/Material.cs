@@ -72,7 +72,7 @@ public class Material
         GL.DepthFunc(function ?? _function);
         if (doCull) GL.CullFace(_cullFaceMode); else GL.Disable(EnableCap.CullFace);
 
-        var state = _application.State();
+        var state = _application.AppState;
 
         _model.Use(model);
         if (state is EngineState.RenderShadowState or EngineState.RenderPointShadowState)
@@ -138,7 +138,7 @@ public class Material
         }
         // Fill in the rest of the slots with empty textures cause opengl was crying about it
 
-        _program.SetUniform("stage", (int)_application.State());
+        _program.SetUniform("stage", (int)_application.AppState);
         _brdfLUT.Use(_application.BrdfLut.Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
     }

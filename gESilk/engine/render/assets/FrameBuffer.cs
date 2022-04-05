@@ -6,7 +6,7 @@ public class FrameBuffer : Asset
 {
     private readonly int _height;
     private readonly int _width;
-    public int Fbo;
+    public int Fbo { get; private set; }
 
     public FrameBuffer(int width, int height)
     {

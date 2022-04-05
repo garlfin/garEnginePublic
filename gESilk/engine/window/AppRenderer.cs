@@ -39,7 +39,6 @@ public partial class Application
     private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _fxaaShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
-    private bool _doMotionBlur;
 
     public Application(int width, int height, string name)
     {
@@ -369,46 +368,21 @@ public partial class Application
         return _openGlExtensions.Contains(name);
     }
 
-    public GameWindow GetWindow()
+    public GameWindow Window => _window;
+
+    public EngineState AppState
     {
-        return _window;
+        get => _state;
+        set => _state = value;
     }
 
-    public EngineState State()
-    {
-        return _state;
-    }
+    public ShaderProgram IrradianceProgram => _irradianceCalculation;
 
-    public void State(EngineState state)
-    {
-        _state = state;
-    }
+    public ShaderProgram SpecularProgram => _specularCalculation;
 
-    public ShaderProgram GetIrradianceProgram()
-    {
-        return _irradianceCalculation;
-    }
+    public ShaderProgram PongProgram => _pongProgram;
 
-    public ShaderProgram GetSpecularProgram()
-    {
-        return _specularCalculation;
-    }
-
-    public ShaderProgram GetPongProgram()
-    {
-        return _pongProgram;
-    }
-
-    public void SetMotionBlur(bool blur)
-    {
-        _doMotionBlur = blur;
-    }
-
-    public bool GetMotionBlur()
-    {
-        return _doMotionBlur;
-    }
-
+    public bool MotionBlur { get; set; }
     public void Run()
     {
         _window.Load += OnLoad;

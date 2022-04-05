@@ -71,8 +71,8 @@ public class EmptyCubemapTexture : Texture
         RenderBuffer buffer = new RenderBuffer(Width, Height);
         buffer.Bind();
 
-        var program = application.GetSpecularProgram();
-        var pongProgram = application.GetPongProgram();
+        var program = application.SpecularProgram;
+        var pongProgram = application.PongProgram;
 
 
         program.SetUniform("environmentMap", Use(0));

@@ -19,7 +19,7 @@ public class ModelRenderer : Component
     {
         var modelTransform = Owner.GetComponent<Transform>();
 
-        var state = Owner.Application.State();
+        var state = Owner.Application.AppState;
 
         if (state != EngineState.RenderPointShadowState && state != EngineState.RenderShadowState && state != EngineState.RenderDepthState)
         {

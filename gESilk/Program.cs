@@ -4,7 +4,7 @@ namespace gESilk;
 
 public static class Program
 {
-    public static Application? MainWindow;
+    public static Application? MainWindow { get; private set; }
 
     private static void Main(string[] args)
     {
@@ -14,7 +14,7 @@ public static class Program
         }
 
         MainWindow = new Application(1280, 720, "gE2");
-        MainWindow.SetMotionBlur(!args.Contains("-noblur"));
+        MainWindow.MotionBlur = !args.Contains("-noblur");
         MainWindow.Run();
     }
 }

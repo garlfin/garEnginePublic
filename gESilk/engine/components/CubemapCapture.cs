@@ -30,7 +30,7 @@ public class CubemapCapture : BaseCamera
 
     public Texture Get()
     {
-        return Owner.Application.State() is EngineState.IterationCubemapState
+        return Owner.Application.AppState is EngineState.IterationCubemapState
             ? _texture
             : _texturePong; // texturePong is the 2nd iteration
     }
@@ -38,7 +38,7 @@ public class CubemapCapture : BaseCamera
 
     public Texture GetIrradiance()
     {
-        return Owner.Application.State() is EngineState.IterationCubemapState
+        return Owner.Application.AppState is EngineState.IterationCubemapState
             ? _irradiance
             : _irradiancePong; // irradiancePong is the 2nd iteration
     }
@@ -61,24 +61,24 @@ public class CubemapCapture : BaseCamera
     {
         var camera = CameraSystem.CurrentCamera;
 
-        EngineState previousState = Owner.Application.State();
+        EngineState previousState = Owner.Application.AppState;
 
         _camera.Position = Owner.GetComponent<Transform>().Location;
         _camera.Fov = 90;
         Set();
 
         LightSystem.UpdateShadow();
-        Owner.Application.State(EngineState.RenderShadowState);
+        Owner.Application.AppState = EngineState.RenderShadowState;
         Owner.Application.ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(0f);
 
-        Owner.Application.State(previousState);
+        Owner.Application.AppState = previousState;
 
         _mainRenderBuffer.Bind(null);
 
         var entityTransform = Owner.GetComponent<Transform>();
 
-        var currentTex = Owner.Application.State() is EngineState.GenerateCubemapState
+        var currentTex = Owner.Application.AppState is EngineState.GenerateCubemapState
             ? _texture
             : _texturePong;
 
@@ -110,17 +110,17 @@ public class CubemapCapture : BaseCamera
 
         _renderBuffer.Bind(null);
 
-        var program = Owner.Application.GetIrradianceProgram();
+        var program = Owner.Application.IrradianceProgram;
 
         program.Use();
         program.SetUniform("environmentMap",
-            (Owner.Application.State() is EngineState.GenerateCubemapState ? _texture : _texturePong).Use(0));
+            (Owner.Application.AppState is EngineState.GenerateCubemapState ? _texture : _texturePong).Use(0));
         program.SetUniform("model", Matrix4.Identity);
         program.SetUniform("projection",
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
 
 
-        currentTex = Owner.Application.State() is EngineState.GenerateCubemapState ? _irradiance : _irradiancePong;
+        currentTex = Owner.Application.AppState is EngineState.GenerateCubemapState ? _irradiance : _irradiancePong;
 
         for (var i = 0; i < 6; i++)
         {

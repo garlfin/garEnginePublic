@@ -21,7 +21,7 @@ public class MovementBehavior : Behavior
         var entityTransform = Owner.GetComponent<Transform>();
         var camera = Owner.GetComponent<Camera>().GetBasicCamera();
 
-        var input = Owner.Application.GetWindow().KeyboardState.GetSnapshot();
+        var input = Owner.Application.Window.KeyboardState.GetSnapshot();
         if (input.IsKeyDown(Keys.W)) entityTransform.Location += camera.Front * _cameraSpeed * gameTime; // Forward
         if (input.IsKeyDown(Keys.S)) entityTransform.Location -= camera.Front * _cameraSpeed * gameTime; // Backwards
         if (input.IsKeyDown(Keys.A)) entityTransform.Location -= camera.Right * (_cameraSpeed / 2) * gameTime; // Left

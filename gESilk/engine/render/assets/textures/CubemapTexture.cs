@@ -115,7 +115,7 @@ public class CubemapTexture : Texture
         renderBuffer = new RenderBuffer(32, 32);
         renderBuffer.Bind();
 
-        program = application.GetIrradianceProgram();
+        program = application.IrradianceProgram;
 
         Irradiance = new EmptyCubemapTexture(32, false);
 
@@ -176,8 +176,8 @@ public class CubemapTexture : Texture
         RenderBuffer buffer = new RenderBuffer(512, 512);
         buffer.Bind();
 
-        var program = _application.GetSpecularProgram();
-        var pongProgram = _application.GetPongProgram();
+        var program = _application.SpecularProgram;
+        var pongProgram = _application.PongProgram;
 
 
         program.SetUniform("environmentMap", Use(0));
