@@ -72,7 +72,6 @@ uniform samplerCube irradianceTex;
 uniform cubemapSample localCubemap;
 
 #define MAX_LIGHTS 10
-
 uniform pointLight lights[MAX_LIGHTS];
 
 in vec3 FragPos;
@@ -204,7 +203,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
             visibility += texture(shadowMap, vec3(projCoords.xy+vec2(x, y)*texelSize, currentDepth - bias));
         }
     }
-    visibility /= totalTexels;
+    visibility /= totalTexels; 
     if (projCoords.z > 1.0) visibility = 1;
 
     return visibility;
@@ -293,10 +292,16 @@ void main()
     skyboxSampler = skyboxSampler * (fresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness) * envBRDF.x + envBRDF.y);
 
 
-    vec4 irradianceSample = texture(localCubemap.irradiance, normal.rgb);
-    //irradianceSample = vec4(mix(irradianceSample.rgb, texture(irradianceTex, normal).rgb, cubemapUV.a),1);
+    vec3 irradianceSample = vec3(0);
 
-    albedoSample *= irradianceSample.rgb;
+    vec3 cubemapFragPos = (localCubemap.Position - FragPos) / (localCubemap.Scale * 1.25);
+    float distance = max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z));
+    float num = clamp(1-pow(distance, 4), 0, 1);
+    float attenuation = min((num*num)/((distance*distance)+1), 1);
+    
+    irradianceSample += texture(localCubemap.irradiance, normal.rgb).rgb * attenuation;
+    
+    albedoSample *= irradianceSample;
 
     albedoSample = ((1-metallic) * albedoSample + skyboxSampler) * ao;
 
@@ -317,7 +322,8 @@ void main()
 
     }
 
-    FragColor = vec4(albedoSample, 1.0);
+    //if (stage == 0) albedoSample = irradianceSample.rgb;
+    FragColor = vec4(vec3(attenuation), 1.0);
     FragLoc = vec4(viewFragPos, 0.0);
     FragNormal = vec4(viewNormal, metallic);
 }

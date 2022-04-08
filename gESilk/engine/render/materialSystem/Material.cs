@@ -99,8 +99,8 @@ public class Material
         _lightProj.Use(LightSystem.ShadowProjection);
         _lightView.Use(LightSystem.ShadowView);
         _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
-        
-        var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
+
+        var currentCubemap = CubemapCaptureManager.Components[0];//cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
         _cubemapLoc.Use(currentCubemap.Owner.GetComponent<Transform>().Location);
         _cubemapScale.Use(currentCubemap.Owner.GetComponent<Transform>().Scale);
@@ -117,8 +117,9 @@ public class Material
             _skybox.Use(currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
             _irradiance.Use(currentCubemap.GetIrradiance().Use(TextureSlotManager.GetUnit()));
         }
-
+ 
         _program.SetUniform("lightsCount", LightSystem.Components.Count);
+        var currentUnit = TextureSlotManager.GetUnit();
         for (var index = 0; index < 10; index++) // 10 lights is max
         {
             if (index < LightSystem.Components.Count)
@@ -130,6 +131,7 @@ public class Material
                 _program.SetUniform($"lights[{index}].radius", light.Radius);
                 _program.SetUniform($"lights[{index}].shadowMap",
                     light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
+                currentUnit = TextureSlotManager.GetUnit();
             }
             else // Fill in the rest of the slots with empty textures cause opengl was crying about it
             {
@@ -137,7 +139,6 @@ public class Material
                 _program.SetUniform($"lights[{index}].Position", Vector3.Zero);
                 _program.SetUniform($"lights[{index}].intensity", 1f);
                 _program.SetUniform($"lights[{index}].radius", 1f);
-                var currentUnit = TextureSlotManager.GetUnit();
                 GL.ActiveTexture(TextureUnit.Texture0 + currentUnit);
                 GL.BindTexture(TextureTarget.TextureCubeMap, 0);
                 _program.SetUniform($"lights[{index}].shadowMap", currentUnit);
