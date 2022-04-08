@@ -169,8 +169,9 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
 
     public static CubemapCapture GetNearest(Vector3 currentLocation)
     {
-        foreach (var item in Components)
+        for (var i = 0; i < Components.Count; i++)
         {
+            var item = Components[i];
             var itemTransform = item.Owner.GetComponent<Transform>();
             if (IsInBounds(itemTransform.Location - itemTransform.Scale, itemTransform.Location + itemTransform.Scale,
                     currentLocation)) return item;
@@ -179,8 +180,9 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
         var nearest = Components[0];
         var minDistance = Vector3.Distance(Components[0].Owner.GetComponent<Transform>().Location, currentLocation);
 
-        foreach (var item in Components)
+        for (var i = 0; i < Components.Count; i++)
         {
+            var item = Components[i];
             var distance = Vector3.Distance(item.Owner.GetComponent<Transform>().Location, currentLocation);
             if (!(distance <= minDistance)) continue;
             nearest = item;

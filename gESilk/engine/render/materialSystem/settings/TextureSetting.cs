@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.render.assets.textures;
+using OpenTK.Graphics.OpenGL4;
 
 namespace gESilk.engine.render.materialSystem.settings;
 
@@ -26,10 +27,10 @@ public static class TextureSlotManager
 
     static TextureSlotManager()
     {
-        Pairs = new int[20];
-        for (int i = 0; i < 20; i++)
+        Pairs = new int[GL.GetInteger(GetPName.MaxCombinedTextureImageUnits)];
+        for (int i = 0; i < Pairs.Length; i++)
         {
-            Pairs[i] = i;
+            Pairs[i] = -1;
         }
     }
 

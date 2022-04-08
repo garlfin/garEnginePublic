@@ -70,7 +70,8 @@ public class Material
 
         // Various Setup
         GL.DepthFunc(function ?? _function);
-        if (doCull) GL.CullFace(_cullFaceMode); else GL.Disable(EnableCap.CullFace);
+        if (doCull) GL.CullFace(_cullFaceMode);
+        else GL.Disable(EnableCap.CullFace);
 
         var state = _application.AppState;
 
@@ -91,7 +92,7 @@ public class Material
 
         // Point lights need this information too
         _lightPos.Use(LightSystem.CurrentLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
-        
+
         if (state is EngineState.RenderDepthState or EngineState.RenderShadowState
             or EngineState.RenderLinearShadowState) return;
 
@@ -100,7 +101,7 @@ public class Material
         _lightView.Use(LightSystem.ShadowView);
         _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
 
-        var currentCubemap = CubemapCaptureManager.Components[0];//cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
+        var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
         _cubemapLoc.Use(currentCubemap.Owner.GetComponent<Transform>().Location);
         _cubemapScale.Use(currentCubemap.Owner.GetComponent<Transform>().Scale);
@@ -117,7 +118,7 @@ public class Material
             _skybox.Use(currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
             _irradiance.Use(currentCubemap.GetIrradiance().Use(TextureSlotManager.GetUnit()));
         }
- 
+
         _program.SetUniform("lightsCount", LightSystem.Components.Count);
         var currentUnit = TextureSlotManager.GetUnit();
         for (var index = 0; index < 10; index++) // 10 lights is max
@@ -144,6 +145,16 @@ public class Material
                 _program.SetUniform($"lights[{index}].shadowMap", currentUnit);
             }
         }
+
+        for (int i = 0; i < 5; i++)
+        {
+            currentCubemap = CubemapCaptureManager.Components[i];
+            _program.SetUniform($"irradiances[{i}].Position", currentCubemap.Owner.GetComponent<Transform>().Location);
+            _program.SetUniform($"irradiances[{i}].Scale", currentCubemap.Owner.GetComponent<Transform>().Scale);
+            _program.SetUniform($"irradiances[{i}].irradiance",
+                currentCubemap.GetIrradiance().Use(TextureSlotManager.GetUnit()));
+        }
+
         _program.SetUniform("stage", (int)_application.AppState);
         _brdfLUT.Use(_application.BrdfLut.Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);

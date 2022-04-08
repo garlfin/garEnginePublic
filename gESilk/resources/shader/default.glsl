@@ -44,13 +44,19 @@ struct pointLight {
     vec3 Color;
     float intensity;
     float radius;
-        samplerCube shadowMap;
+    samplerCube shadowMap;
 };
 
 struct cubemapSample {
     vec3 Position;
     vec3 Scale;
     samplerCube cubemap;
+    samplerCube irradiance;
+};
+
+struct irradianceSample {
+    vec3 Position;
+    vec3 Scale;
     samplerCube irradiance;
 };
 
@@ -67,12 +73,14 @@ uniform float worldStrength = 1.0;
 uniform samplerCube skyboxGlobal;
 uniform int lightsCount;
 uniform int stage;
-uniform sampler2D brdfLUT; 
+uniform sampler2D brdfLUT;
 uniform samplerCube irradianceTex;
 uniform cubemapSample localCubemap;
 
 #define MAX_LIGHTS 10
 uniform pointLight lights[MAX_LIGHTS];
+#define MAX_IRRADIANCE_BLEND 5
+uniform irradianceSample irradiances[MAX_IRRADIANCE_BLEND];
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -251,36 +259,36 @@ vec3 calculateLight(vec3 lightDir, vec3 viewDir, float roughness, vec3 F0, float
    }
 
 void main()
-{	
+{
 
     vec3 albedoSample = texture(albedo, fTexCoord).rgb;
     //albedoSample = pow(albedoSample, vec3(2.2));
-    
+
     vec3 albedoCopy = albedoSample;
-    
+
     vec3 specular = texture(specularTex, fTexCoord).rgb;
     float ao = specular.r;
     float roughness = specular.g;
     float metallic = specular.b;
-    
+
     vec3 F0 = mix(vec3(0.04), albedoSample, metallic);
-    
+
     vec3 maplessNormal = normalize(noNormalNormal);
-    
+
     vec3 normal = texture(normalMap, fTexCoord).rgb * vec3(1, -1, 1) + vec3(0, 1, 0);
     normal = normalize((normal * 2.0 - 1.0) * TBN);
     normal = mix(maplessNormal, normal, normalStrength);
 
     vec3 lightDir = normalize(lightPos);
-    vec3 viewDir = normalize(viewPos - FragPos); 
-   
+    vec3 viewDir = normalize(viewPos - FragPos);
+
 
     float mipmapLevel = float(textureQueryLevels(localCubemap.cubemap));
 
     float shadow = ShadowCalculation(FragPosLightSpace, maplessNormal, lightDir);
-    
+
     vec4 cubemapUV = CubemapParallaxUV(reflect(-viewDir, normal));
-    vec4 skyboxWithAlpha = textureLod(localCubemap.cubemap, cubemapUV.rgb , roughness * mipmapLevel);
+    vec4 skyboxWithAlpha = textureLod(localCubemap.cubemap, cubemapUV.rgb, roughness * mipmapLevel);
     vec3 skyboxSampler = skyboxWithAlpha.rgb;
     skyboxSampler = mix(skyboxSampler, textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb, max(1-skyboxWithAlpha.a, cubemapUV.a));
     vec3 kS = fresnelSchlick(max(dot(normal, viewDir), 0.0), F0);
@@ -294,19 +302,28 @@ void main()
 
     vec3 irradianceSample = vec3(0);
 
-    vec3 cubemapFragPos = (localCubemap.Position - FragPos) / (localCubemap.Scale * 1.25);
-    float distance = max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z));
-    float num = clamp(1-pow(distance, 4), 0, 1);
-    float attenuation = min((num*num)/((distance*distance)+1), 1);
-    
-    irradianceSample += texture(localCubemap.irradiance, normal.rgb).rgb * attenuation;
-    
+    if (stage == 4){
+        irradianceSample = texture(localCubemap.irradiance, normal.rgb).rgb;
+    }
+    else {
+        float contribution = 0;
+        for (int i = 0; i < 5; i++) {
+            vec3 cubemapFragPos = (irradiances[i].Position - FragPos) / irradiances[i].Scale;
+            float distance = clamp(max(max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z)) - 1, 0) * 4, 0, 1);
+            float attenuation = 1 - distance;
+            contribution += attenuation;
+            if (attenuation > 0) irradianceSample += texture(irradiances[i].irradiance, normal.rgb).rgb * attenuation;
+        }
+        irradianceSample += (1-min(1, contribution)) * texture(localCubemap.irradiance, normal.rgb).rgb;
+        irradianceSample /= max(contribution, 1);
+    }
+
     albedoSample *= irradianceSample;
 
     albedoSample = ((1-metallic) * albedoSample + skyboxSampler) * ao;
 
     albedoSample += calculateLight(lightDir, viewDir, roughness, F0, metallic, normal, shadow, albedoCopy, 0.5);
-   
+
     for (int i = 0; i < lightsCount; i++) {
 
         vec3 pointLightPos = normalize(lights[i].Position - FragPos);
@@ -322,8 +339,7 @@ void main()
 
     }
 
-    //if (stage == 0) albedoSample = irradianceSample.rgb;
-    FragColor = vec4(vec3(attenuation), 1.0);
+    FragColor = vec4(albedoSample, 1.0);
     FragLoc = vec4(viewFragPos, 0.0);
     FragNormal = vec4(viewNormal, metallic);
 }
