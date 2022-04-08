@@ -42,13 +42,13 @@ public class Material
         _viewPos = new CachedUniform<Vector3>(_program, "viewPos");
         _lightProj = new CachedUniform<Matrix4>(_program, "lightProjection");
         _lightView = new CachedUniform<Matrix4>(_program, "lightView");
-        _skybox = new CachedUniform<int>(_program, "skyBox");
+        _skybox = new CachedUniform<int>(_program, "localCubemap.cubemap");
         _shadowMap = new CachedUniform<int>(_program, "shadowMap");
         _lightPos = new CachedUniform<Vector3>(_program, "lightPos");
-        _cubemapLoc = new CachedUniform<Vector3>(_program, "cubemapLoc");
-        _cubemapScale = new CachedUniform<Vector3>(_program, "cubemapScale");
+        _cubemapLoc = new CachedUniform<Vector3>(_program, "localCubemap.Position");
+        _cubemapScale = new CachedUniform<Vector3>(_program, "localCubemap.Scale");
         _cubemapGlobal = new CachedUniform<int>(_program, "skyboxGlobal");
-        _irradiance = new CachedUniform<int>(_program, "irradianceTex");
+        _irradiance = new CachedUniform<int>(_program, "localCubemap.irradiance");
         _brdfLUT = new CachedUniform<int>(_program, "brdfLUT");
     }
 
@@ -75,7 +75,7 @@ public class Material
         var state = _application.AppState;
 
         _model.Use(model);
-        if (state is EngineState.RenderShadowState or EngineState.RenderPointShadowState)
+        if (state is EngineState.RenderShadowState or EngineState.RenderLinearShadowState)
         {
             _view.Use(LightSystem.ShadowView);
             _projection.Use(LightSystem.ShadowProjection);
@@ -93,7 +93,7 @@ public class Material
         _lightPos.Use(LightSystem.CurrentLight.Owner.GetComponent<Transform>().Model.ExtractTranslation());
         
         if (state is EngineState.RenderDepthState or EngineState.RenderShadowState
-            or EngineState.RenderPointShadowState) return;
+            or EngineState.RenderLinearShadowState) return;
 
         _viewPos.Use(CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Model.ExtractTranslation());
         _lightProj.Use(LightSystem.ShadowProjection);
@@ -119,25 +119,30 @@ public class Material
         }
 
         _program.SetUniform("lightsCount", LightSystem.Components.Count);
-        for (var index = 0; index < LightSystem.Components.Count; index++)
+        for (var index = 0; index < 10; index++) // 10 lights is max
         {
-            var light = LightSystem.Components[index];
-            _program.SetUniform($"lights[{index}].Color", light.Color);
-            _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
-            _program.SetUniform($"lights[{index}].intensity", light.Power / 25);
-            _program.SetUniform($"lights[{index}].radius", light.Radius);
-            _program.SetUniform($"shadowMaps[{index}]", light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
+            if (index < LightSystem.Components.Count)
+            {
+                var light = LightSystem.Components[index];
+                _program.SetUniform($"lights[{index}].Color", light.Color);
+                _program.SetUniform($"lights[{index}].Position", light.Owner.GetComponent<Transform>().Location);
+                _program.SetUniform($"lights[{index}].intensity", light.Power / 25);
+                _program.SetUniform($"lights[{index}].radius", light.Radius);
+                _program.SetUniform($"lights[{index}].shadowMap",
+                    light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
+            }
+            else // Fill in the rest of the slots with empty textures cause opengl was crying about it
+            {
+                _program.SetUniform($"lights[{index}].Color", Vector3.Zero);
+                _program.SetUniform($"lights[{index}].Position", Vector3.Zero);
+                _program.SetUniform($"lights[{index}].intensity", 1f);
+                _program.SetUniform($"lights[{index}].radius", 1f);
+                var currentUnit = TextureSlotManager.GetUnit();
+                GL.ActiveTexture(TextureUnit.Texture0 + currentUnit);
+                GL.BindTexture(TextureTarget.TextureCubeMap, 0);
+                _program.SetUniform($"lights[{index}].shadowMap", currentUnit);
+            }
         }
-
-        for (var index = 0; index < 10 - LightSystem.Components.Count; index++) // 10 is the max number of lights 
-        {
-            var currentUnit = TextureSlotManager.GetUnit();
-            GL.ActiveTexture(TextureUnit.Texture0 + currentUnit);
-            GL.BindTexture(TextureTarget.TextureCubeMap, 0);
-            _program.SetUniform($"shadowMaps[{index + LightSystem.Components.Count}]", currentUnit);
-        }
-        // Fill in the rest of the slots with empty textures cause opengl was crying about it
-
         _program.SetUniform("stage", (int)_application.AppState);
         _brdfLUT.Use(_application.BrdfLut.Use(TextureSlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);

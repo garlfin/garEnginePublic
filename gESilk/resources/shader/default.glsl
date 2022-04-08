@@ -44,9 +44,16 @@ struct pointLight {
     vec3 Color;
     float intensity;
     float radius;
+        samplerCube shadowMap;
 };
 
-uniform samplerCube skyBox;
+struct cubemapSample {
+    vec3 Position;
+    vec3 Scale;
+    samplerCube cubemap;
+    samplerCube irradiance;
+};
+
 uniform sampler2D albedo;
 uniform sampler2D normalMap;
 uniform sampler2DShadow shadowMap;
@@ -57,18 +64,16 @@ uniform sampler2D specularTex;
 uniform float ior = 1.450;
 uniform float normalStrength = 1.0;
 uniform float worldStrength = 1.0;
-uniform vec3 cubemapLoc = vec3(0);
-uniform vec3 cubemapScale = vec3(1);
 uniform samplerCube skyboxGlobal;
 uniform int lightsCount;
 uniform int stage;
 uniform sampler2D brdfLUT; 
 uniform samplerCube irradianceTex;
+uniform cubemapSample localCubemap;
 
 #define MAX_LIGHTS 10
 
 uniform pointLight lights[MAX_LIGHTS];
-uniform samplerCube shadowMaps[MAX_LIGHTS];
 
 in vec3 FragPos;
 in vec2 fTexCoord;
@@ -102,7 +107,7 @@ bool isOutOfBounds(vec3 box, vec3 position){
     return box.x > position.x || box.y > position.y || box.z > position.z;
 }
 
-float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec3 viewPos)
+float ShadowCalculation(pointLight light, vec3 normal, vec3 viewPos)
 {
 
     vec3 fragToLight = FragPos - light.Position;
@@ -118,7 +123,7 @@ float ShadowCalculation(pointLight light, samplerCube depthMap, vec3 normal, vec
     
     for (int i = 0; i < samples; ++i)
     {
-        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * 0.01).r;
+        float closestDepth = texture(light.shadowMap, fragToLight + sampleOffsetDirections[i] * 0.01).r;
         closestDepth *= 100;
         shadow += (currentDepth - bias > closestDepth) ? 1.0 : 0.0;
     }
@@ -166,8 +171,8 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec4 CubemapParallaxUV(vec3 normal) {
     vec3 reflectionDirWS = normal;
     
-    vec3 BoxMax = cubemapScale + cubemapLoc;
-    vec3 BoxMin = cubemapScale * -1 + cubemapLoc;  
+    vec3 BoxMax = localCubemap.Scale + localCubemap.Position;
+    vec3 BoxMin = localCubemap.Scale * -1 + localCubemap.Position;  
     
     vec3 FirstIntersect = (BoxMax - FragPos) / reflectionDirWS;
     vec3 SecondIntersect = (BoxMin - FragPos) / reflectionDirWS;
@@ -182,7 +187,7 @@ vec4 CubemapParallaxUV(vec3 normal) {
     if (isOutOfBounds(BoxMin, FragPos) || isOutOfBounds(FragPos, BoxMax)) outOfBounds = 1;
     
     
-    return vec4(IntersectPos - cubemapLoc, outOfBounds);
+    return vec4(IntersectPos - localCubemap.Position, outOfBounds);
 }
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
@@ -271,14 +276,12 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos); 
    
 
-    float mipmapLevel = float(textureQueryLevels(skyBox));
+    float mipmapLevel = float(textureQueryLevels(localCubemap.cubemap));
 
     float shadow = ShadowCalculation(FragPosLightSpace, maplessNormal, lightDir);
-   
-    //albedoSample *= textureLod(skyBox, CubemapParallaxUV(normal).xyz, mipmapLevel * 0.8).rgb;
-  
+    
     vec4 cubemapUV = CubemapParallaxUV(reflect(-viewDir, normal));
-    vec4 skyboxWithAlpha = textureLod(skyBox, cubemapUV.rgb , roughness * mipmapLevel);
+    vec4 skyboxWithAlpha = textureLod(localCubemap.cubemap, cubemapUV.rgb , roughness * mipmapLevel);
     vec3 skyboxSampler = skyboxWithAlpha.rgb;
     skyboxSampler = mix(skyboxSampler, textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb, max(1-skyboxWithAlpha.a, cubemapUV.a));
     vec3 kS = fresnelSchlick(max(dot(normal, viewDir), 0.0), F0);
@@ -290,7 +293,7 @@ void main()
     skyboxSampler = skyboxSampler * (fresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, roughness) * envBRDF.x + envBRDF.y);
 
 
-    vec4 irradianceSample = texture(irradianceTex, normal.rgb);
+    vec4 irradianceSample = texture(localCubemap.irradiance, normal.rgb);
     //irradianceSample = vec4(mix(irradianceSample.rgb, texture(irradianceTex, normal).rgb, cubemapUV.a),1);
 
     albedoSample *= irradianceSample.rgb;
@@ -309,7 +312,7 @@ void main()
 
         vec3 radiance = lights[i].Color * lights[i].intensity * attenuation;
 
-        float pointShadow = 1 - ShadowCalculation(lights[i], shadowMaps[i], maplessNormal, viewPos);
+        float pointShadow = 1 - ShadowCalculation(lights[i], maplessNormal, viewPos);
         albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, pointShadow, albedoCopy, lights[i].radius) * radiance, 0, lights[i].intensity);
 
     }

@@ -32,7 +32,7 @@ public partial class Application
 
         TransformSystem.Update(0f);
 
-        _state = EngineState.RenderPointShadowState;
+        _state = EngineState.RenderLinearShadowState;
         foreach (var light in LightSystem.Components)
         {
             light.UpdateShadowMatrices();

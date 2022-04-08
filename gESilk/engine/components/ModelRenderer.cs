@@ -21,7 +21,7 @@ public class ModelRenderer : Component
 
         var state = Owner.Application.AppState;
 
-        if (state != EngineState.RenderPointShadowState && state != EngineState.RenderShadowState && state != EngineState.RenderDepthState)
+        if (state != EngineState.RenderLinearShadowState && state != EngineState.RenderShadowState && state != EngineState.RenderDepthState)
         {
             if (!Owner.IsStatic && state is not EngineState.RenderState) return;
             _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
@@ -30,7 +30,7 @@ public class ModelRenderer : Component
         else
         {
             _mesh.Render(
-                state is EngineState.RenderPointShadowState ? Globals.LinearDepthMaterial : Globals.DepthMaterial,
+                state is EngineState.RenderLinearShadowState ? Globals.LinearDepthMaterial : Globals.DepthMaterial,
                 modelTransform.Model);
         }
     }
