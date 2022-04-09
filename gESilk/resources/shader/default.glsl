@@ -79,7 +79,8 @@ uniform cubemapSample localCubemap;
 
 #define MAX_LIGHTS 10
 uniform pointLight lights[MAX_LIGHTS];
-#define MAX_IRRADIANCE_BLEND 4
+#define MAX_IRRADIANCE_BLEND 8
+uniform int irradianceCount;
 uniform irradianceSample irradiances[MAX_IRRADIANCE_BLEND];
 
 in vec3 FragPos;
@@ -307,15 +308,15 @@ void main()
     }
     else {
         float contribution = 0;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < irradianceCount; i++) {
             vec3 cubemapFragPos = (irradiances[i].Position - FragPos) / irradiances[i].Scale;
-            float distance = clamp(max(max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z)) - 1, 0) * 4, 0, 1);
-            float attenuation = 1 - distance;
+            float distance = max(max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z)) - 1, 0);
+            float attenuation = 1.0/(distance * distance + 1);
             contribution += attenuation;
             if (attenuation > 0) irradianceSample += texture(irradiances[i].irradiance, normal.rgb).rgb * attenuation;
         }
         irradianceSample += (1-min(1, contribution)) * texture(localCubemap.irradiance, normal.rgb).rgb;
-        irradianceSample /= max(contribution, 1);
+        irradianceSample /= max(1, contribution);
     }
 
     albedoSample *= irradianceSample;
@@ -336,7 +337,6 @@ void main()
 
         float pointShadow = 1 - ShadowCalculation(lights[i], maplessNormal, viewPos);
         albedoSample += clamp(calculateLight(pointLightPos, viewDir, roughness, F0, metallic, normal, pointShadow, albedoCopy, lights[i].radius) * radiance, 0, lights[i].intensity);
-
     }
 
     FragColor = vec4(albedoSample, 1.0);

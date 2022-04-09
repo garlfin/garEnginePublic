@@ -146,14 +146,30 @@ public class Material
             }
         }
 
+        currentUnit = TextureSlotManager.GetUnit();
         var closestInOrder = CubemapCaptureManager.ReturnClosestInOrder(model.ExtractTranslation());
-        for (int i = 0; i < 4; i++)
+        var irradianceCount = Math.Min(closestInOrder.Count, 8);
+        _program.SetUniform("irradianceCount", irradianceCount);
+        for (int i = 0; i < 8; i++)
         {
-            currentCubemap = closestInOrder[i].Item2;
-            _program.SetUniform($"irradiances[{i}].Position", currentCubemap.Owner.GetComponent<Transform>().Location);
-            _program.SetUniform($"irradiances[{i}].Scale", currentCubemap.Owner.GetComponent<Transform>().Scale);
-            _program.SetUniform($"irradiances[{i}].irradiance",
-                currentCubemap.GetIrradiance().Use(TextureSlotManager.GetUnit()));
+            if (i < irradianceCount)
+            {
+                currentCubemap = closestInOrder[i].Item2;
+                _program.SetUniform($"irradiances[{i}].Position",
+                    currentCubemap.Owner.GetComponent<Transform>().Location);
+                _program.SetUniform($"irradiances[{i}].Scale", currentCubemap.Owner.GetComponent<Transform>().Scale);
+                _program.SetUniform($"irradiances[{i}].irradiance",
+                    currentCubemap.GetIrradiance().Use(currentUnit));
+                currentUnit = TextureSlotManager.GetUnit();
+            }
+            else
+            {
+                GL.ActiveTexture(TextureUnit.Texture0 + currentUnit);
+                GL.BindTexture(TextureTarget.TextureCubeMap, 0);
+                _program.SetUniform($"irradiances[{i}].Position", Vector3.Zero);
+                _program.SetUniform($"irradiances[{i}].Scale", Vector3.One);
+                _program.SetUniform($"irradiances[{i}].irradiance", currentUnit);
+            }
         }
 
         _program.SetUniform("stage", (int)_application.AppState);
