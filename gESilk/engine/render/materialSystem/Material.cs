@@ -146,9 +146,10 @@ public class Material
             }
         }
 
-        for (int i = 0; i < 5; i++)
+        var closestInOrder = CubemapCaptureManager.ReturnClosestInOrder(model.ExtractTranslation());
+        for (int i = 0; i < 4; i++)
         {
-            currentCubemap = CubemapCaptureManager.Components[i];
+            currentCubemap = closestInOrder[i].Item2;
             _program.SetUniform($"irradiances[{i}].Position", currentCubemap.Owner.GetComponent<Transform>().Location);
             _program.SetUniform($"irradiances[{i}].Scale", currentCubemap.Owner.GetComponent<Transform>().Scale);
             _program.SetUniform($"irradiances[{i}].irradiance",

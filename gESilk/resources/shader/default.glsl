@@ -79,7 +79,7 @@ uniform cubemapSample localCubemap;
 
 #define MAX_LIGHTS 10
 uniform pointLight lights[MAX_LIGHTS];
-#define MAX_IRRADIANCE_BLEND 5
+#define MAX_IRRADIANCE_BLEND 4
 uniform irradianceSample irradiances[MAX_IRRADIANCE_BLEND];
 
 in vec3 FragPos;
@@ -307,7 +307,7 @@ void main()
     }
     else {
         float contribution = 0;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             vec3 cubemapFragPos = (irradiances[i].Position - FragPos) / irradiances[i].Scale;
             float distance = clamp(max(max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z)) - 1, 0) * 4, 0, 1);
             float attenuation = 1 - distance;

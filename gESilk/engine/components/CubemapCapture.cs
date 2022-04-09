@@ -191,4 +191,18 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
 
         return nearest;
     }
+
+    public static List<Tuple<float, CubemapCapture>> ReturnClosestInOrder(Vector3 position)
+    {
+        List<Tuple<float, CubemapCapture>> list = new List<Tuple<float, CubemapCapture>>();
+        foreach (var component in Components)
+        {
+            list.Add(new Tuple<float, CubemapCapture>(
+                Vector3.Distance(component.Owner.GetComponent<Transform>().Location, position), component));
+        }
+
+        return list.OrderBy(i => i.Item1).ToList();
+
+        // I wonder how slow this is...
+    }
 }
