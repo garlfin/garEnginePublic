@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Assimp;
+﻿using Assimp;
 using gESilk.engine.assimp;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
@@ -12,9 +11,7 @@ public class Globals
 {
     public static readonly AssimpContext Assimp;
     public static readonly Material DepthMaterial, LinearDepthMaterial;
-    public static Mesh CubeMesh;
-    public static IntPtr FreeTypeLib;
-    private static GCHandle _pinnedArray;
+    public static readonly Mesh CubeMesh;
 
     static Globals()
     {
@@ -28,13 +25,5 @@ public class Globals
 
         CubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         CubeMesh.IsSkybox(true);
-
-        //_pinnedArray = GCHandle.Alloc(new FreeTypeLibrary(), GCHandleType.Pinned);
-        //FreeTypeLib = _pinnedArray.AddrOfPinnedObject();
-    }
-
-    public static void FreePointers()
-    {
-        //_pinnedArray.Free();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
@@ -64,7 +65,6 @@ public partial class Application
     protected virtual void OnClosing()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit);
-        Globals.FreePointers();
         Console.WriteLine("Closing... Deleting assets");
         AssetManager.Delete();
         Console.WriteLine("Done :)");
@@ -76,6 +76,7 @@ public partial class Application
     }
 
 
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH")]
     protected void OnRender(FrameEventArgs args)
     {
         CameraSystem.Update(0f);

@@ -1,4 +1,5 @@
-﻿using gESilk.engine.components;
+﻿using System.Diagnostics.CodeAnalysis;
+using gESilk.engine.components;
 using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
@@ -63,6 +64,7 @@ public class Material
     }
 
 
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH")]
     public void Use(bool clearTranslation, Matrix4 model, CubemapCapture? cubemap, DepthFunction? function = null,
         bool doCull = true)
     {
