@@ -9,6 +9,7 @@
       "gESilk/1.0.0": {
         "dependencies": {
           "AssimpNet": "4.1.0",
+          "FreeTypeSharp": "1.1.3",
           "OpenTK": "4.6.7",
           "SharpEXR": "1.0.0.19",
           "System.Drawing.Common": "6.0.0",
@@ -48,6 +49,56 @@
             "rid": "win-x86",
             "assetType": "native",
             "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "FreeTypeSharp/1.1.3": {
+        "runtime": {
+          "lib/netstandard2.0/FreeTypeSharp.dll": {
+            "assemblyVersion": "1.1.3.0",
+            "fileVersion": "1.1.3.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libfreetype.so": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx/native/libfreetype.dylib": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/freetype.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win-x86/native/freetype.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-arm/native/freetype.dll": {
+            "rid": "win10-arm",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-arm64/native/freetype.dll": {
+            "rid": "win10-arm64",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-x64/native/freetype.dll": {
+            "rid": "win10-x64",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-x86/native/freetype.dll": {
+            "rid": "win10-x86",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
           }
         }
       },
@@ -1045,6 +1096,13 @@
       "sha512": "sha512-z/4Tmf3Q2r1+vN6o/szArEZvPsdYNRYiS0L/yArybQd7n7KCiS9L4lRZhwwlHJb/edECM+Jky0XisVspr5aQWQ==",
       "path": "assimpnet/4.1.0",
       "hashPath": "assimpnet.4.1.0.nupkg.sha512"
+    },
+    "FreeTypeSharp/1.1.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1JCuO0cbajKxEiuydA9Ms7EFfdSNnR3JTv4unw8PJSIOejkZnTs/9YQD0T2jxX9yZtAAcn1J6R/MZ33b0Snasg==",
+      "path": "freetypesharp/1.1.3",
+      "hashPath": "freetypesharp.1.1.3.nupkg.sha512"
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",

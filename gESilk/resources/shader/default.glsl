@@ -309,8 +309,8 @@ void main()
     else {
         float contribution = 0;
         for (int i = 0; i < irradianceCount; i++) {
-            vec3 cubemapFragPos = (irradiances[i].Position - FragPos) / irradiances[i].Scale;
-            float distance = max(max(max(abs(cubemapFragPos.x), abs(cubemapFragPos.y)), abs(cubemapFragPos.z)) - 1, 0);
+            vec3 cubemapFragPos = irradiances[i].Position - FragPos;
+            float distance = max(max(max(abs(cubemapFragPos.x) - irradiances[i].Scale.x, abs(cubemapFragPos.y)) - irradiances[i].Scale.y, abs(cubemapFragPos.z) - irradiances[i].Scale.z), 0);
             float attenuation = 1.0/(distance * distance + 1);
             contribution += attenuation;
             if (attenuation > 0) irradianceSample += texture(irradiances[i].irradiance, normal.rgb).rgb * attenuation;

@@ -201,8 +201,13 @@ internal class CubemapCaptureManager : BaseSystem<CubemapCapture>
                 Vector3.Distance(component.Owner.GetComponent<Transform>().Location, position), component));
         }
 
-        return list.OrderBy(i => i.Item1).ToList();
+        return list.OrderBy(KeySelector).ToList();
 
         // I wonder how slow this is...
+    }
+
+    private static float KeySelector(Tuple<float, CubemapCapture> i)
+    {
+        return i.Item1;
     }
 }

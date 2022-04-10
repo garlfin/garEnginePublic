@@ -12,6 +12,7 @@ public static class Program
         {
             args[i] = args[i].ToLower();
         }
+
         MainWindow = new Application(1280, 720, "gE2");
         MainWindow.MotionBlur = !args.Contains("-noblur");
         MainWindow.Run();

@@ -120,3 +120,12 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Release\net6.0\gESilk
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\obj\Release\net6.0\ref\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\SharpEXR.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\SharpEXR.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\FreeTypeSharp.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\linux-x64\native\libfreetype.so
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\osx\native\libfreetype.dylib
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win-x64\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win-x86\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-arm\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-arm64\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-x64\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-x86\native\freetype.dll

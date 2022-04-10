@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "TNctGSXYJXHEtr8n+QZLsQDSFO0ipXPIunvFRJ/z15SuAuwX53/iL67glA2tON4zEqwEvOn8U53N7eXkKgAuLA==",
+  "dgSpecHash": "LrUEokTYAacTw4XQM5bCS7CTD7O+enEiCtfIhDqUhGL7Q90GKCVBtmovjFJpb/iBDd8ZLsuKkHHl4tlTojBMig==",
   "success": true,
   "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gModel\\gModel.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
+    "C:\\Users\\scion\\.nuget\\packages\\freetypesharp\\1.1.3\\freetypesharp.1.1.3.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",

@@ -35,6 +35,49 @@
           }
         }
       },
+      "FreeTypeSharp/1.1.3": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/FreeTypeSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/FreeTypeSharp.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libfreetype.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx/native/libfreetype.dylib": {
+            "assetType": "native",
+            "rid": "osx"
+          },
+          "runtimes/win-x64/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win10-arm/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win10-arm"
+          },
+          "runtimes/win10-arm64/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win10-arm64"
+          },
+          "runtimes/win10-x64/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win10-x64"
+          },
+          "runtimes/win10-x86/native/freetype.dll": {
+            "assetType": "native",
+            "rid": "win10-x86"
+          }
+        }
+      },
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -1430,6 +1473,7 @@
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "AssimpNet": "4.1.0",
+          "FreeTypeSharp": "1.1.3",
           "OpenTK": "4.6.7",
           "SharpEXR": "1.0.0.19",
           "System.Drawing.Common": "6.0.0"
@@ -1467,6 +1511,32 @@
         "runtimes/osx-x64/native/libassimp.dylib",
         "runtimes/win-x64/native/assimp.dll",
         "runtimes/win-x86/native/assimp.dll"
+      ]
+    },
+    "FreeTypeSharp/1.1.3": {
+      "sha512": "1JCuO0cbajKxEiuydA9Ms7EFfdSNnR3JTv4unw8PJSIOejkZnTs/9YQD0T2jxX9yZtAAcn1J6R/MZ33b0Snasg==",
+      "type": "package",
+      "path": "freetypesharp/1.1.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "build/net462/FreeTypeSharp.targets",
+        "freetypesharp.1.1.3.nupkg.sha512",
+        "freetypesharp.nuspec",
+        "lib/MonoAndroid10/FreeTypeSharp.dll",
+        "lib/Xamarin.iOS10/FreeTypeSharp.dll",
+        "lib/netstandard2.0/FreeTypeSharp.dll",
+        "lib/uap10.0/FreeTypeSharp.dll",
+        "lib/uap10.0/FreeTypeSharp.pri",
+        "runtimes/linux-x64/native/libfreetype.so",
+        "runtimes/osx/native/libfreetype.dylib",
+        "runtimes/win-x64/native/freetype.dll",
+        "runtimes/win-x86/native/freetype.dll",
+        "runtimes/win10-arm/native/freetype.dll",
+        "runtimes/win10-arm64/native/freetype.dll",
+        "runtimes/win10-x64/native/freetype.dll",
+        "runtimes/win10-x86/native/freetype.dll"
       ]
     },
     "Microsoft.NETCore.Platforms/1.1.0": {

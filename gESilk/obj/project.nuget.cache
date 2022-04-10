@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "n8OAPh6/qd5ReOW1ZMPUSxyXFAnff2BEVezxNKnJmII3A6PPfqwGvtERbjJ2+1cY2M6i4CEpa5c/cR7H0NEFzg==",
+  "dgSpecHash": "dIWxdkLckLKaMypd2nfbQtyQZaA9QX9i7rX4WIRAXCs1sXQ8JvReOf3FeriXiQoEkjvOb/YwrqkfZcBit25jZQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
+    "C:\\Users\\scion\\.nuget\\packages\\freetypesharp\\1.1.3\\freetypesharp.1.1.3.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",

@@ -64,6 +64,7 @@ public partial class Application
     protected virtual void OnClosing()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit);
+        Globals.FreePointers();
         Console.WriteLine("Closing... Deleting assets");
         AssetManager.Delete();
         Console.WriteLine("Done :)");
