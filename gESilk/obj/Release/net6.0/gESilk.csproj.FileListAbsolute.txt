@@ -129,3 +129,4 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-arm64\native\freetype.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-x64\native\freetype.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\runtimes\win10-x86\native\freetype.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\Newtonsoft.Json.dll

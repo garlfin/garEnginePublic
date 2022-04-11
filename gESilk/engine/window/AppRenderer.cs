@@ -40,6 +40,7 @@ public partial class Application
     private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _fxaaShader, _mbShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
+    private FontRenderer _testText;
 
     public Application(int width, int height, string name)
     {
@@ -147,6 +148,7 @@ public partial class Application
         _mbShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         RenderPlaneMesh.Render();
+        //_testText.Update(0f);
 
 
         foreach (var camera in CameraSystem.Components)

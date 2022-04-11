@@ -4,12 +4,12 @@ namespace gESilk.engine.render.assets.textures;
 
 public class TextureFromIntPtr : Texture
 {
-    public TextureFromIntPtr(int width, int height, IntPtr pixels)
+    public TextureFromIntPtr(int width, int height, IntPtr pixels, PixelInternalFormat internalFormat, PixelFormat format, PixelType pixelType)
     {
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, Id);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgb,
-            PixelType.Float, pixels);
+        GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, width, height, 0, format,
+           pixelType, pixels);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);

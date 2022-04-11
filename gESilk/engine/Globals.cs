@@ -1,5 +1,6 @@
 ﻿using Assimp;
 using gESilk.engine.assimp;
+using gESilk.engine.misc;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using Material = gESilk.engine.render.materialSystem.Material;
@@ -12,6 +13,7 @@ public class Globals
     public static readonly AssimpContext Assimp;
     public static readonly Material DepthMaterial, LinearDepthMaterial;
     public static readonly Mesh CubeMesh;
+    public static Font Roboto;
 
     static Globals()
     {
@@ -25,5 +27,6 @@ public class Globals
 
         CubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         CubeMesh.IsSkybox(true);
+        
     }
 }

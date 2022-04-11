@@ -1,8 +1,10 @@
-﻿using gESilk.engine.components;
+﻿using System.Runtime.InteropServices;
+using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 
 namespace gESilk.engine.window;
@@ -15,8 +17,9 @@ public partial class Application
     {
         InitRenderer();
 
-        var basePath = "../../../resources/cubemap/";
-
+        Globals.Roboto = FontLoader.LoadFont("../../../resources/font/roboto.xml", "../../../resources/font/roboto.bin");
+        _testText = new FontRenderer(Globals.Roboto, "This is some test text!");
+        
         Skybox = new CubemapTexture("../../../resources/texture/autumn.exr", this);
 
         var skybox = new Entity(this);
@@ -27,7 +30,7 @@ public partial class Application
         SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
         MapLoader.LoadMap("../../../resources/maps/test.map", this);
-
+        
         var previousLight = LightSystem.CurrentLight;
 
         TransformSystem.Update(0f);

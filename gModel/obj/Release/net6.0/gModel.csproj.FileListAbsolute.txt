@@ -54,7 +54,6 @@ C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\runtimes\unix\l
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gESilk.pdb
-C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\SharpFont.dll.config
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\resources\models\cube.obj
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\resources\models\plane.dae
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\gESilk.deps.json
@@ -69,7 +68,6 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\gModel
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\gModel.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\gModel.pdb
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\AssimpNet.dll
-C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\ImGui.NET.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\OpenTK.Compute.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\OpenTK.Core.dll
@@ -86,10 +84,6 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtim
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\osx-x64\native\libassimp.dylib
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\win-x64\native\assimp.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\win-x86\native\assimp.dll
-C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\linux-x64\native\libcimgui.so
-C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\osx-x64\native\libcimgui.dylib
-C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\win-x64\native\cimgui.dll
-C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\win-x86\native\cimgui.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\linux-x64\native\libglfw.so.3.3
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\runtimes\osx-x64\native\libglfw.3.dylib
@@ -110,3 +104,4 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\obj\Release\net6.0\refint
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\obj\Release\net6.0\gModel.pdb
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\obj\Release\net6.0\gModel.genruntimeconfig.cache
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\obj\Release\net6.0\ref\gModel.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\Newtonsoft.Json.dll
