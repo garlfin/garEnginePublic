@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
+﻿using System.Drawing;
 using gESilk.engine.assimp;
 using gESilk.engine.components;
 using gESilk.engine.misc;
@@ -76,8 +75,6 @@ public partial class Application
         CubemapCaptureManager.Update(0f);
     }
 
-
-    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH")]
     protected void OnRender(FrameEventArgs args)
     {
         CameraSystem.Update(0f);
@@ -148,8 +145,17 @@ public partial class Application
         _mbShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         RenderPlaneMesh.Render();
-        //_testText.Update(0f);
 
+        GL.Enable(EnableCap.Blend);
+        Globals.FontProgram.Use();
+        Vector3 screenTransform = new Vector3((float)720 / 1280, 1, 0);
+        Matrix4 transform = Matrix4.CreateScale(screenTransform * new Vector3(0.15f));
+        transform *= Matrix4.CreateTranslation(-0.9f, -0.9f, 0);
+        Globals.FontProgram.SetUniform("model", transform);
+        Globals.FontProgram.SetUniform("font", _testText.Font.TexAtlas.TexAtlas.Use(0));
+        //_testText.UpdateText($"FPS: {1/args.Time}");
+        _testText.Update(0f);
+        GL.Disable(EnableCap.Blend);
 
         foreach (var camera in CameraSystem.Components)
         {
@@ -254,6 +260,7 @@ public partial class Application
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.TextureCubeMapSeamless);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
         _window.CursorGrabbed = true;
 

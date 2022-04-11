@@ -13,6 +13,7 @@ public class Globals
     public static readonly AssimpContext Assimp;
     public static readonly Material DepthMaterial, LinearDepthMaterial;
     public static readonly Mesh CubeMesh;
+    public static readonly ShaderProgram FontProgram;
     public static Font Roboto;
 
     static Globals()
@@ -27,6 +28,6 @@ public class Globals
 
         CubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
         CubeMesh.IsSkybox(true);
-        
+        FontProgram = new ShaderProgram("../../../resources/shader/text.glsl");
     }
 }
