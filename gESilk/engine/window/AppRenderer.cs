@@ -153,7 +153,7 @@ public partial class Application
         transform *= Matrix4.CreateTranslation(-0.9f, -0.9f, 0);
         Globals.FontProgram.SetUniform("model", transform);
         Globals.FontProgram.SetUniform("font", _testText.Font.TexAtlas.TexAtlas.Use(0));
-        //_testText.UpdateText($"FPS: {1/args.Time}");
+        _testText.Text = $"FPS: {MathF.Round((float)(1/args.Time), 4)}";
         _testText.Update(0f);
         GL.Disable(EnableCap.Blend);
 

@@ -4,7 +4,6 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
-
 public class FontRenderer : Component
 {
     public Font Font;
@@ -16,22 +15,24 @@ public class FontRenderer : Component
         get => _realText;
         set
         {
-            GetData(value, out var data, out var vtdata, out var ebodata);
+            GetData(value, out var data, out var vtData, out var eboData);
 
             GCHandle dataPinned = GCHandle.Alloc(data, GCHandleType.Pinned);
             IntPtr dataPtr = dataPinned.AddrOfPinnedObject();
-            GCHandle vtPinned = GCHandle.Alloc(vtdata, GCHandleType.Pinned);
+            GCHandle vtPinned = GCHandle.Alloc(vtData, GCHandleType.Pinned);
             IntPtr vtPtr = vtPinned.AddrOfPinnedObject();
-            GCHandle eboPinned = GCHandle.Alloc(ebodata, GCHandleType.Pinned);
+            GCHandle eboPinned = GCHandle.Alloc(eboData, GCHandleType.Pinned);
             IntPtr eboPtr = eboPinned.AddrOfPinnedObject();
 
-            UpdateData(data.Length, dataPtr, vtPtr, ebodata.Length, eboPtr);
+            UpdateData(data.Length * sizeof(float) * 3, dataPtr, vtPtr, eboData.Length * sizeof(int), eboPtr);
 
             eboPinned.Free();
             vtPinned.Free();
             dataPinned.Free();
 
             _realText = value;
+            
+            
         }
     }
 
@@ -43,26 +44,28 @@ public class FontRenderer : Component
 
         _vao = GL.GenVertexArray();
         GL.BindVertexArray(_vao);
-
-        _elementLength = 6 * 100;
+        
+        _elementLength = 6 * MaxChar;
+        var vertexCount = 4 * MaxChar;
+        
         _vbo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, 100 * 4 * 3 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertexCount * 3 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
         GL.EnableVertexAttribArray(0);
 
         _vtvbo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vtvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, 100 * 4 * 3 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertexCount * 3 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
         GL.EnableVertexAttribArray(1);
 
         _ebo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _ebo);
-        GL.BufferData(BufferTarget.ArrayBuffer, _elementLength * 3 * sizeof(int), IntPtr.Zero,
+        GL.BufferData(BufferTarget.ArrayBuffer, _elementLength * sizeof(int), IntPtr.Zero,
             BufferUsageHint.DynamicDraw);
 
         Text = text;
@@ -85,16 +88,19 @@ public class FontRenderer : Component
         GL.DrawElements(PrimitiveType.Triangles, _elementLength, DrawElementsType.UnsignedInt, 0);
     }
 
-    public void UpdateData(int dataLength, IntPtr data, IntPtr vtdata, int eboDataLength, IntPtr ebodata)
+    private void UpdateData(int dataLength, IntPtr data, IntPtr vtData, int eboDataLength, IntPtr eboData)
     {
+        
+        GL.BindVertexArray(_vao);
+        
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
         GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, dataLength, data);
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vtvbo);
-        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, dataLength, vtdata);
+        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, dataLength, vtData);
 
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
-        GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, eboDataLength, ebodata);
+        GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, eboDataLength, eboData);
     }
 
     private void GetData(string text, out Vector3[] data, out Vector3[] vtdata, out int[] ebodata)
@@ -147,4 +153,6 @@ public class FontRenderer : Component
         GL.DeleteBuffers(3, new[] { _vbo, _vtvbo, _ebo });
         GL.DeleteVertexArray(_vao);
     }
+
+    public const int MaxChar = 100;
 }
