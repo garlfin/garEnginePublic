@@ -63,12 +63,15 @@ public class Material
         return _function;
     }
 
-
-    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH")]
+    
     public void Use(bool clearTranslation, Matrix4 model, CubemapCapture? cubemap, DepthFunction? function = null,
         bool doCull = true)
     {
-        _program.Use();
+        if (!SlotManager.IsSlotSame(_program))
+        {
+            _program.Use();
+            SlotManager.SetSlot(_program);
+        }
 
         // Various Setup
         GL.DepthFunc(function ?? _function);
@@ -101,28 +104,28 @@ public class Material
         _viewPos.Use(CameraSystem.CurrentCamera.Owner.GetComponent<Transform>().Model.ExtractTranslation());
         _lightProj.Use(LightSystem.ShadowProjection);
         _lightView.Use(LightSystem.ShadowView);
-        _shadowMap.Use(_application.ShadowTex.Use(TextureSlotManager.GetUnit()));
+        _shadowMap.Use(_application.ShadowTex.Use(SlotManager.GetUnit()));
 
         var currentCubemap = cubemap ?? CubemapCaptureManager.GetNearest(model.ExtractTranslation());
 
         _cubemapLoc.Use(currentCubemap.Owner.GetComponent<Transform>().Location);
         _cubemapScale.Use(currentCubemap.Owner.GetComponent<Transform>().Scale);
-        _cubemapGlobal.Use(_application.Skybox.Use(TextureSlotManager.GetUnit()));
+        _cubemapGlobal.Use(_application.Skybox.Use(SlotManager.GetUnit()));
 
         // In my head it makes more sense to use if instead of ternary operator
         if (state is EngineState.GenerateCubemapState)
         {
-            _skybox.Use(_application.Skybox.Use(TextureSlotManager.GetUnit()));
-            _irradiance.Use(_application.Skybox.Irradiance.Use(TextureSlotManager.GetUnit()));
+            _skybox.Use(_application.Skybox.Use(SlotManager.GetUnit()));
+            _irradiance.Use(_application.Skybox.Irradiance.Use(SlotManager.GetUnit()));
         }
         else
         {
-            _skybox.Use(currentCubemap.Get().Use(TextureSlotManager.GetUnit()));
-            _irradiance.Use(currentCubemap.GetIrradiance().Use(TextureSlotManager.GetUnit()));
+            _skybox.Use(currentCubemap.Get().Use(SlotManager.GetUnit()));
+            _irradiance.Use(currentCubemap.GetIrradiance().Use(SlotManager.GetUnit()));
         }
 
         _program.SetUniform("lightsCount", LightSystem.Components.Count);
-        var currentUnit = TextureSlotManager.GetUnit();
+        var currentUnit = SlotManager.GetUnit();
         for (var index = 0; index < 10; index++) // 10 lights is max
         {
             if (index < LightSystem.Components.Count)
@@ -133,8 +136,8 @@ public class Material
                 _program.SetUniform($"lights[{index}].intensity", light.Power / 25);
                 _program.SetUniform($"lights[{index}].radius", light.Radius);
                 _program.SetUniform($"lights[{index}].shadowMap",
-                    light.GetShadowMap().Use(TextureSlotManager.GetUnit()));
-                currentUnit = TextureSlotManager.GetUnit();
+                    light.GetShadowMap().Use(SlotManager.GetUnit()));
+                currentUnit = SlotManager.GetUnit();
             }
             else // Fill in the rest of the slots with empty textures cause opengl was crying about it
             {
@@ -148,7 +151,7 @@ public class Material
             }
         }
 
-        currentUnit = TextureSlotManager.GetUnit();
+        currentUnit = SlotManager.GetUnit();
         var closestInOrder = CubemapCaptureManager.ReturnClosestInOrder(model.ExtractTranslation());
         var irradianceCount = Math.Min(closestInOrder.Count, 8);
         _program.SetUniform("irradianceCount", irradianceCount);
@@ -162,7 +165,7 @@ public class Material
                 _program.SetUniform($"irradiances[{i}].Scale", currentCubemap.Owner.GetComponent<Transform>().Scale);
                 _program.SetUniform($"irradiances[{i}].irradiance",
                     currentCubemap.GetIrradiance().Use(currentUnit));
-                currentUnit = TextureSlotManager.GetUnit();
+                currentUnit = SlotManager.GetUnit();
             }
             else
             {
@@ -175,13 +178,13 @@ public class Material
         }
 
         _program.SetUniform("stage", (int)_application.AppState);
-        _brdfLUT.Use(_application.BrdfLut.Use(TextureSlotManager.GetUnit()));
+        _brdfLUT.Use(_application.BrdfLut.Use(SlotManager.GetUnit()));
         foreach (var setting in _settings) setting.Use(_program);
     }
 
     public void Cleanup()
     {
-        TextureSlotManager.ResetUnit();
+        SlotManager.ResetUnit();
         GL.Enable(EnableCap.CullFace);
         foreach (var setting in _settings) setting.Cleanup(_program);
     }

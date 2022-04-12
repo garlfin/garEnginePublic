@@ -18,8 +18,8 @@ public abstract class Texture : Asset
 
     public virtual int Use(int slot)
     {
-        if (TextureSlotManager.IsSlotSame(slot, Id)) return slot;
-        TextureSlotManager.SetSlot(slot, Id);
+        if (SlotManager.IsSlotSame(slot, Id)) return slot;
+        SlotManager.SetSlot(slot, Id);
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.Texture2D, Id);
         return slot;

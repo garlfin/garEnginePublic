@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Xml;
 using gESilk.engine.render.assets.textures;
+using gESilk.engine.render.materialSystem;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -11,6 +12,8 @@ public static class FontLoader
     public static Font LoadFont(string jsonFile, string imageFile)
     {
         Font font = new Font();
+
+        font.Program = Globals.FontProgram;
 
         XmlDocument document = new XmlDocument();
         document.Load(jsonFile);
@@ -100,19 +103,11 @@ public static class FontLoader
 
 public struct Font
 {
+    public ShaderProgram Program;
     public Atlas TexAtlas;
     public string Name;
     public Metrics FontMetrics;
     public Character[] Characters;
-
-    public Font(Atlas texAtlas = default, string name = null, Metrics fontMetrics = default,
-        Character[] characters = null)
-    {
-        TexAtlas = texAtlas;
-        Name = name;
-        FontMetrics = fontMetrics;
-        Characters = characters;
-    }
 }
 
 public struct Atlas

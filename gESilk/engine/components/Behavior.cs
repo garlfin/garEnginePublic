@@ -6,8 +6,19 @@ public class Behavior : Component
     {
         BehaviorSystem.Register(this);
     }
-}
 
-internal class BehaviorSystem : BaseSystem<Behavior>
+    public virtual void UpdateRender(float gameTime)
+    {
+        
+    }
+}
+class BehaviorSystem : BaseSystem<Behavior>
 {
+    public static void UpdateRender(float gameTime)
+    {
+        foreach (var component in Components)
+        {
+            component.UpdateRender(gameTime);
+        }
+    }
 }

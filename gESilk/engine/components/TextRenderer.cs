@@ -1,10 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 using gESilk.engine.misc;
+using gESilk.engine.render.materialSystem.settings;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
-public class FontRenderer : Component
+public class TextRenderer : Component
 {
     public Font Font;
 
@@ -24,7 +25,8 @@ public class FontRenderer : Component
             GCHandle eboPinned = GCHandle.Alloc(eboData, GCHandleType.Pinned);
             IntPtr eboPtr = eboPinned.AddrOfPinnedObject();
 
-            UpdateData(data.Length * sizeof(float) * 3, dataPtr, vtPtr, eboData.Length * sizeof(int), eboPtr);
+            _elementLength = value.Length;
+            UpdateData(data.Length * sizeof(float) * 3, dataPtr, vtPtr, _elementLength * 6 * sizeof(int), eboPtr);
 
             eboPinned.Free();
             vtPinned.Free();
@@ -36,16 +38,18 @@ public class FontRenderer : Component
         }
     }
 
-    private readonly int _vbo, _vtvbo, _ebo, _vao, _elementLength;
+    private readonly int _vbo, _vtvbo, _ebo, _vao;
+    private int _elementLength;
 
-    public FontRenderer(Font font, string text)
+    public TextRenderer(Font font, string text)
     {
+        TextRenderingSystem.Register(this);
         Font = font;
 
         _vao = GL.GenVertexArray();
         GL.BindVertexArray(_vao);
         
-        _elementLength = 6 * MaxChar;
+        _elementLength = MaxChar;
         var vertexCount = 4 * MaxChar;
         
         _vbo = GL.GenBuffer();
@@ -65,7 +69,7 @@ public class FontRenderer : Component
         _ebo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _ebo);
-        GL.BufferData(BufferTarget.ArrayBuffer, _elementLength * sizeof(int), IntPtr.Zero,
+        GL.BufferData(BufferTarget.ArrayBuffer, _elementLength * 6* sizeof(int), IntPtr.Zero,
             BufferUsageHint.DynamicDraw);
 
         Text = text;
@@ -83,14 +87,22 @@ public class FontRenderer : Component
 
     public override void Update(float gameTime)
     {
+        if (!SlotManager.IsSlotSame(Font.Program))
+        {
+            SlotManager.SetSlot(Font.Program);
+            Font.Program.Use();
+        }
+        
+        Font.Program.SetUniform("model", Matrix4.CreateScale(Owner.Application.InverseScreen) * Owner.GetComponent<Transform>().Model);
+        Font.TexAtlas.TexAtlas.Use(0);
+        
         GL.BindVertexArray(_vao);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
-        GL.DrawElements(PrimitiveType.Triangles, _elementLength, DrawElementsType.UnsignedInt, 0);
+        GL.DrawElements(PrimitiveType.Triangles, _elementLength * 6, DrawElementsType.UnsignedInt, 0);
     }
 
     private void UpdateData(int dataLength, IntPtr data, IntPtr vtData, int eboDataLength, IntPtr eboData)
     {
-        
         GL.BindVertexArray(_vao);
         
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
@@ -148,11 +160,16 @@ public class FontRenderer : Component
         }
     }
 
-    ~FontRenderer()
+    ~TextRenderer()
     {
         GL.DeleteBuffers(3, new[] { _vbo, _vtvbo, _ebo });
         GL.DeleteVertexArray(_vao);
     }
 
-    public const int MaxChar = 100;
+    private const int MaxChar = 100;
+}
+
+class TextRenderingSystem : BaseSystem<TextRenderer>
+{
+    
 }

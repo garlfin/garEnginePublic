@@ -3,6 +3,8 @@ using gESilk.engine.misc;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
+using gESilk.resources.Scripts;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace gESilk.engine.window;
@@ -11,14 +13,27 @@ public partial class Application
 {
     public Material SkyboxMaterial;
 
+    public Vector3 InverseScreen
+    {
+        get;
+        private set;
+    }
+
     protected virtual void OnLoad()
     {
         InitRenderer();
 
+        InverseScreen = new Vector3((float) _height / _width, 1, 1);
+
         Globals.Roboto =
             FontLoader.LoadFont("../../../resources/font/roboto.xml", "../../../resources/font/roboto.bin");
 
-        _testText = new FontRenderer(Globals.Roboto, "gE2 Demo");
+        _testText = new Entity(this);
+        _testText.AddComponent(new Transform());
+        _testText.GetComponent<Transform>().Location = new Vector3(-0.9f, -0.9f, 0);
+        _testText.GetComponent<Transform>().Scale = new Vector3(0.1f);
+        _testText.AddComponent(new TextRenderer(Globals.Roboto, "gE2 Demo"));
+        _testText.AddComponent(new FPS());
 
         Skybox = new CubemapTexture("../../../resources/texture/autumn.exr", this);
 

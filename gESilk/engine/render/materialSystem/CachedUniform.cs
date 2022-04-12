@@ -42,7 +42,7 @@ public class CachedUniform<T>
                 _program.SetUniform(_id, (Matrix4)(object)value);
                 break;
             case Texture:
-                _program.SetUniform(_id, ((Texture)(object)value).Use(TextureSlotManager.GetUnit()));
+                _program.SetUniform(_id, ((Texture)(object)value).Use(SlotManager.GetUnit()));
                 break;
             default:
                 throw new ArgumentException($"Type {value.GetType()} is not recognized.");

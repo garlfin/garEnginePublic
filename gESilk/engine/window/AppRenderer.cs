@@ -39,7 +39,7 @@ public partial class Application
     private ShaderProgram _framebufferShader, _framebufferShaderSsao, _blurShader, _fxaaShader, _mbShader;
     private NoiseTexture _noiseTexture;
     private Vector3[] _data;
-    private FontRenderer _testText;
+    private Entity _testText;
 
     public Application(int width, int height, string name)
     {
@@ -80,6 +80,7 @@ public partial class Application
         CameraSystem.Update(0f);
         TransformSystem.Update(0f);
         LightSystem.UpdateShadow();
+        BehaviorSystem.UpdateRender((float) args.Time);
 
         _state = EngineState.RenderShadowState;
         ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
@@ -111,7 +112,6 @@ public partial class Application
         _renderPos.Use(2);
         _noiseTexture.Use(3);
         _framebufferShaderSsao.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
-        for (var i = 0; i < _data.Length; i++) _framebufferShaderSsao.SetUniform($"Samples[{i}]", _data[i]);
 
         _ssaoTex.BindToBuffer(_postProcessingBuffer, FramebufferAttachment.ColorAttachment0);
         _postProcessingBuffer.Bind(null);
@@ -147,14 +147,7 @@ public partial class Application
         RenderPlaneMesh.Render();
 
         GL.Enable(EnableCap.Blend);
-        Globals.FontProgram.Use();
-        Vector3 screenTransform = new Vector3((float)720 / 1280, 1, 0);
-        Matrix4 transform = Matrix4.CreateScale(screenTransform * new Vector3(0.15f));
-        transform *= Matrix4.CreateTranslation(-0.9f, -0.9f, 0);
-        Globals.FontProgram.SetUniform("model", transform);
-        Globals.FontProgram.SetUniform("font", _testText.Font.TexAtlas.TexAtlas.Use(0));
-        _testText.Text = $"FPS: {MathF.Round((float)(1/args.Time), 4)}";
-        _testText.Update(0f);
+        TextRenderingSystem.Update(0f);
         GL.Disable(EnableCap.Blend);
 
         foreach (var camera in CameraSystem.Components)
@@ -345,8 +338,9 @@ public partial class Application
             PixelType.UnsignedByte, false, TextureWrapMode.ClampToEdge);
         _fxaaCompTex = new RenderTexture(_width, _height, PixelInternalFormat.Rgba8, PixelFormat.Rgba,
             PixelType.UnsignedByte, false, TextureWrapMode.ClampToEdge);
-
-
+        
+        for (var i = 0; i < _data.Length; i++) _framebufferShaderSsao.SetUniform($"Samples[{i}]", _data[i]);
+        
         _postProcessingBuffer = new FrameBuffer(_width, _height);
         _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);

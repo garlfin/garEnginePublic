@@ -40,8 +40,8 @@ public class EmptyCubemapTexture : Texture
 
     public override int Use(int slot)
     {
-        if (TextureSlotManager.IsSlotSame(slot, Id)) return slot;
-        TextureSlotManager.SetSlot(slot, Id);
+        if (SlotManager.IsSlotSame(slot, Id)) return slot;
+        SlotManager.SetSlot(slot, Id);
         GL.ActiveTexture(TextureUnit.Texture0 + slot);
         GL.BindTexture(TextureTarget.TextureCubeMap, Id);
         return slot;

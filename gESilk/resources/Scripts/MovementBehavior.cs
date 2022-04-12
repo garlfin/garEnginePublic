@@ -1,11 +1,10 @@
-﻿using OpenTK.Windowing.Common;
+﻿using gESilk.engine.components;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-#pragma warning disable CS8602
+namespace gESilk.resources.Scripts;
 
-namespace gESilk.engine.components;
-
-public class MovementBehavior : Behavior
+public sealed class MovementBehavior : Behavior
 {
     private readonly float _cameraSpeed;
     private readonly float _sensitivity;

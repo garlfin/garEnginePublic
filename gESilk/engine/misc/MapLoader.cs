@@ -5,6 +5,7 @@ using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
+using gESilk.resources.Scripts;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.misc;

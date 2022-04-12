@@ -15,17 +15,19 @@ public class TextureSetting : ShaderSetting
     public override void Use(ShaderProgram program)
     {
         base.Use(program);
-        program.SetUniform(RealLocation, _value.Use(TextureSlotManager.GetUnit()));
+        program.SetUniform(RealLocation, _value.Use(SlotManager.GetUnit()));
     }
 }
 
-public static class TextureSlotManager
+public static class SlotManager
 {
     private static int _currentTextureUnit;
 
     private static readonly int[] Pairs;
 
-    static TextureSlotManager()
+    private static int _program;
+
+    static SlotManager()
     {
         Pairs = new int[GL.GetInteger(GetPName.MaxCombinedTextureImageUnits)];
         for (int i = 0; i < Pairs.Length; i++)
@@ -53,5 +55,15 @@ public static class TextureSlotManager
     {
         _currentTextureUnit++;
         return _currentTextureUnit - 1;
+    }
+    
+    public static bool IsSlotSame(ShaderProgram program)
+    {
+        return _program == program.Get();
+    }
+
+    public static void SetSlot(ShaderProgram program)
+    {
+        _program = program.Get();
     }
 }
