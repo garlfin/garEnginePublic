@@ -24,7 +24,7 @@ public class Entity
         _components.Add(component);
     }
 
-    public T GetComponent<T>() where T : Component
+    public T? GetComponent<T>() where T : Component
     {
         foreach (var component in _components)
         {

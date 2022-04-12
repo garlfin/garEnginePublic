@@ -93,7 +93,7 @@ public class TextRenderer : Component
             Font.Program.Use();
         }
         
-        Font.Program.SetUniform("model", Matrix4.CreateScale(Owner.Application.InverseScreen) * Owner.GetComponent<Transform>().Model);
+        Font.Program.SetUniform("model", Matrix4.CreateScale(Owner.Application.InverseScreen) * (Owner.GetComponent<Transform>()?.Model ?? Matrix4.Identity));
         Font.TexAtlas.TexAtlas.Use(0);
         
         GL.BindVertexArray(_vao);
