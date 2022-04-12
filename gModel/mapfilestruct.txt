@@ -1,0 +1,37 @@
+﻿char[4] magic
+int meshCount;
+meshStruct[meshCount] meshes;
+int materialCount;
+materialStruct[materialCount] materials;
+int objectCount;
+
+// materialStruct
+int materialID;
+string name;
+int uniformCount;
+uniformStruct[uniformCount] uniforms;
+
+
+// uniformStruct
+int uniformID;
+string uniformName;
+UniformTypeEnum uniformType;
+uniformType value; 
+
+// meshStruct
+Refer to gModel/Program.cs
+
+// UniformTypeEnum
+0: Int
+1: Float
+2: Vector2
+3: Vector3
+4: Texture2D
+5: Texture3D
+
+// ObjectTypeEnum
+0: Entity
+1: Camera (Player)
+2: Reflection Probe
+3: SunLight
+4: PointLight

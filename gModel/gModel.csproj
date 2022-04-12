@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AssimpNet" Version="4.1.0"/>
+        <PackageReference Include="AssimpNet" Version="4.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\gESilk\gESilk.csproj"/>
+        <ProjectReference Include="..\gESilk\gESilk.csproj" />
     </ItemGroup>
 
 </Project>
