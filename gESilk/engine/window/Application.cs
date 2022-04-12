@@ -30,8 +30,8 @@ public partial class Application
 
         _testText = new Entity(this);
         _testText.AddComponent(new Transform());
-        _testText.GetComponent<Transform>().Location = new Vector3(-0.9f, -0.9f, 0);
-        _testText.GetComponent<Transform>().Scale = new Vector3(0.1f);
+        _testText.GetComponent<Transform>().Location = new Vector3(10, 10, 0).PixelToScreen(_width, _height);
+        _testText.GetComponent<Transform>().Scale = new Vector3(0.05f);
         _testText.AddComponent(new TextRenderer(Globals.Roboto, "gE2 Demo"));
         _testText.AddComponent(new FPS());
 
