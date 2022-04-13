@@ -52,7 +52,7 @@ public static class AssimpLoader
             }
 
             var tempMesh = new MeshData(mesh.Vertices.ToArray(), texCoord, mesh.Normals.ToArray(),
-                mesh.Tangents.ToArray(), faces, mesh.MaterialIndex);
+                mesh.Tangents.ToArray(), faces, scene.Materials[mesh.MaterialIndex].Name);
             outMesh.Meshes[v] = tempMesh;
         }
 

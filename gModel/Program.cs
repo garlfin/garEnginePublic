@@ -1,6 +1,9 @@
 ﻿using System.Text;
-using Assimp;
 using gModel.res;
+using OpenTK.Mathematics;
+using Material = gModel.res.Material;
+using static gModel.res.MathHelper;
+using Entity = gModel.res.Entity;
 
 namespace gModel;
 
@@ -15,69 +18,225 @@ internal static class Program
 
         if (!File.Exists(file)) throw new ArgumentException($"File {fileName} doesn't exist!");
         if (!Directory.Exists("output")) Directory.CreateDirectory("output");
+        
+        var reader = new BinaryReader(File.Open(file, FileMode.Open), Encoding.UTF8);
 
-        var mesh = AssimpLoader.GetMeshFromFile(file);
+        var itemCount = reader.ReadInt32();
 
-        using var stream = File.Open($"output/{fileNoExtension}.gmod", FileMode.Create);
-        using var writer = new BinaryWriter(stream, Encoding.UTF8, false);
+        var materials = new Material[itemCount];
 
-        writer.Write(new[] { 'G', 'M', 'O', 'D' });
-        writer.Write((short)0); // Build Version
-        writer.Write(mesh.MatCount);
-
-        foreach (var item in mesh.Meshes)
+        for (var i = 0; i < itemCount; i++)
         {
-            writer.Write(item.Vert.Length);
-            foreach (var vector in item.Vert)
+            ReadString(reader);
+
+            var material = new Material
             {
-                WriteVec3(writer, vector);
+                Name = ReadString(reader),
+                MaterialID = (ushort) i,
+                UniformCount = 4,
+                Uniforms = new IScriptValue[4]
+            };
+
+            for (var x = 0; x < 3; x++)
+            {
+                material.Uniforms[x] = new ScriptValue<string>()
+                {
+                    ValueType = UniformTypeEnum.Texture2D,
+                    Name = ReadString(reader),
+                    Value = ReadString(reader)
+                };
             }
 
-            writer.Write(item.TexCoord.Length);
-            foreach (var vector in item.TexCoord)
+            material.Uniforms[3] = new ScriptValue<float>()
             {
-                WriteVec2(writer, vector);
-            }
+                Name = "normalStrength",
+                ValueType = UniformTypeEnum.Float,
+                Value = reader.ReadSingle()
+            };
 
-            writer.Write(item.Normal.Length);
-            foreach (var vector in item.Normal)
-            {
-                WriteVec3(writer, vector);
-            }
+            materials[i] = material;
 
-            writer.Write(item.Tangent.Length);
-            foreach (var vector in item.Tangent)
-            {
-                WriteVec3(writer, vector);
-            }
-
-            writer.Write(item.Faces.Length);
-            foreach (var vector in item.Faces)
-            {
-                WriteVec3(writer, vector);
-            }
-
-            writer.Write((byte)item.MaterialId);
         }
+
+        var meshes = new List<Mesh>();
+        var meshIndex = 0;
+        var entities = new List<Entity>();
+
+        itemCount = reader.ReadInt32();
+
+        for (var i = 0; i < itemCount; i++)
+        {
+            var itemType = ReadString(reader);
+
+            var itemName = ReadString(reader);
+
+            var location = ReadVec3(reader);
+            var rotation = ReadVec3(reader);
+            var scale = ReadVec3(reader);
+
+            var entity = new Entity()
+            {
+                Name = itemName,
+                Location = location,
+                Rotation = rotation,
+                Scale = scale
+            };
+
+            switch (itemType)
+            {
+                case "MESH":
+                {
+                    var meshPath = ReadString(reader);
+                    var matCount = reader.ReadInt32();
+                    for (var x = 0; x < matCount; x++) ReadString(reader);
+
+                    var loadedMesh = AssimpLoader.GetMeshFromFile(meshPath);
+                    meshes.Add(loadedMesh);
+                    entity.Scripts = new string[]
+                        {"gESilk.engine.components.ModelRenderer", "gESilk.engine.components.MaterialComponent"};
+                    entity.ScriptValues = new IScriptValue[2];
+                    entity.ScriptValues[0] = new ScriptValue<int>()
+                    {
+                        ScriptIndex = 0,
+                        Name = "MeshID",
+                        ValueType = UniformTypeEnum.Int,
+                        Value = meshIndex
+                    };
+                    entity.ScriptValues[1] = new ScriptValue<int>()
+                    {
+                        ScriptIndex = 1,
+                        Name = "MaterialID",
+                        ValueType = UniformTypeEnum.Int,
+                        Value = meshIndex
+                    };
+                    meshIndex++;
+                    break;
+                }
+                case "CAMERA":
+                    entity.Scripts = new[] {"gESilk.engine.components.Camera", "gESilk.resources.Scripts.MovementBehavior"};
+                    entity.ScriptValues = new IScriptValue[4];
+                    entity.ScriptValues[0] = new ScriptValue<float>()
+                    {
+                        ScriptIndex = 0,
+                        Name = "gESilk.engine.components.Camera",
+                        ValueType = UniformTypeEnum.Float,
+                        Value = 43f
+                    };
+                    entity.ScriptValues[1] = new ScriptValue<float>()
+                    {
+                        ScriptIndex = 0,
+                        Name = "gESilk.engine.components.Camera",
+                        ValueType = UniformTypeEnum.Float,
+                        Value = 0.1f
+                    };
+                    entity.ScriptValues[2] = new ScriptValue<float>()
+                    {
+                        ScriptIndex = 0,
+                        Name = "gESilk.engine.components.Camera",
+                        ValueType = UniformTypeEnum.Float,
+                        Value = 1000f
+                    };
+                    entity.ScriptValues[3] = new ScriptValue<float>()
+                    {
+                        ScriptIndex = 0,
+                        Name = "Sensitivity",
+                        ValueType = UniformTypeEnum.Float,
+                        Value = 0.3f
+                    };
+                    break;
+                case "LIGHT_PROBE":
+                    entity.Scripts = new[] {"gESilk.engine.components.CubemapCapture"};
+                    entity.ScriptValues = new IScriptValue[1];
+                    entity.ScriptValues[0] = new ScriptValue<int>()
+                    {
+                        ScriptIndex = 0,
+                        Name = "Size",
+                        ValueType = UniformTypeEnum.Int,
+                        Value = 512
+                    };
+                    break;
+                case "LIGHT":
+                {
+                    var lightType = ReadString(reader);
+                    switch (lightType)
+                    {
+                        case "SUN":
+                            entity.Scripts = new[] {"gESilk.engine.components.Light"};
+                            break;
+                        case "POINT":
+                        {
+                            var lightPower = reader.ReadSingle();
+                            var lightSize = reader.ReadSingle();
+                            var lightColor = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+
+                            entity.Scripts = new[] {"gESilk.engine.components.PointLight"};
+                            entity.ScriptValues = new IScriptValue[3];
+                            entity.ScriptValues[1] = new ScriptValue<float>()
+                            {
+                                ScriptIndex = 0,
+                                Name = "Size",
+                                ValueType = UniformTypeEnum.Float,
+                                Value = lightSize
+                            };
+                            entity.ScriptValues[1] = new ScriptValue<float>()
+                            {
+                                ScriptIndex = 0,
+                                Name = "Power",
+                                ValueType = UniformTypeEnum.Float,
+                                Value = lightPower
+                            };
+                            entity.ScriptValues[2] = new ScriptValue<Vector3>()
+                            {
+                                ScriptIndex = 0,
+                                Name = "Color",
+                                ValueType = UniformTypeEnum.Vector3,
+                                Value = lightColor
+                            };
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            entities.Add(entity);
+        }
+
+        reader.Close();
+
+        var outFile = File.Open($"{fileNoExtension}.gmap", FileMode.Create);
+        var writer = new BinaryWriter(outFile);
+
+        writer.Write(new char[] {'G', 'M', 'A', 'P'});
+        writer.Write(meshes.Count);
+        foreach (var mesh in meshes)
+        {
+            mesh.Write(writer);
+        }
+
+        writer.Write(materials.Length);
+        foreach (var material in materials)
+        {
+            material.Write(writer);
+        }
+        writer.Write(entities.Count);
+        foreach (var entity in entities)
+        {
+            entity.Write(writer);
+        }
+        writer.Write(new char[]{'E', 'N', 'D'});
+        writer.Close();
     }
 
-    public static void WriteVec3(BinaryWriter stream, Vector3D vector3D)
+    public static int GetMatID(string matName, Material[] materials)
     {
-        stream.Write(vector3D.X);
-        stream.Write(vector3D.Y);
-        stream.Write(vector3D.Z);
-    }
+        for (int i = 0; i < materials.Length; i++)
+        {
+            if (materials[i].Name == matName)
+            {
+                return i;
+            }
+        }
 
-    public static void WriteVec3(BinaryWriter stream, IntVec3 vector3D)
-    {
-        stream.Write(vector3D.X);
-        stream.Write(vector3D.Y);
-        stream.Write(vector3D.Z);
-    }
-
-    public static void WriteVec2(BinaryWriter stream, Vector2D vector2D)
-    {
-        stream.Write(vector2D.X);
-        stream.Write(vector2D.Y);
+        return 0;
     }
 }

@@ -28,10 +28,4 @@ Refer to gModel/Program.cs
 3: Vector3
 4: Texture2D
 5: Texture3D
-
-// ObjectTypeEnum
-0: Entity
-1: Camera (Player)
-2: Reflection Probe
-3: SunLight
-4: PointLight
+6: String
