@@ -46,7 +46,7 @@ public static class MapLoader
 
         var program = new ShaderProgram("../../../resources/shader/default.glsl");
 
-        using var reader = new BinaryReader(File.Open(path, FileMode.Open), Encoding.UTF8, false);
+        var reader = new BinaryReader(File.Open(path, FileMode.Open), Encoding.UTF8, false);
 
         reader.ReadChars(4);
         var matCount = reader.ReadInt32();
@@ -70,19 +70,32 @@ public static class MapLoader
                     case UniformTypeEnum.Float:
                         tempMat.AddSetting(new FloatSetting(uniformName, reader.ReadSingle()));
                         break;
+                    case UniformTypeEnum.Int:
+                        break;
+                    case UniformTypeEnum.Vector2:
+                        break;
+                    case UniformTypeEnum.Vector3:
+                        break;
+                    case UniformTypeEnum.Texture3D:
+                        break;
+                    case UniformTypeEnum.String:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
-
-        var meshCount = reader.ReadInt32();
+        
+        var meshCount = reader.ReadUInt32();
         Mesh[] meshes = new Mesh[meshCount];
+        
         for (int i = 0; i < meshCount; i++)
         {
-            reader.ReadChars(4);
-            reader.ReadInt16();
-
             Mesh finalMesh = new Mesh();
-            int subMeshCount = reader.ReadInt16();
+            
+            if (reader.ReadInt16() != 2) throw new InvalidDataException("Build version mismatch"); 
+            int subMeshCount = reader.ReadInt32();
+            
             for (int meshID = 0; meshID < subMeshCount; meshID++)
             {
                 MeshData subMesh = new MeshData();
@@ -122,7 +135,10 @@ public static class MapLoader
                     subMesh.Faces.Add(reader.ReadIntVec3());
                 }
 
+                reader.ReadString();
+
                 subMesh.MaterialId = meshID;
+                subMesh.Data = new VertexArray(subMesh);
 
                 finalMesh.AddMesh(subMesh);
             }
@@ -130,8 +146,57 @@ public static class MapLoader
             meshes[i] = finalMesh;
         }
 
-        reader.Close();
+        var objectCount = reader.ReadInt32();
 
+        for (int i = 0; i < objectCount; i++)
+        {
+            Entity entity = new Entity(application, reader.ReadString());
+            entity.AddComponent(new Transform()
+            {
+                Location = reader.ReadVec3(),
+                Rotation = reader.ReadVec3(),
+                Scale = reader.ReadVec3()
+            });
+
+            ushort scriptCount = reader.ReadUInt16();
+            Type[] scriptTypes = new Type[scriptCount];
+
+            for (int j = 0; j < scriptCount; j++)
+            {
+                scriptTypes[j] = Type.GetType(reader.ReadString());
+                entity.AddComponent((Component) Activator.CreateInstance(scriptTypes[j]));
+            }
+
+            scriptCount = reader.ReadUInt16();
+            for (int j = 0; j < scriptCount; j++)
+            {
+                uint scriptIndex = reader.ReadUInt32(); // I need to be a lot more consistent LOL
+                var scriptField = scriptTypes[scriptIndex].GetField(reader.ReadString());
+                dynamic value = 0;
+                UniformTypeEnum fieldType = (UniformTypeEnum) reader.ReadInt32();
+                switch (fieldType)
+                {
+                    case UniformTypeEnum.Float:
+                        value = reader.ReadSingle();
+                        break;
+                    case UniformTypeEnum.Int:
+                        value = reader.ReadInt32();
+                        break;
+                    case UniformTypeEnum.Vector3:
+                        value = reader.ReadVec3();
+                        break;
+                    case UniformTypeEnum.String:
+                        value = reader.ReadString();
+                        break;
+                }
+                scriptField.SetValue(entity.GetComponent(scriptTypes[j]), value);
+            }
+        }
+
+        char[] end = reader.ReadChars(4);
+        if (end != new char[] {'G', 'M', 'A', 'P'}) throw new Exception("No EOF found.");
+        reader.Close();
+        
         foreach (var entity in EntityManager.Entities.Where(entity => entity.GetComponent<MaterialComponent>() != null))
             entity.GetComponent<MaterialComponent>().GetNearestCubemap();
     }

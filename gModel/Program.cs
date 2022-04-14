@@ -170,7 +170,7 @@ internal static class Program
 
                             entity.Scripts = new[] { "gESilk.engine.components.PointLight" };
                             entity.ScriptValues = new IScriptValue[3];
-                            entity.ScriptValues[1] = new ScriptValue<float>()
+                            entity.ScriptValues[0] = new ScriptValue<float>()
                             {
                                 ScriptIndex = 0,
                                 Name = "Size",
@@ -213,20 +213,23 @@ internal static class Program
         {
             material.Write(writer);
         }
-
+        Console.WriteLine($"There are {materials.Length} materials");
+        
         writer.Write(meshes.Count);
         foreach (var mesh in meshes)
         {
             mesh.Write(writer);
         }
+        Console.WriteLine($"There are {meshes.Count} meshes");
 
         writer.Write(entities.Count);
         foreach (var entity in entities)
         {
             entity.Write(writer);
         }
+        Console.WriteLine($"There are {entities.Count} entities");
 
-        writer.Write(new char[] { 'E', 'N', 'D' });
+        writer.Write(new char[] { 'G', 'M', 'A', 'P' });
         writer.Close();
     }
 

@@ -34,13 +34,11 @@ public readonly struct Mesh
     }
     public void Write(BinaryWriter writer)
     {
-        writer.Write(new[] { 'G', 'M', 'O', 'D' });
+        writer.Write((ushort) 2); // Build Version
         
-        writer.Write((short) 0); // Build Version
-        
-        writer.Write((short) Meshes.Length);
+        writer.Write(Meshes.Length);
 
-        foreach (var item in this.Meshes)
+        foreach (var item in Meshes)
         {
             writer.Write(item.Vert.Length);
             foreach (var vector in item.Vert)

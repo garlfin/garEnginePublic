@@ -32,6 +32,16 @@ public class Entity
         }
         return null;
     }
+
+    public Component GetComponent(Type T)
+    {
+        foreach (var component in _components)
+        {
+            if (T == component.GetType()) return component;
+        }
+
+        return null;
+    }
 }
 
 public static class EntityManager
