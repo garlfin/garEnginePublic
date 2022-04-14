@@ -1,5 +1,6 @@
 ﻿using Assimp;
 using gESilk.engine.render.assets;
+using OpenTK.Mathematics;
 using Mesh = gESilk.engine.render.assets.Mesh;
 
 namespace gESilk.engine.assimp;
@@ -43,11 +44,11 @@ public static class AssimpLoader
             foreach (var vert in mesh.Faces)
                 if (vert.IndexCount == 3)
                     tempMesh.Faces.Add(new IntVec3(vert.Indices[0], vert.Indices[1], vert.Indices[2]));
-            foreach (var vert in mesh.TextureCoordinateChannels[0]) tempMesh.TexCoord.Add(new Vector2D(vert.X, vert.Y));
+            foreach (var vert in mesh.TextureCoordinateChannels[0]) tempMesh.TexCoord.Add(new Vector2(vert.X, vert.Y));
 
-            tempMesh.Vert = mesh.Vertices;
-            tempMesh.Normal = mesh.Normals;
-            tempMesh.Tangent = mesh.Tangents;
+            tempMesh.Vert = mesh.Vertices.Vec3DtoVec3();
+            tempMesh.Normal = mesh.Normals.Vec3DtoVec3();
+            tempMesh.Tangent = mesh.Tangents.Vec3DtoVec3();
             tempMesh.MaterialId = mesh.MaterialIndex;
             tempMesh.Data = new VertexArray(tempMesh);
             outMesh.AddMesh(tempMesh);
@@ -55,5 +56,17 @@ public static class AssimpLoader
 
         outMesh.SetMatCount(_scene.MaterialCount);
         return outMesh;
+    }
+
+    public static List<Vector3> Vec3DtoVec3(this List<Vector3D> vector)
+    {
+        List<Vector3> outVec = new List<Vector3>();
+
+        foreach (var vector3D in vector)
+        {
+            outVec.Add(new Vector3(vector3D.X, vector3D.Y, vector3D.Z));
+        }
+
+        return outVec;
     }
 }

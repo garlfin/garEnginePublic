@@ -7,12 +7,11 @@ namespace gESilk.engine.components;
 
 public class ModelRenderer : Component
 {
-    private readonly Mesh _mesh;
+    public Mesh Mesh;
 
-    public ModelRenderer(Mesh mesh)
+    public ModelRenderer()
     {
         ModelRendererSystem.Register(this);
-        _mesh = mesh;
     }
 
     public override void Update(float gameTime)
@@ -21,15 +20,17 @@ public class ModelRenderer : Component
 
         var state = Owner.Application.AppState;
 
-        if (state != EngineState.RenderLinearShadowState && state != EngineState.RenderShadowState && state != EngineState.RenderDepthState)
+        if (state != EngineState.RenderLinearShadowState && state != EngineState.RenderShadowState &&
+            state != EngineState.RenderDepthState)
         {
             if (!Owner.IsStatic && state is not EngineState.RenderState) return;
-            _mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
-               state is EngineState.RenderState ? DepthFunction.Equal : DepthFunction.Less, Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
+            Mesh.Render(Owner.GetComponent<MaterialComponent>().GetMaterials(), modelTransform.Model,
+                state is EngineState.RenderState ? DepthFunction.Equal : DepthFunction.Less,
+                Owner.IsStatic ? Owner.GetComponent<MaterialComponent>().SkyboxTexture : null);
         }
         else
         {
-            _mesh.Render(
+            Mesh.Render(
                 state is EngineState.RenderLinearShadowState ? Globals.LinearDepthMaterial : Globals.DepthMaterial,
                 modelTransform.Model);
         }

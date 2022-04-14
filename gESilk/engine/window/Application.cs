@@ -13,17 +13,13 @@ public partial class Application
 {
     public Material SkyboxMaterial;
 
-    public Vector3 InverseScreen
-    {
-        get;
-        private set;
-    }
+    public Vector3 InverseScreen { get; private set; }
 
     protected virtual void OnLoad()
     {
         InitRenderer();
 
-        InverseScreen = new Vector3((float) _height / _width, 1, 1);
+        InverseScreen = new Vector3((float)_height / _width, 1, 1);
 
         Globals.Roboto =
             FontLoader.LoadFont("../../../resources/font/roboto.xml", "../../../resources/font/roboto.bin");
@@ -32,7 +28,8 @@ public partial class Application
         _testText.AddComponent(new Transform());
         _testText.GetComponent<Transform>().Location = new Vector3(10, 10, 0).PixelToScreen(_width, _height);
         _testText.GetComponent<Transform>().Scale = new Vector3(0.05f);
-        _testText.AddComponent(new TextRenderer(Globals.Roboto, "gE2 Demo"));
+        _testText.AddComponent(new TextRenderer());
+        _testText.GetComponent<TextRenderer>().Font = Globals.Roboto;
         _testText.AddComponent(new FPS());
 
         Skybox = new CubemapTexture("../../../resources/texture/autumn.exr", this);
@@ -44,7 +41,7 @@ public partial class Application
         SkyboxMaterial = new Material(new ShaderProgram("../../../resources/shader/skybox.glsl"), this);
         SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
 
-        MapLoader.LoadMap("../../../resources/maps/test.map", this);
+        MapLoader.LoadMap("test.gmap", this);
 
         var previousLight = LightSystem.CurrentLight;
 

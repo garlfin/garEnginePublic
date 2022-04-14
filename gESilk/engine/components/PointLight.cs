@@ -18,16 +18,17 @@ public class PointLight : Light
 
     private FrameBuffer _buffer;
     private EmptyCubemapTexture _texture;
-    private int _size;
+    public int Size;
 
-    public PointLight(float power, int width = 1024)
+
+    public PointLight(int size)
     {
-        Power = power;
         LightSystem.Register(this);
-        _size = width;
-        _texture = new EmptyCubemapTexture(width, false, PixelInternalFormat.DepthComponent24,
+        Size = size;
+        _texture = new EmptyCubemapTexture(Size, false, PixelInternalFormat.DepthComponent24,
             PixelFormat.DepthComponent);
     }
+
 
     public EmptyCubemapTexture GetShadowMap()
     {
@@ -36,8 +37,8 @@ public class PointLight : Light
 
     public override void UpdateShadowMatrices()
     {
-        GL.Viewport(0, 0, _size, _size);
-        _buffer = new FrameBuffer(_size, _size);
+        GL.Viewport(0, 0, Size, Size);
+        _buffer = new FrameBuffer(Size, Size);
         Set();
 
         for (int i = 0; i < 6; i++)

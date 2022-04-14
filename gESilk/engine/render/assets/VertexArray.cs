@@ -1,7 +1,6 @@
-﻿using Assimp;
-using gESilk.engine.assimp;
+﻿using gESilk.engine.assimp;
 using OpenTK.Graphics.OpenGL4;
-using PrimitiveType = OpenTK.Graphics.OpenGL4.PrimitiveType;
+using OpenTK.Mathematics;
 
 namespace gESilk.engine.render.assets;
 
@@ -34,7 +33,7 @@ public class VertexArray : Asset
         _elementCount = mesh.Faces.Count;
     }
 
-    private static int CreateBufferAttribute(List<Vector3D> data, BufferUsageHint usageArb,
+    private static int CreateBufferAttribute(List<Vector3> data, BufferUsageHint usageArb,
         VertexAttribPointerType type, uint index, BufferTarget target = BufferTarget.ArrayBuffer)
     {
         var buffer = GL.GenBuffer();
@@ -45,7 +44,7 @@ public class VertexArray : Asset
         return buffer;
     }
 
-    private static int CreateBufferAttribute(List<Vector2D> data, BufferUsageHint usageArb,
+    private static int CreateBufferAttribute(List<Vector2> data, BufferUsageHint usageArb,
         VertexAttribPointerType type, uint index, BufferTarget target = BufferTarget.ArrayBuffer)
     {
         var buffer = GL.GenBuffer();

@@ -1,5 +1,4 @@
-﻿using gESilk.engine.misc;
-using gESilk.engine.window;
+﻿using gESilk.engine.window;
 
 namespace gESilk;
 

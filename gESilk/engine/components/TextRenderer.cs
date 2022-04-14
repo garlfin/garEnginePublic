@@ -5,6 +5,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace gESilk.engine.components;
+
 public class TextRenderer : Component
 {
     public Font Font;
@@ -33,46 +34,45 @@ public class TextRenderer : Component
             dataPinned.Free();
 
             _realText = value;
-            
-            
         }
     }
 
-    private readonly int _vbo, _vtvbo, _ebo, _vao;
+    private int _vbo;
+    private int _vtvbo;
+    private int _ebo;
+    private int _vao;
     private int _elementLength;
 
-    public TextRenderer(Font font, string text)
+    public TextRenderer()
     {
         TextRenderingSystem.Register(this);
-        Font = font;
-
         _vao = GL.GenVertexArray();
         GL.BindVertexArray(_vao);
-        
+
         _elementLength = MaxChar;
         var vertexCount = 4 * MaxChar;
-        
+
         _vbo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertexCount * 3 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertexCount * 3 * sizeof(float), IntPtr.Zero,
+            BufferUsageHint.DynamicDraw);
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
         GL.EnableVertexAttribArray(0);
 
         _vtvbo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vtvbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertexCount * 3 * sizeof(float), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertexCount * 3 * sizeof(float), IntPtr.Zero,
+            BufferUsageHint.DynamicDraw);
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
         GL.EnableVertexAttribArray(1);
 
         _ebo = GL.GenBuffer();
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _ebo);
-        GL.BufferData(BufferTarget.ArrayBuffer, _elementLength * 6* sizeof(int), IntPtr.Zero,
+        GL.BufferData(BufferTarget.ArrayBuffer, _elementLength * 6 * sizeof(int), IntPtr.Zero,
             BufferUsageHint.DynamicDraw);
-
-        Text = text;
     }
 
     private static int CreateBufferAttribute(int buffer, Vector3[] data, BufferUsageHint usageArb,
@@ -92,10 +92,12 @@ public class TextRenderer : Component
             SlotManager.SetSlot(Font.Program);
             Font.Program.Use();
         }
-        
-        Font.Program.SetUniform("model", Matrix4.CreateScale(Owner.Application.InverseScreen) * (Owner.GetComponent<Transform>()?.Model ?? Matrix4.Identity));
+
+        Font.Program.SetUniform("model",
+            Matrix4.CreateScale(Owner.Application.InverseScreen) *
+            (Owner.GetComponent<Transform>()?.Model ?? Matrix4.Identity));
         Font.TexAtlas.TexAtlas.Use(0);
-        
+
         GL.BindVertexArray(_vao);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
         GL.DrawElements(PrimitiveType.Triangles, _elementLength * 6, DrawElementsType.UnsignedInt, 0);
@@ -104,7 +106,7 @@ public class TextRenderer : Component
     private void UpdateData(int dataLength, IntPtr data, IntPtr vtData, int eboDataLength, IntPtr eboData)
     {
         GL.BindVertexArray(_vao);
-        
+
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
         GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, dataLength, data);
 
@@ -171,5 +173,4 @@ public class TextRenderer : Component
 
 class TextRenderingSystem : BaseSystem<TextRenderer>
 {
-    
 }

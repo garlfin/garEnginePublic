@@ -6,14 +6,8 @@ namespace gESilk.resources.Scripts;
 
 public sealed class MovementBehavior : Behavior
 {
-    private readonly float _cameraSpeed;
-    private readonly float _sensitivity;
-
-    public MovementBehavior(float sensitivity = 1f, float cameraSpeed = 4f)
-    {
-        _sensitivity = sensitivity * 0.1f;
-        _cameraSpeed = cameraSpeed;
-    }
+    public float CameraSpeed = 4f;
+    public float Sensitivity = 0.1f;
 
     public override void Update(float gameTime)
     {
@@ -21,18 +15,18 @@ public sealed class MovementBehavior : Behavior
         var camera = Owner.GetComponent<Camera>().GetBasicCamera();
 
         var input = Owner.Application.Window.KeyboardState.GetSnapshot();
-        if (input.IsKeyDown(Keys.W)) entityTransform.Location += camera.Front * _cameraSpeed * gameTime; // Forward
-        if (input.IsKeyDown(Keys.S)) entityTransform.Location -= camera.Front * _cameraSpeed * gameTime; // Backwards
-        if (input.IsKeyDown(Keys.A)) entityTransform.Location -= camera.Right * _cameraSpeed * gameTime; // Left
-        if (input.IsKeyDown(Keys.D)) entityTransform.Location += camera.Right * _cameraSpeed * gameTime; // Right
-        if (input.IsKeyDown(Keys.Space)) entityTransform.Location += camera.Up * _cameraSpeed * gameTime; // Up
-        if (input.IsKeyDown(Keys.C)) entityTransform.Location -= camera.Up * _cameraSpeed * gameTime; // Down
+        if (input.IsKeyDown(Keys.W)) entityTransform.Location += camera.Front * CameraSpeed * gameTime; // Forward
+        if (input.IsKeyDown(Keys.S)) entityTransform.Location -= camera.Front * CameraSpeed * gameTime; // Backwards
+        if (input.IsKeyDown(Keys.A)) entityTransform.Location -= camera.Right * CameraSpeed * gameTime; // Left
+        if (input.IsKeyDown(Keys.D)) entityTransform.Location += camera.Right * CameraSpeed * gameTime; // Right
+        if (input.IsKeyDown(Keys.Space)) entityTransform.Location += camera.Up * CameraSpeed * gameTime; // Up
+        if (input.IsKeyDown(Keys.C)) entityTransform.Location -= camera.Up * CameraSpeed * gameTime; // Down
     }
 
     public override void UpdateMouse(MouseMoveEventArgs args)
     {
         var entityTransform = Owner.GetComponent<Transform>();
-        entityTransform.Rotation.Y += args.DeltaX * _sensitivity;
-        entityTransform.Rotation.X = Math.Clamp(entityTransform.Rotation.X - args.DeltaY * _sensitivity, -90, 90);
+        entityTransform.Rotation.Y += args.DeltaX * Sensitivity;
+        entityTransform.Rotation.X = Math.Clamp(entityTransform.Rotation.X - args.DeltaY * Sensitivity, -90, 90);
     }
 }

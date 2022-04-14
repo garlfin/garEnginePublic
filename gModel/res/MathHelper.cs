@@ -3,12 +3,6 @@ using OpenTK.Mathematics;
 
 namespace gModel.res;
 
-
-/*
-    using var stream = File.Open($"output/{fileNoExtension}.gmod", FileMode.Create);
-    using var writer = new BinaryWriter(stream, Encoding.UTF8, false);
-    mesh.Write(writer);
- */
 public static class MathHelper
 {
     public static void WriteVec3(BinaryWriter stream, Vector3D vector3D)
@@ -17,7 +11,7 @@ public static class MathHelper
         stream.Write(vector3D.Y);
         stream.Write(vector3D.Z);
     }
-    
+
     public static void WriteVec3(this Vector3 tempVec, BinaryWriter writer)
     {
         writer.Write(tempVec.X);

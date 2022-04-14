@@ -7,19 +7,17 @@ namespace gESilk.engine.components;
 
 public class CubemapRenderer : Component
 {
-    private readonly Application _application;
     private readonly Mesh _mesh;
 
     public CubemapRenderer(Application application)
     {
-        _application = application;
         CubemapMManager.Register(this);
         _mesh = Globals.CubeMesh;
     }
 
     public override void Update(float gameTime)
     {
-        _mesh.Render(_application.SkyboxMaterial, Matrix4.Identity, DepthFunction.Lequal, false);
+        _mesh.Render(Owner.Application.SkyboxMaterial, Matrix4.Identity, DepthFunction.Lequal, false);
     }
 }
 

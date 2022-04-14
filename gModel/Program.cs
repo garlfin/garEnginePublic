@@ -1,9 +1,8 @@
 ﻿using System.Text;
+using gESilk.engine.misc;
 using gModel.res;
 using OpenTK.Mathematics;
-using Material = gModel.res.Material;
 using static gModel.res.MathHelper;
-using Entity = gModel.res.Entity;
 
 namespace gModel;
 
@@ -18,7 +17,7 @@ internal static class Program
 
         if (!File.Exists(file)) throw new ArgumentException($"File {fileName} doesn't exist!");
         if (!Directory.Exists("output")) Directory.CreateDirectory("output");
-        
+
         var reader = new BinaryReader(File.Open(file, FileMode.Open), Encoding.UTF8);
 
         var itemCount = reader.ReadInt32();
@@ -32,7 +31,7 @@ internal static class Program
             var material = new Material
             {
                 Name = ReadString(reader),
-                MaterialID = (ushort) i,
+                MaterialID = (ushort)i,
                 UniformCount = 4,
                 Uniforms = new IScriptValue[4]
             };
@@ -55,7 +54,6 @@ internal static class Program
             };
 
             materials[i] = material;
-
         }
 
         var meshes = new List<Mesh>();
@@ -93,7 +91,7 @@ internal static class Program
                     var loadedMesh = AssimpLoader.GetMeshFromFile(meshPath);
                     meshes.Add(loadedMesh);
                     entity.Scripts = new string[]
-                        {"gESilk.engine.components.ModelRenderer", "gESilk.engine.components.MaterialComponent"};
+                        { "gESilk.engine.components.ModelRenderer", "gESilk.engine.components.MaterialComponent" };
                     entity.ScriptValues = new IScriptValue[2];
                     entity.ScriptValues[0] = new ScriptValue<int>()
                     {
@@ -113,7 +111,8 @@ internal static class Program
                     break;
                 }
                 case "CAMERA":
-                    entity.Scripts = new[] {"gESilk.engine.components.Camera", "gESilk.resources.Scripts.MovementBehavior"};
+                    entity.Scripts = new[]
+                        { "gESilk.engine.components.Camera", "gESilk.resources.Scripts.MovementBehavior" };
                     entity.ScriptValues = new IScriptValue[4];
                     entity.ScriptValues[0] = new ScriptValue<float>()
                     {
@@ -145,7 +144,7 @@ internal static class Program
                     };
                     break;
                 case "LIGHT_PROBE":
-                    entity.Scripts = new[] {"gESilk.engine.components.CubemapCapture"};
+                    entity.Scripts = new[] { "gESilk.engine.components.CubemapCapture" };
                     entity.ScriptValues = new IScriptValue[1];
                     entity.ScriptValues[0] = new ScriptValue<int>()
                     {
@@ -161,7 +160,7 @@ internal static class Program
                     switch (lightType)
                     {
                         case "SUN":
-                            entity.Scripts = new[] {"gESilk.engine.components.Light"};
+                            entity.Scripts = new[] { "gESilk.engine.components.Light" };
                             break;
                         case "POINT":
                         {
@@ -169,7 +168,7 @@ internal static class Program
                             var lightSize = reader.ReadSingle();
                             var lightColor = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
-                            entity.Scripts = new[] {"gESilk.engine.components.PointLight"};
+                            entity.Scripts = new[] { "gESilk.engine.components.PointLight" };
                             entity.ScriptValues = new IScriptValue[3];
                             entity.ScriptValues[1] = new ScriptValue<float>()
                             {
@@ -195,9 +194,11 @@ internal static class Program
                             break;
                         }
                     }
+
                     break;
                 }
             }
+
             entities.Add(entity);
         }
 
@@ -206,24 +207,26 @@ internal static class Program
         var outFile = File.Open($"{fileNoExtension}.gmap", FileMode.Create);
         var writer = new BinaryWriter(outFile);
 
-        writer.Write(new char[] {'G', 'M', 'A', 'P'});
+        writer.Write(new char[] { 'G', 'M', 'A', 'P' });
+        writer.Write(materials.Length);
+        foreach (var material in materials)
+        {
+            material.Write(writer);
+        }
+
         writer.Write(meshes.Count);
         foreach (var mesh in meshes)
         {
             mesh.Write(writer);
         }
 
-        writer.Write(materials.Length);
-        foreach (var material in materials)
-        {
-            material.Write(writer);
-        }
         writer.Write(entities.Count);
         foreach (var entity in entities)
         {
             entity.Write(writer);
         }
-        writer.Write(new char[]{'E', 'N', 'D'});
+
+        writer.Write(new char[] { 'E', 'N', 'D' });
         writer.Close();
     }
 

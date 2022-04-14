@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using gESilk.engine.misc;
+using OpenTK.Mathematics;
 
 namespace gModel.res;
 
@@ -21,21 +22,10 @@ public struct Material
     }
 }
 
-public enum UniformTypeEnum
-{ 
-    Int = 0,
-    Float = 1,
-    Vector2 = 2,
-    Vector3 = 3,
-    Texture2D = 4,
-    Texture3D = 5,
-    String = 6
-}
-
 public struct Entity
 {
     public string Name;
-    
+
     public Vector3 Location;
     public Vector3 Rotation;
     public Vector3 Scale;
@@ -49,8 +39,8 @@ public struct Entity
         Location.WriteVec3(writer);
         Rotation.WriteVec3(writer);
         Scale.WriteVec3(writer);
-        
-        writer.Write((ushort) Scripts.Length);
+
+        writer.Write((ushort)Scripts.Length);
         foreach (var script in Scripts)
         {
             writer.Write(script);
@@ -58,7 +48,7 @@ public struct Entity
 
         try
         {
-            writer.Write((ushort) ScriptValues.Length);
+            writer.Write((ushort)ScriptValues.Length);
             foreach (var scriptValue in ScriptValues)
             {
                 scriptValue.Write(writer);
@@ -66,7 +56,7 @@ public struct Entity
         }
         catch (NullReferenceException)
         {
-            writer.Write((ushort) 0);
+            writer.Write((ushort)0);
         }
     }
 }
@@ -78,7 +68,6 @@ public interface IScriptValue
     public UniformTypeEnum ValueType { get; set; }
 
     public void Write(BinaryWriter writer);
-
 }
 
 public struct ScriptValue<T> : IScriptValue
@@ -92,24 +81,22 @@ public struct ScriptValue<T> : IScriptValue
     {
         writer.Write(ScriptIndex);
         writer.Write(Name);
-        writer.Write((int) ValueType);
+        writer.Write((int)ValueType);
         if (typeof(T) == typeof(Vector3))
         {
-            ((Vector3) (object) Value).WriteVec3(writer);
+            ((Vector3)(object)Value).WriteVec3(writer);
         }
         else if (typeof(T) == typeof(int))
         {
-            writer.Write((int) (object) Value);
+            writer.Write((int)(object)Value);
         }
         else if (typeof(T) == typeof(float))
         {
-            writer.Write((float) (object) Value);
+            writer.Write((float)(object)Value);
         }
         else if (typeof(T) == typeof(string))
         {
-            writer.Write((string) (object) Value);
+            writer.Write((string)(object)Value);
         }
     }
-    
 }
-

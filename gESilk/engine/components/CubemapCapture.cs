@@ -9,22 +9,24 @@ namespace gESilk.engine.components;
 
 public class CubemapCapture : BaseCamera
 {
-    private readonly EmptyCubemapTexture _texture;
-    private readonly EmptyCubemapTexture _texturePong;
-    private readonly EmptyCubemapTexture _irradiance;
-    private readonly EmptyCubemapTexture _irradiancePong;
-    private readonly RenderBuffer _mainRenderBuffer, _renderBuffer;
+    private EmptyCubemapTexture _texture;
+    private EmptyCubemapTexture _texturePong;
+    private EmptyCubemapTexture _irradiance;
+    private EmptyCubemapTexture _irradiancePong;
+    private RenderBuffer _mainRenderBuffer, _renderBuffer;
 
+    public int Size;
 
     public CubemapCapture(int size)
     {
         CubemapCaptureManager.Register(this);
-        _texture = new EmptyCubemapTexture(size);
-        _texturePong = new EmptyCubemapTexture(size);
+        Size = size;
+        _texture = new EmptyCubemapTexture(Size);
+        _texturePong = new EmptyCubemapTexture(Size);
         _irradiance = new EmptyCubemapTexture(32, false);
         _irradiancePong = new EmptyCubemapTexture(32, false);
         _camera = new BasicCamera(new Vector3(0), 1f);
-        _mainRenderBuffer = new RenderBuffer(size, size);
+        _mainRenderBuffer = new RenderBuffer(Size, Size);
         _renderBuffer = new RenderBuffer(32, 32);
     }
 

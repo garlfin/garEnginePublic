@@ -9,9 +9,13 @@ public class Behavior : Component
 
     public virtual void UpdateRender(float gameTime)
     {
-        
+    }
+
+    public virtual void OnLoad()
+    {
     }
 }
+
 class BehaviorSystem : BaseSystem<Behavior>
 {
     public static void UpdateRender(float gameTime)
@@ -19,6 +23,14 @@ class BehaviorSystem : BaseSystem<Behavior>
         foreach (var component in Components)
         {
             component.UpdateRender(gameTime);
+        }
+    }
+
+    public static void OnLoad()
+    {
+        foreach (var component in Components)
+        {
+            component.OnLoad();
         }
     }
 }
