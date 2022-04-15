@@ -126,7 +126,7 @@ internal static class Program
                         ScriptIndex = 0,
                         Name = "Fov",
                         ValueType = UniformTypeEnum.Float,
-                        Value = 43f
+                        Value = 50f
                     };
                     entity.ScriptValues[1] = new ScriptValue<float>()
                     {
@@ -147,7 +147,7 @@ internal static class Program
                         ScriptIndex = 1,
                         Name = "Sensitivity",
                         ValueType = UniformTypeEnum.Float,
-                        Value = 0.3f
+                        Value = 0.03f
                     };
                     break;
                 case "LIGHT_PROBE":
