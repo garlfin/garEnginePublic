@@ -2,7 +2,6 @@ C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gModel.exe
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gModel.deps.json
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gModel.runtimeconfig.json
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gModel.dll
-C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\ref\gModel.dll
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\gModel.pdb
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\AssimpNet.dll
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\runtimes\linux-x64\native\libassimp.so
@@ -100,3 +99,4 @@ C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\obj\Release\net6.0\gModel
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\obj\Release\net6.0\ref\gModel.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\Newtonsoft.Json.dll
 C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\Newtonsoft.Json.dll
+C:\Users\scion\RiderProjects\garEngine\gModel\obj\Release\net6.0\refint\gModel.dll

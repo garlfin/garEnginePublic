@@ -7,7 +7,6 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\resources\textu
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\gESilk.deps.json
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\gESilk.runtimeconfig.json
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\gESilk.dll
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\ref\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\gESilk.pdb
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\AssimpNet.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\Microsoft.Win32.SystemEvents.dll
@@ -122,3 +121,4 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\SharpEXR.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\SharpEXR.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\Newtonsoft.Json.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\Newtonsoft.Json.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Release\net6.0\refint\gESilk.dll

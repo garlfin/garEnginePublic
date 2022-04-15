@@ -21,14 +21,16 @@ public class PointLight : Light
     public int Size;
 
 
-    public PointLight(int size)
+    public PointLight()
     {
-        LightSystem.Register(this);
-        Size = size;
-        _texture = new EmptyCubemapTexture(Size, false, PixelInternalFormat.DepthComponent24,
-            PixelFormat.DepthComponent);
     }
 
+    public override void Activate()
+    {
+        _texture = new EmptyCubemapTexture(Size, false, PixelInternalFormat.DepthComponent24,
+            PixelFormat.DepthComponent);
+        LightSystem.Register(this);
+    }
 
     public EmptyCubemapTexture GetShadowMap()
     {

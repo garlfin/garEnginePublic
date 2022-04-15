@@ -18,6 +18,11 @@ public class Light : Component
         LightSystem.ShadowProjection = Matrix4.CreateOrthographic(40f, 40f, 0.1f, 100f);
     }
 
+    public override void Activate()
+    {
+        Set();
+    }
+
     public virtual void UpdateShadowMatrices(int index)
     {
     }

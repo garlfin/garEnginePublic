@@ -5,17 +5,31 @@ namespace gESilk.engine.components;
 
 public class Camera : BaseCamera
 {
-    public Camera(float fov, float clipStart, float clipEnd)
+    public Camera()
     {
-        _fov = fov;
-        _clipStart = clipStart;
-        _clipEnd = clipEnd;
-        CameraSystem.Register(this);
         _camera = new BasicCamera(Vector3.Zero, (float)1280 / 720)
         {
-            DepthFar = clipEnd,
-            DepthNear = clipStart
+            DepthFar = _clipEnd,
+            DepthNear = _clipStart
         };
+    }
+
+    public float Fov
+    {
+        get => _fov;
+        set => _fov = value;
+    }
+
+    public float ClipStart
+    {
+        get => _clipStart;
+        set => _clipStart = value;
+    }
+
+    public float ClipEnd
+    {
+        get => _clipEnd;
+        set => _clipEnd = value;
     }
 
     public override void Update(float gameTime)
@@ -28,5 +42,11 @@ public class Camera : BaseCamera
         View = _camera.GetViewMatrix();
         Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_fov), (float)1280 / 720,
             _clipStart, _clipEnd);
+    }
+
+    public override void Activate()
+    {
+        CameraSystem.Register(this);
+        Set();
     }
 }

@@ -36,7 +36,7 @@ public partial class Application
 
         var skybox = new Entity(this);
 
-        skybox.AddComponent(new CubemapRenderer(this));
+        skybox.AddComponent(new CubemapRenderer());
 
         SkyboxMaterial = new Material(new ShaderProgram("../../../resources/shader/skybox.glsl"), this);
         SkyboxMaterial.AddSetting(new TextureSetting("skybox", Skybox));
@@ -60,6 +60,8 @@ public partial class Application
         _state = EngineState.IterationCubemapState;
         BakeCubemaps();
         foreach (var cubemap in CubemapCaptureManager.Components) cubemap.DeleteOldAssets();
+
+        BehaviorSystem.OnLoad();
     }
 
     protected virtual void OnUpdate(FrameEventArgs args)

@@ -58,9 +58,9 @@ public static class MapLoader
             var uniformCount = reader.ReadInt16();
             for (int j = 0; j < uniformCount; j++)
             {
-                reader.ReadInt32();
+                reader.ReadUInt16();
                 var uniformName = reader.ReadString();
-                var uniformType = (UniformTypeEnum)reader.ReadInt32();
+                var uniformType = (UniformTypeEnum)reader.ReadByte();
                 switch (uniformType)
                 {
                     case UniformTypeEnum.Texture2D:
@@ -85,17 +85,17 @@ public static class MapLoader
                 }
             }
         }
-        
+
         var meshCount = reader.ReadUInt32();
         Mesh[] meshes = new Mesh[meshCount];
-        
+
         for (int i = 0; i < meshCount; i++)
         {
             Mesh finalMesh = new Mesh();
-            
-            if (reader.ReadInt16() != 2) throw new InvalidDataException("Build version mismatch"); 
+
+            if (reader.ReadInt16() != 2) throw new InvalidDataException("Build version mismatch");
             int subMeshCount = reader.ReadInt32();
-            
+
             for (int meshID = 0; meshID < subMeshCount; meshID++)
             {
                 MeshData subMesh = new MeshData();
@@ -139,10 +139,10 @@ public static class MapLoader
 
                 subMesh.MaterialId = meshID;
                 subMesh.Data = new VertexArray(subMesh);
-
                 finalMesh.AddMesh(subMesh);
             }
 
+            finalMesh.SetMatCount(finalMesh.Length());
             meshes[i] = finalMesh;
         }
 
@@ -164,39 +164,49 @@ public static class MapLoader
             for (int j = 0; j < scriptCount; j++)
             {
                 scriptTypes[j] = Type.GetType(reader.ReadString());
-                entity.AddComponent((Component) Activator.CreateInstance(scriptTypes[j]));
+                entity.AddComponent((Component)Activator.CreateInstance(scriptTypes[j]));
             }
 
             scriptCount = reader.ReadUInt16();
             for (int j = 0; j < scriptCount; j++)
             {
-                uint scriptIndex = reader.ReadUInt32(); // I need to be a lot more consistent LOL
-                var scriptField = scriptTypes[scriptIndex].GetField(reader.ReadString());
+                uint scriptIndex = reader.ReadUInt16(); // I need to be a lot more consistent LOL
+                string fieldName = reader.ReadString();
                 dynamic value = 0;
-                UniformTypeEnum fieldType = (UniformTypeEnum) reader.ReadInt32();
-                switch (fieldType)
+                UniformTypeEnum fieldType = (UniformTypeEnum)reader.ReadByte();
+                value = fieldType switch
                 {
-                    case UniformTypeEnum.Float:
-                        value = reader.ReadSingle();
-                        break;
-                    case UniformTypeEnum.Int:
-                        value = reader.ReadInt32();
-                        break;
-                    case UniformTypeEnum.Vector3:
-                        value = reader.ReadVec3();
-                        break;
-                    case UniformTypeEnum.String:
-                        value = reader.ReadString();
-                        break;
+                    UniformTypeEnum.Float => reader.ReadSingle(),
+                    UniformTypeEnum.Int => reader.ReadInt32(),
+                    UniformTypeEnum.Vector3 => reader.ReadVec3(),
+                    UniformTypeEnum.String => reader.ReadString(),
+                    UniformTypeEnum.Material => _materials[reader.ReadInt32()].Mat,
+                    UniformTypeEnum.Mesh => meshes[reader.ReadInt32()],
+                    _ => value
+                };
+                var scriptField = scriptTypes[scriptIndex].GetField(fieldName);
+                if (scriptField != null)
+                {
+                    scriptField.SetValue(entity.GetComponent(scriptTypes[scriptIndex]), value);
                 }
-                scriptField.SetValue(entity.GetComponent(scriptTypes[j]), value);
+                else
+                {
+                    var scriptProperty = scriptTypes[scriptIndex].GetProperty(fieldName);
+                    if (scriptProperty == null) throw new Exception($"Field not found {fieldName}");
+                    scriptProperty.SetValue(entity.GetComponent(scriptTypes[scriptIndex]), value);
+                }
+            }
+
+            foreach (var component in entity.Components)
+            {
+                component.Activate();
             }
         }
 
-        char[] end = reader.ReadChars(4);
-        if (end != new char[] {'G', 'M', 'A', 'P'}) throw new Exception("No EOF found.");
+        string end = new string(reader.ReadChars(4));
+        if (end != "GMAP") throw new Exception("No EOF found.");
         reader.Close();
-        
+
         foreach (var entity in EntityManager.Entities.Where(entity => entity.GetComponent<MaterialComponent>() != null))
             entity.GetComponent<MaterialComponent>().GetNearestCubemap();
     }
@@ -234,5 +244,7 @@ public enum UniformTypeEnum
     Vector3 = 3,
     Texture2D = 4,
     Texture3D = 5,
-    String = 6
+    String = 6,
+    Material = 7,
+    Mesh = 8
 }

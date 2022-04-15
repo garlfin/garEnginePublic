@@ -17,10 +17,13 @@ public class CubemapCapture : BaseCamera
 
     public int Size;
 
-    public CubemapCapture(int size)
+    public CubemapCapture()
     {
         CubemapCaptureManager.Register(this);
-        Size = size;
+    }
+
+    public override void Activate()
+    {
         _texture = new EmptyCubemapTexture(Size);
         _texturePong = new EmptyCubemapTexture(Size);
         _irradiance = new EmptyCubemapTexture(32, false);

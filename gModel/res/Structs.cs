@@ -79,9 +79,9 @@ public struct ScriptValue<T> : IScriptValue
 
     public void Write(BinaryWriter writer)
     {
-        writer.Write(ScriptIndex);
+        writer.Write((ushort)ScriptIndex);
         writer.Write(Name);
-        writer.Write((int)ValueType);
+        writer.Write((byte)ValueType);
         if (typeof(T) == typeof(Vector3))
         {
             ((Vector3)(object)Value).WriteVec3(writer);

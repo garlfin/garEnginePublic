@@ -6,37 +6,37 @@ namespace gESilk.engine.components;
 
 public class MaterialComponent : Component
 {
-    private List<Material> _materials = new();
+    public List<Material> Materials = new();
     public CubemapCapture SkyboxTexture;
+    public Mesh Mesh;
+    public Material DefaultMaterial;
 
-    public MaterialComponent(Mesh mesh, Material defaultMaterial)
+    public override void Activate()
     {
-        for (var i = 0; i < mesh.GetMatCount(); i++) _materials.Add(defaultMaterial);
-    }
-
-    public MaterialComponent(List<Material> materials)
-    {
-        _materials = materials;
+        for (int i = 0; i < Mesh.Length(); i++)
+        {
+            Materials.Add(DefaultMaterial);
+        }
     }
 
     public void ChangeMaterial(int index, Material material)
     {
-        _materials[index] = material;
+        Materials[index] = material;
     }
 
     public void ChangeMaterial(List<Material> materials)
     {
-        _materials = materials;
+        Materials = materials;
     }
 
     public List<Material> GetMaterials()
     {
-        return _materials;
+        return Materials;
     }
 
     public Material GetMaterial(int index)
     {
-        return _materials[index];
+        return Materials[index];
     }
 
     public void GetNearestCubemap()

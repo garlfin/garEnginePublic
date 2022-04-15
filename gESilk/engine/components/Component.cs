@@ -13,6 +13,10 @@ public class Component
     public virtual void UpdateMouse(MouseMoveEventArgs args)
     {
     }
+
+    public virtual void Activate()
+    {
+    }
 }
 
 internal class BaseSystem<T> where T : Component

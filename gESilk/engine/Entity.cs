@@ -10,6 +10,8 @@ public class Entity
     public readonly string Name;
     public readonly Application Application;
 
+    public List<Component> Components => _components;
+
     public Entity(Application application, string name = "Entity", bool isStatic = true)
     {
         EntityManager.AddEntity(this);
@@ -30,6 +32,7 @@ public class Entity
         {
             if (typeof(T) == component.GetType()) return (component as T)!;
         }
+
         return null;
     }
 

@@ -1,5 +1,4 @@
 ﻿using gESilk.engine.render.assets;
-using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -9,7 +8,7 @@ public class CubemapRenderer : Component
 {
     private readonly Mesh _mesh;
 
-    public CubemapRenderer(Application application)
+    public CubemapRenderer()
     {
         CubemapMManager.Register(this);
         _mesh = Globals.CubeMesh;

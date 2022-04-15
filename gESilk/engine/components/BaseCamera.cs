@@ -6,9 +6,9 @@ namespace gESilk.engine.components;
 public abstract class BaseCamera : Component
 {
     protected BasicCamera _camera;
-    protected float _clipEnd;
-    protected float _clipStart;
-    protected float _fov;
+    protected float _clipEnd = 100f;
+    protected float _clipStart = 0.1f;
+    protected float _fov = 43f;
     public Matrix4 View, Projection, PreviousView = Matrix4.Identity;
 
 

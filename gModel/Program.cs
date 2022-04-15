@@ -92,19 +92,26 @@ internal static class Program
                     meshes.Add(loadedMesh);
                     entity.Scripts = new string[]
                         { "gESilk.engine.components.ModelRenderer", "gESilk.engine.components.MaterialComponent" };
-                    entity.ScriptValues = new IScriptValue[2];
+                    entity.ScriptValues = new IScriptValue[3];
                     entity.ScriptValues[0] = new ScriptValue<int>()
                     {
                         ScriptIndex = 0,
-                        Name = "MeshID",
-                        ValueType = UniformTypeEnum.Int,
+                        Name = "Mesh",
+                        ValueType = UniformTypeEnum.Mesh,
                         Value = meshIndex
                     };
                     entity.ScriptValues[1] = new ScriptValue<int>()
                     {
                         ScriptIndex = 1,
-                        Name = "MaterialID",
-                        ValueType = UniformTypeEnum.Int,
+                        Name = "DefaultMaterial",
+                        ValueType = UniformTypeEnum.Material,
+                        Value = GetMatID(loadedMesh.Meshes[0].MaterialId, materials)
+                    };
+                    entity.ScriptValues[2] = new ScriptValue<int>()
+                    {
+                        ScriptIndex = 1,
+                        Name = "Mesh",
+                        ValueType = UniformTypeEnum.Mesh,
                         Value = meshIndex
                     };
                     meshIndex++;
@@ -117,27 +124,27 @@ internal static class Program
                     entity.ScriptValues[0] = new ScriptValue<float>()
                     {
                         ScriptIndex = 0,
-                        Name = "gESilk.engine.components.Camera",
+                        Name = "Fov",
                         ValueType = UniformTypeEnum.Float,
                         Value = 43f
                     };
                     entity.ScriptValues[1] = new ScriptValue<float>()
                     {
                         ScriptIndex = 0,
-                        Name = "gESilk.engine.components.Camera",
+                        Name = "ClipStart",
                         ValueType = UniformTypeEnum.Float,
                         Value = 0.1f
                     };
                     entity.ScriptValues[2] = new ScriptValue<float>()
                     {
                         ScriptIndex = 0,
-                        Name = "gESilk.engine.components.Camera",
+                        Name = "ClipEnd",
                         ValueType = UniformTypeEnum.Float,
                         Value = 1000f
                     };
                     entity.ScriptValues[3] = new ScriptValue<float>()
                     {
-                        ScriptIndex = 0,
+                        ScriptIndex = 1,
                         Name = "Sensitivity",
                         ValueType = UniformTypeEnum.Float,
                         Value = 0.3f
@@ -169,13 +176,13 @@ internal static class Program
                             var lightColor = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
                             entity.Scripts = new[] { "gESilk.engine.components.PointLight" };
-                            entity.ScriptValues = new IScriptValue[3];
-                            entity.ScriptValues[0] = new ScriptValue<float>()
+                            entity.ScriptValues = new IScriptValue[4];
+                            entity.ScriptValues[0] = new ScriptValue<int>()
                             {
                                 ScriptIndex = 0,
                                 Name = "Size",
-                                ValueType = UniformTypeEnum.Float,
-                                Value = lightSize
+                                ValueType = UniformTypeEnum.Int,
+                                Value = 1024
                             };
                             entity.ScriptValues[1] = new ScriptValue<float>()
                             {
@@ -190,6 +197,13 @@ internal static class Program
                                 Name = "Color",
                                 ValueType = UniformTypeEnum.Vector3,
                                 Value = lightColor
+                            };
+                            entity.ScriptValues[3] = new ScriptValue<float>()
+                            {
+                                ScriptIndex = 0,
+                                Name = "Radius",
+                                ValueType = UniformTypeEnum.Float,
+                                Value = lightSize
                             };
                             break;
                         }
@@ -213,13 +227,15 @@ internal static class Program
         {
             material.Write(writer);
         }
+
         Console.WriteLine($"There are {materials.Length} materials");
-        
+
         writer.Write(meshes.Count);
         foreach (var mesh in meshes)
         {
             mesh.Write(writer);
         }
+
         Console.WriteLine($"There are {meshes.Count} meshes");
 
         writer.Write(entities.Count);
@@ -227,6 +243,7 @@ internal static class Program
         {
             entity.Write(writer);
         }
+
         Console.WriteLine($"There are {entities.Count} entities");
 
         writer.Write(new char[] { 'G', 'M', 'A', 'P' });
