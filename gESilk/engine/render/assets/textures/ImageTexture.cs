@@ -23,25 +23,21 @@ public class ImageTexture : Texture
         var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, format);
 
         GL.TexImage2D(TextureTarget.Texture2D, 0, Format, bmp.Width, bmp.Height, 0,
-            OpenTK.Graphics.OpenGL4.PixelFormat.Bgra,
-            PixelType.UnsignedByte, bmpData.Scan0);
+            OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-            (int) TextureMinFilter.LinearMipmapLinear);
+            (int)TextureMinFilter.LinearMipmapLinear);
         if (application.HasExtension("GL_EXT_texture_filter_anisotropic"))
         {
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-                (int) TextureMagFilter.Linear);
+                (int)TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D,
-                (TextureParameterName) ArbTextureFilterAnisotropic.TextureMaxAnisotropy, 4f);
+                (TextureParameterName)ArbTextureFilterAnisotropic.TextureMaxAnisotropy, 4f);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureLodBias, 0f);
         }
-        else
-        {
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureLodBias, -1f);
-        }
+
 
         bmp.UnlockBits(bmpData);
         bmp.Dispose();

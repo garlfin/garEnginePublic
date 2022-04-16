@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gESilk", "gESilk\gESilk.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gModel", "gModel\gModel.csproj", "{679E5645-56E9-452B-9B5E-C5722AB0BA73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVRTC", "PVRTC\PVRTC.csproj", "{997CE7F8-8A71-45CF-B2AE-EFF16BC4B1DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{679E5645-56E9-452B-9B5E-C5722AB0BA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{679E5645-56E9-452B-9B5E-C5722AB0BA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{679E5645-56E9-452B-9B5E-C5722AB0BA73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{997CE7F8-8A71-45CF-B2AE-EFF16BC4B1DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{997CE7F8-8A71-45CF-B2AE-EFF16BC4B1DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{997CE7F8-8A71-45CF-B2AE-EFF16BC4B1DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{997CE7F8-8A71-45CF-B2AE-EFF16BC4B1DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
