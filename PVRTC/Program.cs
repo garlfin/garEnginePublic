@@ -5,41 +5,39 @@ public static class Program
     public static void Main(string[] args)
     {
         var file = File.Open("test.pvr", FileMode.Open);
+        long length = file.Length;
         var reader = new BinaryReader(file);
 
-        uint version = reader.ReadUInt32();
-        uint flags = reader.ReadUInt32();
+        reader.ReadUInt32();
+        reader.ReadUInt32();
         Format format = (Format)reader.ReadUInt64();
-        ColorSpace colorSpace = (ColorSpace)reader.ReadUInt32();
+        reader.ReadUInt32();
         ChannelType channelType = (ChannelType)reader.ReadUInt32();
         uint width = reader.ReadUInt32();
         uint height = reader.ReadUInt32();
-        uint depth = reader.ReadUInt32();
-        uint surfaces = reader.ReadUInt32();
-        uint faces = reader.ReadUInt32();
+        reader.ReadUInt32();
+        reader.ReadUInt32();
+        reader.ReadUInt32();
         uint mipCount = reader.ReadUInt32();
         uint metaDataSize = reader.ReadUInt32();
         Console.WriteLine(
-            $"Version: {version} | Flags: {flags} | Format: {format} | Color Space: {colorSpace} | Channel Type: {channelType} | Width: {width} | Height: {height} | Depth: {depth} | Surfaces: {surfaces} | Faces: {faces} | Mip-Map Count: {mipCount}");
-        if (depth + surfaces + faces + mipCount > 4) throw new Exception("Only one texture supported.");
+            $"Format: {format} | Channel Type: {channelType} | Width: {width} | Height: {height}");
+        if (mipCount > 1) throw new Exception("No mips supported");
         reader.ReadBytes((int)metaDataSize);
+        byte[] imageData = reader.ReadBytes((int)(length - metaDataSize - 52));
+
 
         reader.Close();
         file.Close();
     }
 
-    public enum Format
+    private enum Format
     {
-        PVRTC_2BPP_RGB = 0,
-        PVRTC_2BPP_RGBA = 1,
-        PVRTC_4BPP_RGB = 2,
-        PVRTC_4BPP_RGBA = 3,
-    }
-
-    public enum ColorSpace
-    {
-        Linear = 0,
-        sRGB = 1
+        BC1 = 7,
+        BC2 = 9,
+        BC3 = 11,
+        BC4 = 12,
+        BC5 = 13
     }
 
     public enum ChannelType
