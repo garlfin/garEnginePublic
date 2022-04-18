@@ -13,3 +13,15 @@ C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\refint\PVRTC.dll
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.pdb
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.genruntimeconfig.cache
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\ref\PVRTC.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\bin\Release\net6.0\PVRTC.deps.json
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\bin\Release\net6.0\PVRTC.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\bin\Release\net6.0\PVRTC.pdb
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.csproj.AssemblyReference.cache
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.AssemblyInfoInputs.cache
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.AssemblyInfo.cs
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.csproj.CoreCompileInputs.cache
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\refint\PVRTC.dll
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\PVRTC.pdb
+C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\obj\Release\net6.0\ref\PVRTC.dll

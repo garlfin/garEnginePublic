@@ -1,29 +1,27 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
+using Image = PVRTC.Image;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace gESilk.engine.render.assets.textures;
 
-[SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
 public class ImageTexture : Texture
 {
-    public ImageTexture(string path,
-        Application application,
-        PixelFormat format = PixelFormat.Format32bppArgb)
+    public ImageTexture(Image image, Application application)
     {
         Format = PixelInternalFormat.Rgba;
         Id = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, Id);
-
-        var bmp = new Bitmap(path);
-        bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, format);
-
-        GL.TexImage2D(TextureTarget.Texture2D, 0, Format, bmp.Width, bmp.Height, 0,
-            OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
+        
+        GCHandle pinnedArray = GCHandle.Alloc(image.ImageData, GCHandleType.Pinned);
+        IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+        GL.CompressedTexImage2D(TextureTarget.Texture2D, 0, InternalFormat.CompressedRgbaS3tcDxt3Ext, (int) image.Width,
+            (int) image.Height, 0, image.ImageData.Length, pointer);
+        pinnedArray.Free();
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
@@ -37,9 +35,5 @@ public class ImageTexture : Texture
                 (TextureParameterName)ArbTextureFilterAnisotropic.TextureMaxAnisotropy, 4f);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureLodBias, 0f);
         }
-
-
-        bmp.UnlockBits(bmpData);
-        bmp.Dispose();
     }
 }

@@ -66,4 +66,8 @@
         <Folder Include="resources\maps\assets" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\PVRTC\PVRTC.csproj" />
+    </ItemGroup>
+
 </Project>

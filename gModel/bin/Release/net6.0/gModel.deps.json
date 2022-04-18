@@ -9,6 +9,7 @@
       "gModel/1.0.0": {
         "dependencies": {
           "AssimpNet": "4.1.0",
+          "PVRTC": "1.0.0",
           "gESilk": "1.0.0"
         },
         "runtime": {
@@ -911,11 +912,17 @@
           "AssimpNet": "4.1.0",
           "Newtonsoft.Json": "13.0.1",
           "OpenTK": "4.6.7",
+          "PVRTC": "1.0.0",
           "SharpEXR": "1.0.0.19",
           "System.Drawing.Common": "6.0.0"
         },
         "runtime": {
           "gESilk.dll": {}
+        }
+      },
+      "PVRTC/1.0.0": {
+        "runtime": {
+          "PVRTC.dll": {}
         }
       }
     }
@@ -1557,6 +1564,11 @@
       "hashPath": "system.xml.xdocument.4.3.0.nupkg.sha512"
     },
     "gESilk/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "PVRTC/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -7,6 +7,7 @@ using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Mathematics;
+using PVRTC;
 
 namespace gESilk.engine.misc;
 
@@ -49,6 +50,24 @@ public static class MapLoader
         var reader = new BinaryReader(File.Open(path, FileMode.Open), Encoding.UTF8, false);
 
         reader.ReadChars(4);
+        var imgCount = reader.ReadInt32();
+
+        ImageTexture[] images = new ImageTexture[imgCount];
+        
+        for (int i = 0; i < imgCount; i++)
+        {
+            PVRTC.Image image = new Image
+            {
+                Format = (PVRTC.Format) reader.ReadByte(),
+                Type = (PVRTC.ChannelType) reader.ReadByte(),
+                Width = reader.ReadUInt32(),
+                Height = reader.ReadUInt32(),
+                ImageData = reader.ReadBytes((int) reader.ReadUInt32())
+            };
+
+            images[i] = new ImageTexture(image, application);
+        }
+
         var matCount = reader.ReadInt32();
         for (int i = 0; i < matCount; i++)
         {
@@ -64,8 +83,7 @@ public static class MapLoader
                 switch (uniformType)
                 {
                     case UniformTypeEnum.Texture2D:
-                        tempMat.AddSetting(new TextureSetting(uniformName,
-                            new ImageTexture(reader.ReadString(), application)));
+                        tempMat.AddSetting(new TextureSetting(uniformName, images[reader.ReadUInt32()]));
                         break;
                     case UniformTypeEnum.Float:
                         tempMat.AddSetting(new FloatSetting(uniformName, reader.ReadSingle()));
@@ -142,7 +160,7 @@ public static class MapLoader
                 finalMesh.AddMesh(subMesh);
             }
 
-            finalMesh.SetMatCount(finalMesh.Length());
+            finalMesh.SetMatCount(finalMesh.Length()); 
             meshes[i] = finalMesh;
         }
 
@@ -150,7 +168,8 @@ public static class MapLoader
 
         for (int i = 0; i < objectCount; i++)
         {
-            Entity entity = new Entity(application, reader.ReadString());
+            string entityName = reader.ReadString();
+            Entity entity = new Entity(application, entityName, !entityName.StartsWith("D_"));
             entity.AddComponent(new Transform()
             {
                 Location = reader.ReadVec3(),

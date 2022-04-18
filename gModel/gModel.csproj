@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\gESilk\gESilk.csproj" />
+        <ProjectReference Include="..\PVRTC\PVRTC.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "d8pktclS4pv5waGumvHC/S8AbOgN51XEx9rccthHAMjAEYf+gkSKF5Pi0ABiKAiV4mWvge7Jp8ppQq8CuZjH1w==",
+  "dgSpecHash": "AJoP4Dc+t7i0dWX7k5EW75vUpvTOHurjpZKNO7zQ+aNQWqk+P1DSPqcotv1KSyNgaO88SUeEOb73dhyfT6o9fA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gModel\\gModel.csproj",
+  "projectFilePath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gModel\\gModel.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

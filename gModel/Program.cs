@@ -2,6 +2,7 @@
 using gESilk.engine.misc;
 using gModel.res;
 using OpenTK.Mathematics;
+using PVRTC;
 using static gModel.res.MathHelper;
 
 namespace gModel;
@@ -22,6 +23,7 @@ internal static class Program
 
         var itemCount = reader.ReadInt32();
 
+        var images = new List<Tuple<PVRTC.Image, string>>();
         var materials = new Material[itemCount];
 
         for (var i = 0; i < itemCount; i++)
@@ -38,12 +40,23 @@ internal static class Program
 
             for (var x = 0; x < 3; x++)
             {
-                material.Uniforms[x] = new ScriptValue<string>()
+                string name = ReadString(reader);
+                string path = ReadString(reader) + ".pvr";
+                int uniformValue = GetImgID(path, images);
+                if (uniformValue == -1)
+                {
+                    images.Add(new Tuple<Image, string>(PVRTC.Program.GetImageFromFile(path), path));
+                    uniformValue = GetImgID(path, images);
+                }
+
+                if (uniformValue == -1) throw new Exception($"{path} managed to still have a value of -1");
+                material.Uniforms[x] = new ScriptValue<int>()
                 {
                     ValueType = UniformTypeEnum.Texture2D,
-                    Name = ReadString(reader),
-                    Value = ReadString(reader)
+                    Name = name,
+                    Value = uniformValue
                 };
+                
             }
 
             material.Uniforms[3] = new ScriptValue<float>()
@@ -222,6 +235,13 @@ internal static class Program
         var writer = new BinaryWriter(outFile);
 
         writer.Write(new char[] { 'G', 'M', 'A', 'P' });
+        
+        writer.Write(images.Count);
+        foreach (var image in images)
+        {
+            image.Item1.Write(writer);
+        }
+        
         writer.Write(materials.Length);
         foreach (var material in materials)
         {
@@ -260,6 +280,19 @@ internal static class Program
             }
         }
 
-        return 0;
+        return -1;
+    }
+
+    public static int GetImgID(string imgName, List<Tuple<Image, string>> images)
+    {
+        for (int i = 0; i < images.Count; i++)
+        {
+            if (images[i].Item2 == imgName)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
