@@ -80,7 +80,7 @@ public partial class Application
         CameraSystem.Update(0f);
         TransformSystem.Update(0f);
         LightSystem.UpdateShadow();
-        BehaviorSystem.UpdateRender((float) args.Time);
+        BehaviorSystem.UpdateRender((float)args.Time);
 
         _state = EngineState.RenderShadowState;
         ShadowMap.Bind(ClearBufferMask.DepthBufferBit);
@@ -257,7 +257,7 @@ public partial class Application
 
         _window.CursorGrabbed = true;
 
-        RenderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae");
+        RenderPlaneMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/plane.dae", this);
 
         var prevState = _state;
         _state = EngineState.GenerateBrdfState;
@@ -338,9 +338,9 @@ public partial class Application
             PixelType.UnsignedByte, false, TextureWrapMode.ClampToEdge);
         _fxaaCompTex = new RenderTexture(_width, _height, PixelInternalFormat.Rgba8, PixelFormat.Rgba,
             PixelType.UnsignedByte, false, TextureWrapMode.ClampToEdge);
-        
+
         for (var i = 0; i < _data.Length; i++) _framebufferShaderSsao.SetUniform($"Samples[{i}]", _data[i]);
-        
+
         _postProcessingBuffer = new FrameBuffer(_width, _height);
         _ssaoTex = new RenderTexture(_width, _height, PixelInternalFormat.R8, PixelFormat.Red, PixelType.Float,
             false, TextureWrapMode.ClampToEdge);

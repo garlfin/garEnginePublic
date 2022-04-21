@@ -1,5 +1,4 @@
 ﻿using Assimp;
-using gESilk.engine.assimp;
 using gESilk.engine.misc;
 using gESilk.engine.render.materialSystem;
 using gESilk.engine.render.materialSystem.settings;
@@ -8,11 +7,11 @@ using Mesh = gESilk.engine.render.assets.Mesh;
 
 namespace gESilk.engine;
 
-public class Globals
+public static class Globals
 {
-    public static readonly AssimpContext Assimp;
+    public static AssimpContext Assimp;
     public static readonly Material DepthMaterial, LinearDepthMaterial;
-    public static readonly Mesh CubeMesh;
+    public static Mesh CubeMesh;
     public static readonly ShaderProgram FontProgram;
     public static Font Roboto;
 
@@ -25,9 +24,6 @@ public class Globals
         LinearDepthMaterial = new Material(new ShaderProgram("../../../resources/shader/lineardepth.glsl"),
             Program.MainWindow ?? throw new InvalidOperationException());
         LinearDepthMaterial.AddSetting(new FloatSetting("far", 100f));
-
-        CubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj");
-        CubeMesh.IsSkybox(true);
         FontProgram = new ShaderProgram("../../../resources/shader/text.glsl");
     }
 }

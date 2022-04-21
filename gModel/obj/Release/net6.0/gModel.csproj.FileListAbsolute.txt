@@ -102,3 +102,5 @@ C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\Newtonsoft.Json
 C:\Users\scion\RiderProjects\garEngine\gModel\obj\Release\net6.0\refint\gModel.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\PVRTC.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gModel\bin\Release\net6.0\PVRTC.pdb
+C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\PVRTC.dll
+C:\Users\scion\RiderProjects\garEngine\gModel\bin\Release\net6.0\PVRTC.pdb

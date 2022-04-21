@@ -1,4 +1,5 @@
 ﻿using gESilk.engine.assimp;
+using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -13,9 +14,11 @@ public class VertexArray : Asset
     private int _vao;
     private readonly int _vbo;
     private readonly int _vtvbo;
+    private Application _application;
 
-    public VertexArray(MeshData mesh)
+    public VertexArray(MeshData mesh, Application application)
     {
+        _application = application;
         AssetManager.Register(this);
 
         _vao = GL.GenVertexArray();
@@ -67,7 +70,11 @@ public class VertexArray : Asset
     public void Render()
     {
         GL.BindVertexArray(_vao);
-        GL.DrawElements(PrimitiveType.Triangles, _elementCount * 3, DrawElementsType.UnsignedInt, 0);
+        if (_application.AppState is EngineState.RenderLinearShadowState)
+            GL.DrawElementsInstanced(PrimitiveType.Triangles, _elementCount * 3, DrawElementsType.UnsignedInt,
+                IntPtr.Zero, 6);
+        else
+            GL.DrawElements(PrimitiveType.Triangles, _elementCount * 3, DrawElementsType.UnsignedInt, 0);
     }
 
     public override void Delete()
