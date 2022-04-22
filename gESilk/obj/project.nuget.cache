@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZXX4673dndotaFUTVAsPjJNTCaGQ+GeCc3YO/th98SvUvQ2oU34egPVf0iAOKCl80BoSPwcRx/Qj6Pzdv92EIQ==",
+  "dgSpecHash": "jN4gu010eyaOpwtGAwNc/ypqrRs+ARjzc598RXtaPh4d3WvEqIG13b3oiBz1+vpjiJw5KS7GzjLfUmLtSs6Fsg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\scion\\RiderProjects\\garEngine\\gESilk\\gESilk.csproj",
+  "projectFilePath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\gESilk\\gESilk.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\scion\\.nuget\\packages\\assimpnet\\4.1.0\\assimpnet.4.1.0.nupkg.sha512",
     "C:\\Users\\scion\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

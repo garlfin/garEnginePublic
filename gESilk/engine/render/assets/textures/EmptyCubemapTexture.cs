@@ -10,8 +10,8 @@ namespace gESilk.engine.render.assets.textures;
 [SuppressMessage("Interoperability", "CA1416", MessageId = "Validate platform compatibility")]
 public class EmptyCubemapTexture : Texture
 {
-    public EmptyCubemapTexture(int size, bool genMips = true, PixelInternalFormat format = PixelInternalFormat.Rgba16f,
-        PixelFormat byteFormat = PixelFormat.Rgba, bool isShadow = false)
+    public EmptyCubemapTexture(int size, bool genMips = true, PixelInternalFormat format = PixelInternalFormat.Rgb16f,
+        PixelFormat byteFormat = PixelFormat.Rgb, bool isShadow = false)
     {
         Format = format;
         Id = GL.GenTexture();

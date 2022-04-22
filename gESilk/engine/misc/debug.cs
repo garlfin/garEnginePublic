@@ -16,6 +16,7 @@ internal static class GlDebug
     private static void Debug(DebugSource source, DebugType type, int id, DebugSeverity severity, int length,
         IntPtr message, IntPtr userParam)
     {
+        if (severity is not DebugSeverity.DebugSeverityHigh) Console.Write(Marshal.PtrToStringAnsi(message, length));
         Console.BackgroundColor = ConsoleColor.Red;
         if (severity is DebugSeverity.DebugSeverityHigh) throw new Exception(Marshal.PtrToStringAnsi(message, length));
         Console.BackgroundColor = default;

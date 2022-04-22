@@ -82,26 +82,20 @@ public class Material
         var state = _application.AppState;
 
         _model.Use(model);
-        switch (state)
+        if (state == EngineState.RenderShadowState)
         {
-            case EngineState.RenderShadowState:
-                _view.Use(LightSystem.ShadowView);
-                _projection.Use(LightSystem.ShadowProjection);
-                GL.Disable(EnableCap.CullFace);
-                break;
-            case EngineState.GenerateCubemapState or EngineState.IterationCubemapState:
+            _view.Use(LightSystem.ShadowView);
+            _projection.Use(LightSystem.ShadowProjection);
+            GL.Disable(EnableCap.CullFace);
+        }
+        else
+        {
+            for (int i = 0; i < 6; i++)
             {
-                for (int i = 0; i < 6; i++)
-                    _program.SetUniform($"view[{i}]", ((CubemapCapture)CameraSystem.CurrentCamera).CubemapView[i]);
-                _projection.Use(CameraSystem.CurrentCamera.Projection);
-                break;
+                var currentView = CameraSystem.CurrentCamera.View[i];
+                _program.SetUniform($"view[{i}]", clearTranslation ? currentView.ClearTranslation() : currentView);
             }
-            default:
-                _view.Use(clearTranslation
-                    ? CameraSystem.CurrentCamera.View.ClearTranslation()
-                    : CameraSystem.CurrentCamera.View);
-                _projection.Use(CameraSystem.CurrentCamera.Projection);
-                break;
+            _projection.Use(CameraSystem.CurrentCamera.Projection);
         }
 
         // Point lights need this information too

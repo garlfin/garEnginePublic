@@ -14,7 +14,6 @@ public class CubemapCapture : BaseCamera
     private EmptyCubemapTexture _irradiance;
     private EmptyCubemapTexture _irradiancePong;
     private RenderBuffer _mainRenderBuffer, _renderBuffer;
-    public Matrix4[] CubemapView = new Matrix4[6];
 
     public int Size;
 
@@ -80,27 +79,25 @@ public class CubemapCapture : BaseCamera
 
         Owner.Application.AppState = previousState;
 
-        _mainRenderBuffer.Bind(null);
-
         var entityTransform = Owner.GetComponent<Transform>();
-
-        var currentTex = Owner.Application.AppState is EngineState.GenerateCubemapState
-            ? _texture
-            : _texturePong;
-
-
-        currentTex.BindToBuffer3D(_mainRenderBuffer, FramebufferAttachment.ColorAttachment0);
-
+        
         for (int i = 0; i < 6; i++)
         {
-            CubemapView[i] = MiscMath.GetLookAt(entityTransform.Location, i);
+            View[i] = MiscMath.GetLookAt(entityTransform.Location, i);
         }
-
         Projection = _camera.GetProjectionMatrix();
 
+        var currentTex = previousState is EngineState.GenerateCubemapState
+            ? _texture
+            : _texturePong;
+        
+        _mainRenderBuffer.Bind(null);
+        GL.NamedFramebufferTexture(_mainRenderBuffer.Get(), FramebufferAttachment.ColorAttachment0, currentTex.Get(), 0);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         ModelRendererSystem.Update(0f);
         CubemapMManager.Update(0f);
 
+        Owner.Application.AppState = EngineState.PostProcessState;
         GL.BindTexture(TextureTarget.TextureCubeMap, currentTex.Get());
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
         currentTex.GenerateMipsSpecular(Owner.Application);
@@ -108,7 +105,7 @@ public class CubemapCapture : BaseCamera
         previousCamera.Set();
 
         GL.Disable(EnableCap.CullFace);
-        GL.DepthFunc(DepthFunction.Always);
+        GL.DepthFunc(DepthFunction.Always); 
 
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
@@ -119,14 +116,13 @@ public class CubemapCapture : BaseCamera
 
         program.Use();
         program.SetUniform("environmentMap",
-            (Owner.Application.AppState is EngineState.GenerateCubemapState ? _texture : _texturePong).Use(0));
+            (previousState is EngineState.GenerateCubemapState ? _texture : _texturePong).Use(0));
         program.SetUniform("model", Matrix4.Identity);
         program.SetUniform("projection",
             Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f));
 
 
-        currentTex = Owner.Application.AppState is EngineState.GenerateCubemapState ? _irradiance : _irradiancePong;
-
+        currentTex = previousState is EngineState.GenerateCubemapState ? _irradiance : _irradiancePong;
         for (var i = 0; i < 6; i++)
         {
             currentTex.BindToBuffer(_renderBuffer, FramebufferAttachment.ColorAttachment0,
@@ -139,6 +135,7 @@ public class CubemapCapture : BaseCamera
             Globals.CubeMesh.Render();
         }
 
+        Owner.Application.AppState = previousState;
         GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
