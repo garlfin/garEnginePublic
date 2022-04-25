@@ -27,7 +27,6 @@ out vec3 noNormalNormal;
 
 
 void main() {
-    gl_Layer = gl_InstanceID;
     fTexCoord = vTexCoord;
     mat3 normalMatrix =  mat3(transpose(inverse(model)));
     vec3 T = normalize(vTangent * normalMatrix);
@@ -38,10 +37,10 @@ void main() {
     FragPos = vec3(worldPos);
     gl_Position = worldPos * view[gl_InstanceID] * projection;
     FragPosLightSpace = worldPos * lightView * lightProjection;
-    viewFragPos = vec3(worldPos * view[gl_InstanceID]);
-    viewNormal = normalize(vNormal * mat3(transpose(inverse(model*view[gl_InstanceID]))));
+    viewFragPos = vec3(worldPos * view[0]);
+    viewNormal = normalize(vNormal * mat3(transpose(inverse(model*view[0]))));
     noNormalNormal = N;
-  
+    gl_Layer = gl_InstanceID;
 }
     //-FRAGMENT-
     #version 430
@@ -296,8 +295,9 @@ void main()
     float shadow = ShadowCalculation(FragPosLightSpace, maplessNormal, lightDir);
 
     vec4 cubemapUV = CubemapParallaxUV(reflect(-viewDir, normal));
-    vec3 skyboxSampler = textureLod(localCubemap.cubemap, cubemapUV.rgb, roughness * mipmapLevel).rgb;
-   
+    vec4 skyboxWithAlpha = textureLod(localCubemap.cubemap, cubemapUV.rgb, roughness * mipmapLevel);
+    vec3 skyboxSampler = skyboxWithAlpha.rgb;
+    skyboxSampler = mix(skyboxSampler, textureLod(skyboxGlobal, reflect(-viewDir, normal), roughness * mipmapLevel).rgb, max(1-skyboxWithAlpha.a, cubemapUV.a));
     vec3 kS = fresnelSchlick(max(dot(normal, viewDir), 0.0), F0);
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;

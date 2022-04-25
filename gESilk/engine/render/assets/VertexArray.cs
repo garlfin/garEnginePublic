@@ -70,7 +70,7 @@ public class VertexArray : Asset
     public void Render()
     {
         GL.BindVertexArray(_vao);
-        if (_application.AppState is EngineState.RenderLinearShadowState or EngineState.GenerateCubemapState or EngineState.IterationCubemapState)
+        if (_application.AppState is EngineState.RenderLinearShadowState)
             GL.DrawElementsInstanced(PrimitiveType.Triangles, _elementCount * 3, DrawElementsType.UnsignedInt,
                 IntPtr.Zero, 6);
         else

@@ -141,7 +141,7 @@ public partial class Application
         _mbShader.Use();
         _fxaaCompTex.Use(0);
         _mbShader.SetUniform("projection", CameraSystem.CurrentCamera.Projection);
-        _mbShader.SetUniform("view", CameraSystem.CurrentCamera.View[0].Inverted());
+        _mbShader.SetUniform("view", CameraSystem.CurrentCamera.View.Inverted());
         _mbShader.SetUniform("prevView", CameraSystem.CurrentCamera.PreviousView);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         RenderPlaneMesh.Render();

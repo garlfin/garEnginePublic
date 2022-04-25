@@ -39,7 +39,7 @@ public class Camera : BaseCamera
         _camera.Position = entityTransform.Location;
         _camera.Yaw = entityTransform.Rotation.Y;
         _camera.Pitch = entityTransform.Rotation.X;
-        View[0] = _camera.GetViewMatrix();
+        View = _camera.GetViewMatrix();
         Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_fov), (float)1280 / 720,
             _clipStart, _clipEnd);
     }
