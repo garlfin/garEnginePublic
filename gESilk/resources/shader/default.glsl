@@ -1,18 +1,13 @@
 ﻿// I love you Joey DeVries https://learnopengl.com/About -- BRDF Code
 #version 430
-#extension GL_NV_viewport_array2 : enable
-#extension GL_NV_viewport_array : enable
-#extension GL_ARB_shader_viewport_layer_array : enable
-#extension GL_AMD_vertex_shader_layer : enable
 
 layout(location = 0) in vec3 vPosition;
 layout(location = 1) in vec3 vNormal;
 layout(location = 2) in vec2 vTexCoord;
 layout(location = 3) in vec3 vTangent;
 
-
 uniform mat4 projection;
-uniform mat4 view[6];
+uniform mat4 view;
 uniform mat4 model;
 uniform mat4 lightView;
 uniform mat4 lightProjection;
@@ -35,12 +30,11 @@ void main() {
     TBN = transpose(mat3(T, B, N));
     vec4 worldPos = vec4(vPosition, 1.0) * model;
     FragPos = vec3(worldPos);
-    gl_Position = worldPos * view[gl_InstanceID] * projection;
+    gl_Position = worldPos * view * projection;
     FragPosLightSpace = worldPos * lightView * lightProjection;
-    viewFragPos = vec3(worldPos * view[0]);
-    viewNormal = normalize(vNormal * mat3(transpose(inverse(model*view[0]))));
+    viewFragPos = vec3(worldPos * view);
+    viewNormal = normalize(vNormal * mat3(transpose(inverse(model*view))));
     noNormalNormal = N;
-    gl_Layer = gl_InstanceID;
 }
     //-FRAGMENT-
     #version 430

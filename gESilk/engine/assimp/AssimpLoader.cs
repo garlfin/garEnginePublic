@@ -1,6 +1,5 @@
 ﻿using Assimp;
 using gESilk.engine.render.assets;
-using gESilk.engine.window;
 using OpenTK.Mathematics;
 using Mesh = gESilk.engine.render.assets.Mesh;
 
@@ -25,7 +24,6 @@ public static class AssimpLoader
     private static Scene? _scene;
 
     public static Mesh GetMeshFromFile(string path,
-        Application application,
         PostProcessSteps steps = PostProcessSteps.Triangulate | PostProcessSteps.OptimizeGraph |
                                  PostProcessSteps.OptimizeMeshes | PostProcessSteps.FindInvalidData |
                                  PostProcessSteps.CalculateTangentSpace)
@@ -37,7 +35,6 @@ public static class AssimpLoader
             throw new FileNotFoundException(path);
         }
 
-        Globals.Assimp ??= new AssimpContext();
         _scene = Globals.Assimp.ImportFile(path, steps);
 
         if (_scene is null || _scene.HasMeshes == false) throw new Exception($"Error in mesh: {path}");
@@ -53,7 +50,7 @@ public static class AssimpLoader
             tempMesh.Normal = mesh.Normals.Vec3DtoVec3();
             tempMesh.Tangent = mesh.Tangents.Vec3DtoVec3();
             tempMesh.MaterialId = mesh.MaterialIndex;
-            tempMesh.Data = new VertexArray(tempMesh, application);
+            tempMesh.Data = new VertexArray(tempMesh);
             outMesh.AddMesh(tempMesh);
         }
 

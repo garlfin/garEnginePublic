@@ -124,5 +124,3 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\Newtonsoft.Json
 C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Release\net6.0\refint\gESilk.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\PVRTC.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\gESilk\bin\Release\net6.0\PVRTC.pdb
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\PVRTC.dll
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Release\net6.0\PVRTC.pdb

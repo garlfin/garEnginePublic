@@ -14,7 +14,6 @@ public class CubemapCapture : BaseCamera
     private EmptyCubemapTexture _irradiance;
     private EmptyCubemapTexture _irradiancePong;
     private RenderBuffer _mainRenderBuffer, _renderBuffer;
-    public Matrix4[] CubemapView = new Matrix4[6];
 
     public int Size;
 
@@ -65,7 +64,7 @@ public class CubemapCapture : BaseCamera
 
     public override void Update(float gameTime)
     {
-        var previousCamera = CameraSystem.CurrentCamera;
+        var camera = CameraSystem.CurrentCamera;
 
         EngineState previousState = Owner.Application.AppState;
 
@@ -88,24 +87,25 @@ public class CubemapCapture : BaseCamera
             ? _texture
             : _texturePong;
 
-
-        currentTex.BindToBuffer3D(_mainRenderBuffer, FramebufferAttachment.ColorAttachment0);
-
-        for (int i = 0; i < 6; i++)
+        for (var i = 0; i < 6; i++)
         {
-            CubemapView[i] = MiscMath.GetLookAt(entityTransform.Location, i);
+            currentTex.BindToBuffer(_mainRenderBuffer, FramebufferAttachment.ColorAttachment0,
+                TextureTarget.TextureCubeMapPositiveX + i);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            View = MiscMath.GetLookAt(entityTransform.Location, i);
+            Projection = _camera.GetProjectionMatrix();
+
+            ModelRendererSystem.Update(0f);
+            CubemapMManager.Update(0f);
         }
-
-        Projection = _camera.GetProjectionMatrix();
-
-        ModelRendererSystem.Update(0f);
-        CubemapMManager.Update(0f);
 
         GL.BindTexture(TextureTarget.TextureCubeMap, currentTex.Get());
         GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
         currentTex.GenerateMipsSpecular(Owner.Application);
 
-        previousCamera.Set();
+        camera.Set();
 
         GL.Disable(EnableCap.CullFace);
         GL.DepthFunc(DepthFunction.Always);

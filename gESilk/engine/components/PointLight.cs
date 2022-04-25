@@ -39,27 +39,26 @@ public class PointLight : Light
 
     public override void UpdateShadowMatrices()
     {
-        var prevLight = LightSystem.CurrentLight;
-        Set();
         GL.Viewport(0, 0, Size, Size);
         _buffer = new FrameBuffer(Size, Size);
-        var projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f);
+        Set();
+
         for (int i = 0; i < 6; i++)
-            Globals.LinearDepthMaterial.ShaderProgram.SetUniform($"shadowMatrices[{i}]",
-                MiscMath.GetLookAt(Owner.GetComponent<Transform>().Location, i) * projection);
+        {
+            LightSystem.ShadowView = MiscMath.GetLookAt(Owner.GetComponent<Transform>().Location, i);
+            LightSystem.ShadowProjection =
+                Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90f), 1, 0.1f, 100f);
 
+            _texture.BindToBuffer(_buffer, FramebufferAttachment.DepthAttachment,
+                TextureTarget.TextureCubeMapPositiveX + i, 0);
+            GL.ReadBuffer(ReadBufferMode.None);
+            GL.DrawBuffer(DrawBufferMode.None);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
 
-        _texture.BindToBuffer3D(_buffer, FramebufferAttachment.DepthAttachment);
-
-        GL.ReadBuffer(ReadBufferMode.None);
-        GL.DrawBuffer(DrawBufferMode.None);
-        GL.Clear(ClearBufferMask.DepthBufferBit);
-
-        ModelRendererSystem.Update(0f);
-
+            ModelRendererSystem.Update(0f);
+        }
 
         _buffer.Delete();
         AssetManager.Register(_buffer);
-        prevLight.Set();
     }
 }

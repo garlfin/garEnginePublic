@@ -32,6 +32,14 @@ public static class MapLoader
 {
     private static List<MatHolder> _materials;
 
+    private static string ReadString(BinaryReader reader)
+    {
+        var length = reader.ReadInt32();
+        var finalString = "";
+        for (var i = 0; i < length; i++) finalString += reader.ReadChar();
+        return finalString;
+    }
+
     public static void LoadMap(string path, Application application)
     {
         _materials = new List<MatHolder>();
@@ -44,31 +52,23 @@ public static class MapLoader
         reader.ReadChars(4);
         var imgCount = reader.ReadInt32();
 
-        Console.Write("Loading images: ");
         ImageTexture[] images = new ImageTexture[imgCount];
-
+        
         for (int i = 0; i < imgCount; i++)
         {
-            Image image = new Image
+            PVRTC.Image image = new Image
             {
-                Format = (Format)reader.ReadByte(),
-                Type = (ChannelType)reader.ReadByte(),
+                Format = (PVRTC.Format) reader.ReadByte(),
+                Type = (PVRTC.ChannelType) reader.ReadByte(),
                 Width = reader.ReadUInt32(),
                 Height = reader.ReadUInt32(),
-                ImageData = reader.ReadBytes((int)reader.ReadUInt32())
+                ImageData = reader.ReadBytes((int) reader.ReadUInt32())
             };
 
             images[i] = new ImageTexture(image, application);
-
-            Console.SetCursorPosition(16, Console.CursorTop);
-            Console.Write($"{(int)((i + 1f) / imgCount * 100)}%");
         }
 
-        Console.SetCursorPosition(0, Console.CursorTop + 1);
-        Console.Write("Loading materials: ");
-
         var matCount = reader.ReadInt32();
-
         for (int i = 0; i < matCount; i++)
         {
             reader.ReadInt32();
@@ -102,16 +102,10 @@ public static class MapLoader
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
-            Console.SetCursorPosition(19, Console.CursorTop);
-            Console.Write($"{(int)((i + 1f) / matCount * 100)}%");
         }
 
         var meshCount = reader.ReadUInt32();
         Mesh[] meshes = new Mesh[meshCount];
-
-        Console.SetCursorPosition(0, Console.CursorTop + 1);
-        Console.Write("Loading meshes: ");
 
         for (int i = 0; i < meshCount; i++)
         {
@@ -162,19 +156,14 @@ public static class MapLoader
                 reader.ReadString();
 
                 subMesh.MaterialId = meshID;
-                subMesh.Data = new VertexArray(subMesh, application);
+                subMesh.Data = new VertexArray(subMesh);
                 finalMesh.AddMesh(subMesh);
             }
 
-            finalMesh.SetMatCount(finalMesh.Length());
+            finalMesh.SetMatCount(finalMesh.Length()); 
             meshes[i] = finalMesh;
-
-            Console.SetCursorPosition(16, Console.CursorTop);
-            Console.Write($"{(int)((i + 1f) / meshCount * 100)}%");
         }
 
-        Console.SetCursorPosition(0, Console.CursorTop + 1);
-        Console.Write("Asset loading complete; creating entities: ");
         var objectCount = reader.ReadInt32();
 
         for (int i = 0; i < objectCount; i++)
@@ -231,9 +220,6 @@ public static class MapLoader
             {
                 component.Activate();
             }
-
-            Console.SetCursorPosition(43, Console.CursorTop);
-            Console.Write($"{(int)((i + 1f) / objectCount * 100)}%");
         }
 
         string end = new string(reader.ReadChars(4));
@@ -242,9 +228,6 @@ public static class MapLoader
 
         foreach (var entity in EntityManager.Entities.Where(entity => entity.GetComponent<MaterialComponent>() != null))
             entity.GetComponent<MaterialComponent>().GetNearestCubemap();
-
-        Console.SetCursorPosition(0, Console.CursorTop + 1);
-        Console.WriteLine("Map loading complete");
     }
 
     private static Material FindMat(string name)

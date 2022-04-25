@@ -1,4 +1,6 @@
+C:\Users\scion\RiderProjects\garEngine\PVRTC\bin\Release\net6.0\PVRTC.exe
 C:\Users\scion\RiderProjects\garEngine\PVRTC\bin\Release\net6.0\PVRTC.deps.json
+C:\Users\scion\RiderProjects\garEngine\PVRTC\bin\Release\net6.0\PVRTC.runtimeconfig.json
 C:\Users\scion\RiderProjects\garEngine\PVRTC\bin\Release\net6.0\PVRTC.dll
 C:\Users\scion\RiderProjects\garEngine\PVRTC\bin\Release\net6.0\PVRTC.pdb
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.csproj.AssemblyReference.cache
@@ -9,6 +11,7 @@ C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.csproj.Cor
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.dll
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\refint\PVRTC.dll
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.pdb
+C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\PVRTC.genruntimeconfig.cache
 C:\Users\scion\RiderProjects\garEngine\PVRTC\obj\Release\net6.0\ref\PVRTC.dll
 C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\bin\Release\net6.0\PVRTC.deps.json
 C:\Users\scion\Documents\GitHub\garEnginePublic\PVRTC\bin\Release\net6.0\PVRTC.dll

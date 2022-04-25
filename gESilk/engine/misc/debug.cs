@@ -19,5 +19,15 @@ internal static class GlDebug
         Console.BackgroundColor = ConsoleColor.Red;
         if (severity is DebugSeverity.DebugSeverityHigh) throw new Exception(Marshal.PtrToStringAnsi(message, length));
         Console.BackgroundColor = default;
+
+        Console.ForegroundColor =
+            severity is DebugSeverity.DebugSeverityLow or DebugSeverity.DontCare or DebugSeverity.DebugSeverityMedium
+                or DebugSeverity.DebugSeverityNotification
+                ? ConsoleColor.Green
+                : ConsoleColor.Yellow;
+        Console.WriteLine(
+            (severity is DebugSeverity.DontCare or DebugSeverity.DebugSeverityNotification ? "Info: " : "Warning: ") +
+            Marshal.PtrToStringAnsi(message, length));
+        Console.ForegroundColor = default;
     }
 }

@@ -1,4 +1,5 @@
-﻿using gESilk.engine.components;
+﻿using System.Diagnostics.CodeAnalysis;
+using gESilk.engine.components;
 using gESilk.engine.render.materialSystem.settings;
 using gESilk.engine.window;
 using OpenTK.Graphics.OpenGL4;
@@ -28,8 +29,6 @@ public class Material
     private readonly CachedUniform<int> _cubemapGlobal;
     private CullFaceMode _cullFaceMode;
 
-    public ShaderProgram ShaderProgram => _program;
-
     public Material(ShaderProgram program, Application application, DepthFunction function = DepthFunction.Less,
         CullFaceMode cullFaceMode = CullFaceMode.Back)
     {
@@ -39,7 +38,7 @@ public class Material
         _cullFaceMode = cullFaceMode;
 
         _model = new CachedUniform<Matrix4>(_program, "model");
-        _view = new CachedUniform<Matrix4>(_program, "view[0]");
+        _view = new CachedUniform<Matrix4>(_program, "view");
         _projection = new CachedUniform<Matrix4>(_program, "projection");
         _viewPos = new CachedUniform<Vector3>(_program, "viewPos");
         _lightProj = new CachedUniform<Matrix4>(_program, "lightProjection");
@@ -64,7 +63,7 @@ public class Material
         return _function;
     }
 
-
+    
     public void Use(bool clearTranslation, Matrix4 model, CubemapCapture? cubemap, DepthFunction? function = null,
         bool doCull = true)
     {
@@ -82,26 +81,18 @@ public class Material
         var state = _application.AppState;
 
         _model.Use(model);
-        switch (state)
+        if (state is EngineState.RenderShadowState or EngineState.RenderLinearShadowState)
         {
-            case EngineState.RenderShadowState:
-                _view.Use(LightSystem.ShadowView);
-                _projection.Use(LightSystem.ShadowProjection);
-                GL.Disable(EnableCap.CullFace);
-                break;
-            case EngineState.GenerateCubemapState or EngineState.IterationCubemapState:
-            {
-                for (int i = 0; i < 6; i++)
-                    _program.SetUniform($"view[{i}]", ((CubemapCapture)CameraSystem.CurrentCamera).CubemapView[i]);
-                _projection.Use(CameraSystem.CurrentCamera.Projection);
-                break;
-            }
-            default:
-                _view.Use(clearTranslation
-                    ? CameraSystem.CurrentCamera.View.ClearTranslation()
-                    : CameraSystem.CurrentCamera.View);
-                _projection.Use(CameraSystem.CurrentCamera.Projection);
-                break;
+            _view.Use(LightSystem.ShadowView);
+            _projection.Use(LightSystem.ShadowProjection);
+            GL.Disable(EnableCap.CullFace);
+        }
+        else
+        {
+            _view.Use(clearTranslation
+                ? CameraSystem.CurrentCamera.View.ClearTranslation()
+                : CameraSystem.CurrentCamera.View);
+            _projection.Use(CameraSystem.CurrentCamera.Projection);
         }
 
         // Point lights need this information too

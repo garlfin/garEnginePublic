@@ -27,6 +27,7 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\gESilk.exe
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\gESilk.deps.json
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\gESilk.runtimeconfig.json
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\gESilk.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\ref\gESilk.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\gESilk.pdb
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\AssimpNet.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
@@ -125,8 +126,13 @@ C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\resources\models\
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\resources\texture\brick_albedo.tif
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\resources\texture\brick_normal.png
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\resources\texture\sponza_column_a_diff.png
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\FreeTypeSharp.dll
 C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\SharpEXR.dll
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\Newtonsoft.Json.dll
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\PVRTC.dll
-C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\PVRTC.pdb
-C:\Users\scion\RiderProjects\garEngine\gESilk\obj\Debug\net6.0\refint\gESilk.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\linux-x64\native\libfreetype.so
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\osx\native\libfreetype.dylib
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\win-x64\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\win-x86\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\win10-arm\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\win10-arm64\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\win10-x64\native\freetype.dll
+C:\Users\scion\RiderProjects\garEngine\gESilk\bin\Debug\net6.0\runtimes\win10-x86\native\freetype.dll

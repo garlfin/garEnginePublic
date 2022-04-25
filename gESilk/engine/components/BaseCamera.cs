@@ -11,6 +11,7 @@ public abstract class BaseCamera : Component
     protected float _fov = 43f;
     public Matrix4 View, Projection, PreviousView = Matrix4.Identity;
 
+
     public BasicCamera GetBasicCamera()
     {
         return _camera;

@@ -8,32 +8,24 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\scion\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\scion\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\scion\\RiderProjects\\garEngine\\PVRTC\\PVRTC.csproj",
+      "projectUniqueName": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\PVRTC\\PVRTC.csproj",
       "projectName": "PVRTC",
-      "projectPath": "C:\\Users\\scion\\RiderProjects\\garEngine\\PVRTC\\PVRTC.csproj",
+      "projectPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\PVRTC\\PVRTC.csproj",
       "packagesPath": "C:\\Users\\scion\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\scion\\RiderProjects\\garEngine\\PVRTC\\obj\\",
+      "outputPath": "C:\\Users\\scion\\Documents\\GitHub\\garEnginePublic\\PVRTC\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\scion\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Users\\scion\\Downloads\\Build_x64": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -66,7 +58,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Users\\scion\\.dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }

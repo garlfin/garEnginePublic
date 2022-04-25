@@ -1,5 +1,4 @@
-﻿using gESilk.engine.assimp;
-using gESilk.engine.components;
+﻿using gESilk.engine.components;
 using gESilk.engine.misc;
 using gESilk.engine.render.assets.textures;
 using gESilk.engine.render.materialSystem;
@@ -18,9 +17,6 @@ public partial class Application
 
     protected virtual void OnLoad()
     {
-        Globals.CubeMesh = AssimpLoader.GetMeshFromFile("../../../resources/models/cube.obj", this);
-        Globals.CubeMesh.IsSkybox(true);
-
         InitRenderer();
 
         InverseScreen = new Vector3((float)_height / _width, 1, 1);
@@ -47,6 +43,8 @@ public partial class Application
 
         MapLoader.LoadMap("test.gmap", this);
 
+        var previousLight = LightSystem.CurrentLight;
+
         TransformSystem.Update(0f);
 
         _state = EngineState.RenderLinearShadowState;
@@ -54,6 +52,8 @@ public partial class Application
         {
             light.UpdateShadowMatrices();
         }
+
+        previousLight.Set();
 
         _state = EngineState.GenerateCubemapState;
         BakeCubemaps();

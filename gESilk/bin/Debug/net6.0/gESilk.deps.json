@@ -9,9 +9,8 @@
       "gESilk/1.0.0": {
         "dependencies": {
           "AssimpNet": "4.1.0",
-          "Newtonsoft.Json": "13.0.1",
+          "FreeTypeSharp": "1.1.3",
           "OpenTK": "4.6.7",
-          "PVRTC": "1.0.0",
           "SharpEXR": "1.0.0.19",
           "System.Drawing.Common": "6.0.0",
           "System.Windows.Forms": "6.0.0.0"
@@ -50,6 +49,56 @@
             "rid": "win-x86",
             "assetType": "native",
             "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "FreeTypeSharp/1.1.3": {
+        "runtime": {
+          "lib/netstandard2.0/FreeTypeSharp.dll": {
+            "assemblyVersion": "1.1.3.0",
+            "fileVersion": "1.1.3.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libfreetype.so": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx/native/libfreetype.dylib": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/freetype.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win-x86/native/freetype.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-arm/native/freetype.dll": {
+            "rid": "win10-arm",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-arm64/native/freetype.dll": {
+            "rid": "win10-arm64",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-x64/native/freetype.dll": {
+            "rid": "win10-x64",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
+          },
+          "runtimes/win10-x86/native/freetype.dll": {
+            "rid": "win10-x86",
+            "assetType": "native",
+            "fileVersion": "2.10.1.0"
           }
         }
       },
@@ -124,14 +173,6 @@
           "System.Threading.Timer": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0",
           "System.Xml.XDocument": "4.3.0"
-        }
-      },
-      "Newtonsoft.Json/13.0.1": {
-        "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {
-            "assemblyVersion": "13.0.0.0",
-            "fileVersion": "13.0.1.25517"
-          }
         }
       },
       "OpenTK/4.6.7": {
@@ -911,11 +952,6 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "PVRTC/1.0.0": {
-        "runtime": {
-          "PVRTC.dll": {}
-        }
-      },
       "System.Windows.Forms/6.0.0.0": {
         "runtime": {
           "System.Windows.Forms.dll": {
@@ -1061,6 +1097,13 @@
       "path": "assimpnet/4.1.0",
       "hashPath": "assimpnet.4.1.0.nupkg.sha512"
     },
+    "FreeTypeSharp/1.1.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1JCuO0cbajKxEiuydA9Ms7EFfdSNnR3JTv4unw8PJSIOejkZnTs/9YQD0T2jxX9yZtAAcn1J6R/MZ33b0Snasg==",
+      "path": "freetypesharp/1.1.3",
+      "hashPath": "freetypesharp.1.1.3.nupkg.sha512"
+    },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",
       "serviceable": true,
@@ -1095,13 +1138,6 @@
       "sha512": "sha512-WcSp3+vP+yHNgS8EV5J7pZ9IRpeDuARBPN28by8zqff1wJQXm26PVU8L3/fYLBJVU7BtDyqNVWq2KlCVvSSR4A==",
       "path": "netstandard.library/1.6.1",
       "hashPath": "netstandard.library.1.6.1.nupkg.sha512"
-    },
-    "Newtonsoft.Json/13.0.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
-      "path": "newtonsoft.json/13.0.1",
-      "hashPath": "newtonsoft.json.13.0.1.nupkg.sha512"
     },
     "OpenTK/4.6.7": {
       "type": "package",
@@ -1683,11 +1719,6 @@
       "sha512": "sha512-5zJ0XDxAIg8iy+t4aMnQAu0MqVbqyvfoUVl1yDV61xdo3Vth45oA2FoY4pPkxYAH5f8ixpmTqXeEIya95x0aCQ==",
       "path": "system.xml.xdocument/4.3.0",
       "hashPath": "system.xml.xdocument.4.3.0.nupkg.sha512"
-    },
-    "PVRTC/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     },
     "System.Windows.Forms/6.0.0.0": {
       "type": "reference",

@@ -60,18 +60,6 @@ public class EmptyCubemapTexture : Texture
         GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachment, target, Id, level);
     }
 
-    public void BindToBuffer3D(FrameBuffer buffer, FramebufferAttachment attachment, int level = 0)
-    {
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Fbo);
-        GL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, Id, level);
-    }
-
-    public void BindToBuffer3D(RenderBuffer buffer, FramebufferAttachment attachment, int level = 0)
-    {
-        GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer.Get());
-        GL.FramebufferTexture(FramebufferTarget.Framebuffer, attachment, Id, level);
-    }
-
 
     public void GenerateMipsSpecular(Application application)
     {
